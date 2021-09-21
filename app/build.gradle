@@ -1,0 +1,99 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+}
+
+android {
+    compileSdk 31
+
+    defaultConfig {
+        applicationId "ma.dexter"
+        minSdk 26
+        targetSdk 31
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    buildFeatures {
+        viewBinding true
+    }
+
+    compileOptions {
+        coreLibraryDesugaringEnabled true
+
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    packagingOptions {
+        exclude 'org/antlr/codegen/templates/**' // useless templates taking up +1MB
+        exclude 'org/antlr/v4/tool/templates/codegen/**'
+        exclude 'com/googlecode/dex2jar/tools/**' // useless debug keys
+        exclude 'smali.properties'
+        exclude 'baksmali.properties'
+    }
+}
+
+dependencies {
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
+    
+    implementation 'androidx.core:core-ktx:1.6.0'
+    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+
+    implementation project(path: ':code-editor')
+    implementation "com.github.angads25:filepicker:1.1.1"
+
+    // dex2jar (maintained fork)
+    def d2jVersion = "v26"
+    def withoutIcu = { exclude group: 'com.ibm.icu', module: 'icu4j' } // Adds ~10MB to the APK !
+    implementation "com.github.ThexXTURBOXx.dex2jar:dex-tools:$d2jVersion", withoutIcu
+    implementation "com.github.ThexXTURBOXx.dex2jar:dex-translator:$d2jVersion", withoutIcu
+
+    // for dexlib2
+    implementation 'com.google.guava:guava:27.1-android'
+
+    // smali & baksmali
+    def smaliVersion = "2.5.2"
+    implementation "org.smali:smali:$smaliVersion"
+    implementation "org.smali:baksmali:$smaliVersion"
+
+    // fernflower (mirror)
+    // doesn't have a proper versioning so we're stuck with using this
+    implementation 'com.github.fesh0r:fernflower:e19aab61ce'
+
+    // cfr
+    implementation 'org.benf:cfr:0.151'
+
+    // jd-core
+    implementation 'com.github.java-decompiler:jd-core:v1.1.3'
+
+    // procyon
+    implementation 'com.github.MikeAndrson.procyon:procyon-compilertools:androidport_0.5.36'
+    implementation files("libs/javax-model.jar") // for javax.lang.model
+
+    // jadx
+    // TODO: update to the latest version
+    implementation files("libs/jadx/jadx-core-0.9.0.jar")
+    implementation files("libs/jadx/dx-1.16.jar") // jadx.core.utils.files.InputFile
+    implementation files("libs/jadx/android-5.1.jar") // jadx.core.dex.nodes.RootNode
+    //noinspection GradleDependency
+    implementation "commons-io:commons-io:2.5" // jadx.core.dex.visitors.RenameVisitor
+    implementation 'uk.com.robust-it:cloning:1.9.12' // jadx.core.dex.nodes.InsnNode
+    //noinspection GradleDependency
+    implementation 'org.slf4j:slf4j-api:1.7.26' // Logger
+}

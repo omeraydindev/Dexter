@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/decompile_to_java"
+        android:icon="@drawable/ic_java"
+        android:title="Decompile to Java"
+        app:showAsAction="always" />
+
+</menu>
