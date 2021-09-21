@@ -49,7 +49,12 @@ class SmaliTree {
                     // deepest level means this is the name of the class
                     // (as in, "String" in "java/lang/String")
                     subNode = if (classDefSegments.size - 1 == level) {
-                        TreeNode(DexClassItem(segment, classDef))
+                        TreeNode(
+                            DexClassItem(
+                                segment,
+                                classDef
+                            )
+                        )
                     } else {
                         TreeNode(DexItem(segment))
                     }

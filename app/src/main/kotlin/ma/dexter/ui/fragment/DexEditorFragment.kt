@@ -79,45 +79,56 @@ class DexEditorFragment : Fragment() {
 
         DexProjectManager.dexList = dexTree.dexList
 
-        val treeView = TreeView(dexTree.createTree(), requireContext(), object : BaseNodeViewFactory<DexItem>() {
+        val treeView = TreeView(
+            dexTree.createTree(),
+            requireContext(),
+            object :
+                BaseNodeViewFactory<DexItem>() {
 
-            override fun getNodeLayoutId(level: Int) = R.layout.item_dex_tree_node
+                override fun getNodeLayoutId(level: Int) = R.layout.item_dex_tree_node
 
-            override fun getNodeViewBinder(view: View, level: Int) =
+                override fun getNodeViewBinder(view: View, level: Int) =
 
-                object : BaseNodeViewBinder<DexItem>(view) {
-                    lateinit var icon: ImageView
+                    object :
+                        BaseNodeViewBinder<DexItem>(
+                            view
+                        ) {
+                        lateinit var icon: ImageView
 
-                    override fun bindView(treeNode: TreeNode<DexItem>) {
-                        val binding = ItemDexTreeNodeBinding.bind(view).apply {
-                            title.text = treeNode.value.path
+                        override fun bindView(treeNode: TreeNode<DexItem>) {
+                            val binding = ItemDexTreeNodeBinding.bind(view).apply {
+                                title.text = treeNode.value.path
 
-                            root.setMargins(
-                                left = level * 20.dp
-                            )
-                        }
-
-                        icon = binding.icon
-                        icon.rotation = if (treeNode.isExpanded) 90F else 0F
-                        icon.visibility = if (treeNode.isLeaf()) View.INVISIBLE else View.VISIBLE
-                    }
-
-                    override fun onNodeToggled(treeNode: TreeNode<DexItem>, expand: Boolean) {
-                        icon.animate()
-                            .rotation(if (expand) 90F else 0F)
-                            .setDuration(150)
-                            .start()
-
-                        treeNode.value.run {
-                            if (this is DexClassItem) {
-                                dexItemClickListener?.onDexClassItemClick(this.dexClassDef)
-                                return
+                                root.setMargins(
+                                    left = level * 20.dp
+                                )
                             }
+
+                            icon = binding.icon
+                            icon.rotation = if (treeNode.isExpanded) 90F else 0F
+                            icon.visibility =
+                                if (treeNode.isLeaf()) View.INVISIBLE else View.VISIBLE
                         }
 
+                        override fun onNodeToggled(
+                            treeNode: TreeNode<DexItem>,
+                            expand: Boolean
+                        ) {
+                            icon.animate()
+                                .rotation(if (expand) 90F else 0F)
+                                .setDuration(150)
+                                .start()
+
+                            treeNode.value.run {
+                                if (this is DexClassItem) {
+                                    dexItemClickListener?.onDexClassItemClick(this.dexClassDef)
+                                    return
+                                }
+                            }
+
+                        }
                     }
-                }
-        })
+            })
 
         binding.root.removeAllViews()
         binding.root.addView(treeView.view, ViewGroup.LayoutParams(-1, -1))
