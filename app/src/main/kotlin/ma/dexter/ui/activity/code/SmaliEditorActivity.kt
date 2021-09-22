@@ -7,11 +7,13 @@ import android.view.MenuItem
 import android.widget.Toast
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import ma.dexter.R
+import ma.dexter.core.model.SmaliMethod
 import ma.dexter.managers.DexProjectManager
 import ma.dexter.databinding.ActivitySmaliEditorBinding
 import ma.dexter.editor.lang.smali.SmaliLanguage
 import ma.dexter.editor.scheme.smali.SchemeLightSmali
 import ma.dexter.editor.util.SmaliActionPopupWindow
+import ma.dexter.model.tree.DexClassItem
 import ma.dexter.tasks.BaksmaliTask
 import ma.dexter.tasks.Smali2JavaTask
 import ma.dexter.tools.decompilers.BaseDecompiler
@@ -29,10 +31,10 @@ class SmaliEditorActivity : BaseActivity() {
         binding = ActivitySmaliEditorBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        DexProjectManager.currentDexClassDef.use {
+        DexProjectManager.currentGotoDef.use {
             it.value?.let { def ->
-                dexClassDef = def
-                loadSmali()
+                dexClassDef = def.dexBackedClassDef
+                loadSmali(def.defDescriptor)
                 return@use
             }
 
@@ -41,7 +43,9 @@ class SmaliEditorActivity : BaseActivity() {
         }
     }
 
-    private fun loadSmali() {
+    private fun loadSmali(
+        defDescriptorToGo: String? = null
+    ) {
         val path = getClassDefPath(dexClassDef.type)
 
         title    = path.substringAfterLast("/")
@@ -65,6 +69,25 @@ class SmaliEditorActivity : BaseActivity() {
             dialog.dismiss()
 
             binding.codeEditor.setText(it)
+            gotoDefDescriptor(defDescriptorToGo)
+        }
+    }
+
+    private fun gotoDefDescriptor(
+        defDescriptorToGo: String? = null
+    ) {
+        defDescriptorToGo?.let { desc ->
+            val smaliFile = DexProjectManager.getSmaliModel(
+                binding.codeEditor.text.toString()
+            )
+
+            val members = smaliFile.smaliFields + smaliFile.smaliMethods
+
+            val line = members.firstOrNull { member ->
+                member.descriptor == desc
+            }?.line
+
+            binding.codeEditor.jumpToLine(line ?: 0)
         }
     }
 
@@ -83,6 +106,31 @@ class SmaliEditorActivity : BaseActivity() {
                     .setItems(decompilers.map { it.getName() }.toTypedArray()) { _, pos ->
                         runSmali2Java(decompilers[pos])
                     }.show()
+            }
+
+            R.id.navigate_smali -> {
+                val smaliFile = DexProjectManager.getSmaliModel(
+                    binding.codeEditor.text.toString()
+                )
+
+                val navItems = smaliFile.smaliFields + smaliFile.smaliMethods
+
+                MaterialAlertDialogBuilder(this)
+                    .setTitle("Navigation")
+                    .setItems(navItems.map { it.descriptor }.toTypedArray()) { _, pos ->
+                        val navItem = navItems[pos]
+
+                        binding.codeEditor.jumpToLine(navItem.line)
+
+                        if (navItem is SmaliMethod) {
+                            Toast.makeText(
+                                this,
+                                navItem.methodBody,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                    .show()
             }
         }
 

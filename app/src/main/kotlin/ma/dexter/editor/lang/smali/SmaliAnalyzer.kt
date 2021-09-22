@@ -7,8 +7,6 @@ import io.github.rosemoe.sora.text.TextAnalyzer
 import io.github.rosemoe.sora.widget.EditorColorScheme
 import ma.dexter.editor.lang.smali.model.SmaliAutoCompleteModel
 import ma.dexter.editor.lang.smali.model.SmaliClassDesc
-import ma.dexter.editor.lang.smali.model.SmaliField
-import ma.dexter.editor.lang.smali.model.SmaliMethod
 import ma.dexter.editor.scheme.smali.SmaliBaseScheme
 import org.antlr.runtime.Token
 import org.jf.smali.smaliFlexLexer
@@ -26,8 +24,6 @@ class SmaliAnalyzer: CodeAnalyzer {
 
         // For completion TODO
         val classDescList = mutableSetOf<SmaliClassDesc>()
-        val fieldList = mutableSetOf<SmaliField>()
-        val methodList = mutableSetOf<SmaliMethod>()
 
         // For drawing lines between '.method' and '.end method' directives
         var lastBlockline: BlockLine? = null
@@ -122,7 +118,7 @@ class SmaliAnalyzer: CodeAnalyzer {
             // todo: underline spans for syntax errors
         }
 
-        colors.extra = SmaliAutoCompleteModel(classDescList, methodList, fieldList)
+        colors.extra = SmaliAutoCompleteModel(classDescList)
         colors.determine(lastLine)
     }
 

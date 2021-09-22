@@ -5,8 +5,6 @@ import io.github.rosemoe.sora.interfaces.AutoCompleteProvider
 import io.github.rosemoe.sora.text.TextAnalyzeResult
 import ma.dexter.editor.lang.smali.model.SmaliAutoCompleteModel
 import ma.dexter.editor.lang.smali.model.SmaliClassDesc
-import ma.dexter.editor.lang.smali.model.SmaliField
-import ma.dexter.editor.lang.smali.model.SmaliMethod
 
 class SmaliAutoCompleteProvider: AutoCompleteProvider {
 
@@ -29,14 +27,6 @@ class SmaliAutoCompleteProvider: AutoCompleteProvider {
             .filter { prefix in it.name }
             .forEach { list += classDescItem(it) }
 
-        acModel.fields
-            .filter { prefix in it.name }
-            .forEach { list += fieldItem(it) }
-
-        acModel.methods
-            .filter { prefix in it.name }
-            .forEach { list += methodItem(it) }
-
         //TODO: add completions for labels/gotos
 
         return list
@@ -57,14 +47,6 @@ class SmaliAutoCompleteProvider: AutoCompleteProvider {
 
     private fun classDescItem(classDesc: SmaliClassDesc): CompletionItem {
         return CompletionItem(classDesc.name, classDesc.name, "Class descriptor")
-    }
-
-    private fun fieldItem(field: SmaliField): CompletionItem {
-        return CompletionItem(field.name, field.name, "Field")
-    }
-
-    private fun methodItem(method: SmaliMethod): CompletionItem {
-        return CompletionItem(method.name, method.name, "Method")
     }
 
     companion object {
