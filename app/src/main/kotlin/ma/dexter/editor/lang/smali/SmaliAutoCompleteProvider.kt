@@ -25,23 +25,17 @@ class SmaliAutoCompleteProvider: AutoCompleteProvider {
 
         val acModel = colors.extra as SmaliAutoCompleteModel
 
-        for (classDesc in acModel.classDescs) {
-            if (prefix in classDesc.name) {
-                list += classDescItem(classDesc)
-            }
-        }
+        acModel.classDescs
+            .filter { prefix in it.name }
+            .forEach { list += classDescItem(it) }
 
-        for (field in acModel.fields) {
-            if (prefix in field.name) {
-                list += fieldItem(field)
-            }
-        }
+        acModel.fields
+            .filter { prefix in it.name }
+            .forEach { list += fieldItem(it) }
 
-        for (method in acModel.methods) {
-            if (prefix in method.name) {
-                list += methodItem(method)
-            }
-        }
+        acModel.methods
+            .filter { prefix in it.name }
+            .forEach { list += methodItem(it) }
 
         //TODO: add completions for labels/gotos
 

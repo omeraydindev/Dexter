@@ -1,11 +1,12 @@
 package ma.dexter.util
 
+/**
+ * Temporary solution.
+ */
 class Releasable<T> : AutoCloseable {
     var value: T? = null
 
-    fun release() {
+    override fun close() {
         value = null
     }
-
-    override fun close() = release()
 }
