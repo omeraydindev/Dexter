@@ -12,14 +12,14 @@ import com.github.angads25.filepicker.model.DialogConfigs
 import com.github.angads25.filepicker.model.DialogProperties
 import com.github.angads25.filepicker.view.FilePickerDialog
 import ma.dexter.R
-import ma.dexter.managers.DexProjectManager
 import ma.dexter.databinding.ActivityMainBinding
+import ma.dexter.managers.DexProjectManager
 import ma.dexter.ui.fragment.DexEditorFragment
 import ma.dexter.util.requestAllFilesAccessPermission
 import ma.dexter.util.storagePath
 import org.jf.dexlib2.dexbacked.DexBackedClassDef
 
-class MainActivity : AppCompatActivity(), DexEditorFragment.DexItemClickListener {
+class MainActivity : BaseActivity(), DexEditorFragment.DexItemClickListener {
     private lateinit var binding: ActivityMainBinding
     private lateinit var dexEditorFragment: DexEditorFragment
 
@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity(), DexEditorFragment.DexItemClickListener
 
         requestAllFilesAccessPermission(this)
 
-        supportActionBar?.subtitle = "by MikeAndrson"
+        subtitle = "by MikeAndrson"
         init()
     }
 
