@@ -84,7 +84,12 @@ dependencies {
     implementation 'org.benf:cfr:0.151'
 
     // jd-core
-    implementation 'com.github.java-decompiler:jd-core:v1.1.3'
+    /*
+     * jd-core's repo fixed some critical bugs in their commits
+     * since the last release (v1.1.3), that's why we're using the
+     * hash of the latest commit (might fork and release myself later)
+     */
+    implementation 'com.github.java-decompiler:jd-core:fafc656826'
 
     // procyon
     implementation 'com.github.MikeAndrson.procyon:procyon-compilertools:androidport_0.5.36'
