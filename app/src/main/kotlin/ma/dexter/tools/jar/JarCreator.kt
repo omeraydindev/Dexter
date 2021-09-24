@@ -1,9 +1,12 @@
 package ma.dexter.tools.jar
 
 import ma.dexter.BuildConfig
+import java.io.BufferedInputStream
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.util.jar.Attributes
+import java.util.jar.JarEntry
 import java.util.jar.JarOutputStream
 import java.util.jar.Manifest
 
@@ -20,8 +23,8 @@ class JarCreator(
             JarOutputStream(stream, manifest).use { out ->
                 val files = classesDir.listFiles()
 
-                files?.forEach { clazz ->
-                    add(classesDir.path, clazz, out)
+                files?.forEach {
+                    add(classesDir.path, it, out)
                 }
             }
         }
@@ -29,6 +32,7 @@ class JarCreator(
         return jarFile
     }
 
+    // TODO: clean this mess up
     private fun add(
         parentPath: String,
         source: File,
@@ -36,7 +40,39 @@ class JarCreator(
     ) {
         var name = source.path.substring(parentPath.length + 1)
 
-        // TODO
+        if (source.isDirectory) {
+            if (name.isNotEmpty()) {
+                if (!name.endsWith("/")) name += "/"
+
+                JarEntry(name).run {
+                    time = source.lastModified()
+                    target.putNextEntry(this)
+                    target.closeEntry()
+                }
+            }
+
+            source.listFiles()!!.forEach { nestedFile ->
+                add(parentPath, nestedFile, target)
+            }
+
+            return
+        }
+
+        JarEntry(name).run {
+            time = source.lastModified()
+            target.putNextEntry(this)
+        }
+
+        BufferedInputStream(FileInputStream(source)).use {
+            val buffer = ByteArray(1024)
+            while (true) {
+                val count = it.read(buffer)
+                if (count == -1) break
+                target.write(buffer, 0, count)
+            }
+
+            target.closeEntry()
+        }
     }
 
     companion object {

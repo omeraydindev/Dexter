@@ -7,13 +7,11 @@ import android.view.MenuItem
 import android.widget.Toast
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import ma.dexter.R
-import ma.dexter.core.model.SmaliMethod
 import ma.dexter.managers.DexProjectManager
 import ma.dexter.databinding.ActivitySmaliEditorBinding
 import ma.dexter.editor.lang.smali.SmaliLanguage
 import ma.dexter.editor.scheme.smali.SchemeLightSmali
 import ma.dexter.editor.util.SmaliActionPopupWindow
-import ma.dexter.model.tree.DexClassItem
 import ma.dexter.tasks.BaksmaliTask
 import ma.dexter.tasks.Smali2JavaTask
 import ma.dexter.tools.decompilers.BaseDecompiler
@@ -118,17 +116,7 @@ class SmaliEditorActivity : BaseActivity() {
                 MaterialAlertDialogBuilder(this)
                     .setTitle("Navigation")
                     .setItems(navItems.map { it.descriptor }.toTypedArray()) { _, pos ->
-                        val navItem = navItems[pos]
-
-                        binding.codeEditor.jumpToLine(navItem.line)
-
-                        if (navItem is SmaliMethod) {
-                            Toast.makeText(
-                                this,
-                                navItem.methodBody,
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
+                        binding.codeEditor.jumpToLine(navItems[pos].line)
                     }
                     .show()
             }
@@ -142,7 +130,10 @@ class SmaliEditorActivity : BaseActivity() {
         dialog.setCancelable(false)
 
         Smali2JavaTask.execute(
-            binding.codeEditor.text.toString(), decompiler, dialog::setMessage
+            smaliCode  = binding.codeEditor.text.toString(),
+            className  = getClassDefPath(dexClassDef.type),
+            decompiler = decompiler,
+            progress   = dialog::setMessage
         ) {
             dialog.dismiss()
 

@@ -5,29 +5,36 @@ import org.jd.core.v1.ClassFileToJavaSourceDecompiler
 import org.jd.core.v1.api.loader.Loader
 import org.jd.core.v1.api.printer.Printer
 import java.io.File
-import java.lang.StringBuilder
-import java.nio.file.Files
+import java.util.jar.JarFile
 
-/**
- * Adapted from [https://github.com/java-decompiler/jd-core/tree/v1.1.3]
+/*
+ * Adapted from https://github.com/java-decompiler/jd-core/tree/v1.1.3
  */
 class JDCoreDecompiler : BaseJarDecompiler {
 
-    override fun decompile(classFile: File): String {
+    override fun decompileJar(
+        className: String,
+        jarFile: File
+    ): String {
+        val jar = JarFile(jarFile)
 
         val loader = object : Loader {
             override fun canLoad(internalName: String?): Boolean {
-                return internalName == classFile.name
+                return jar.getJarEntry("$internalName.class") != null
             }
 
-            override fun load(internalName: String?): ByteArray {
-                return Files.readAllBytes(classFile.toPath())
+            override fun load(internalName: String?): ByteArray? {
+                val entry = jar.getJarEntry("$internalName.class") ?: return null
+
+                jar.getInputStream(entry).use {
+                    return it.readBytes()
+                }
             }
         }
 
         val printer = JDCorePrinter()
 
-        ClassFileToJavaSourceDecompiler().decompile(loader, printer, classFile.name)
+        ClassFileToJavaSourceDecompiler().decompile(loader, printer, className)
 
         return getBanner() + printer.toString()
     }

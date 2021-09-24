@@ -1,5 +1,6 @@
 package ma.dexter.tools.decompilers.procyon
 
+import com.strobel.assembler.metadata.JarTypeLoader
 import com.strobel.decompiler.Decompiler
 import com.strobel.decompiler.DecompilerSettings
 import com.strobel.decompiler.DecompilerSettings.RT_JAR
@@ -12,18 +13,15 @@ import java.util.jar.JarFile
 
 class ProcyonDecompiler: BaseJarDecompiler {
 
-    override fun decompile(
-        classFile: File
+    override fun decompileJar(
+        className: String,
+        jarFile: File
     ): String {
 
-        // WARNING: This is a hack and is likely very error-prone
-        val classFileName = classFile.absolutePath
-            .substring(File(App.context.cacheDir, "out/").absolutePath.length)
-            .replace(".class", "")
-            .substring(1) // strip off the extra '/'
-
-        // for some reason, Procyon needs to process bytecodes of 'java.lang.Class'
-        // and 'java.lang.Object' before decompilation. fortunately they take up like 3 KBs
+        /**
+         * For some reason, Procyon needs to process bytecodes of [java.lang.Class]
+         * and [java.lang.Object] before decompilation. Fortunately they take up like 3 KBs
+         */
         val rtJar = File(App.context.filesDir, "rt.jar")
         extractAsset("rt.jar", rtJar)
 
@@ -32,11 +30,11 @@ class ProcyonDecompiler: BaseJarDecompiler {
             forceExplicitImports = true
 
             RT_JAR = JarFile(rtJar)
-            typeLoader = ClassFileLoader(classFile, classFileName)
+            typeLoader = JarTypeLoader(JarFile(jarFile))
         }
 
         val output = PlainTextOutput()
-        Decompiler.decompile(classFileName, output, options)
+        Decompiler.decompile(className, output, options)
 
         return getBanner() + output.toString()
     }

@@ -9,7 +9,10 @@ class JADXDecompiler(
     private val fallbackMode: Boolean = false
 ) : BaseDexDecompiler {
 
-    override fun decompileDex(dexFile: File): String {
+    override fun decompileDex(
+        className: String,
+        dexFile: File
+    ): String {
 
         val jadxArgs = JadxArgs().apply {
             inputFiles.add(dexFile)
@@ -23,11 +26,13 @@ class JADXDecompiler(
             jadx.load()
             // jadx.save() // Saves decompiled classes to storage, we don't want that
 
-            return if (jadx.errorsCount > 0) {
-                "Error" // TODO (does this even ever happen?)
-            } else {
-                getBanner() + jadx.classes[0].code
+            jadx.classes.forEach {
+                if (it.fullName.replace(".", "/") == className) {
+                    return getBanner() + it.code
+                }
             }
+
+            return "Error" // TODO (does this even ever happen?)
         }
 
     }

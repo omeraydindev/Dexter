@@ -2,8 +2,10 @@ package ma.dexter.tools.decompilers.cfr
 
 import ma.dexter.tools.decompilers.BaseJarDecompiler
 import org.benf.cfr.reader.api.CfrDriver
+import org.benf.cfr.reader.api.ClassFileSource
 import org.benf.cfr.reader.api.OutputSinkFactory
 import org.benf.cfr.reader.api.SinkReturns
+import org.benf.cfr.reader.bytecode.analysis.parse.utils.Pair
 import java.io.File
 import java.lang.StringBuilder
 import java.util.*
@@ -11,10 +13,13 @@ import java.util.*
 class CFRDecompiler : BaseJarDecompiler {
     private val options = defaultOptions()
 
-    /**
-     * Adapted from [https://github.com/leibnitz27/cfr_client/blob/master/src/org/benf/cfr_client_example/WithBetterSink.java]
+    /*
+     * Adapted from https://github.com/leibnitz27/cfr_client/blob/master/src/org/benf/cfr_client_example/WithBetterSink.java
      */
-    override fun decompile(classFile: File): String {
+    override fun decompileJar(
+        className: String, // TODO: didn't need this?
+        jarFile: File
+    ): String {
 
         val javaCode = StringBuilder()
 
@@ -50,12 +55,27 @@ class CFRDecompiler : BaseJarDecompiler {
             }
         }
 
+        /*val source = object : ClassFileSource {
+            override fun addJar(jarPath: String?): MutableCollection<String> {
+
+            }
+
+            override fun getClassFileContent(path: String?): Pair<ByteArray, String> {
+
+            }
+
+            override fun informAnalysisRelativePathDetail(usePath: String?, classFilePath: String?) {}
+
+            override fun getPossiblyRenamedPath(path: String?) = path
+        }*/
+
         val driver = CfrDriver.Builder()
+            // .withOverrideClassFileSource(source)
             .withOutputSink(outSink)
             .withOptions(options)
             .build()
 
-        driver.analyse(listOf(classFile.absolutePath))
+        driver.analyse(listOf(jarFile.absolutePath))
         return javaCode.toString()
     }
 

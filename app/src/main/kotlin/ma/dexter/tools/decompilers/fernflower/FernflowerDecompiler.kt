@@ -7,7 +7,7 @@ import org.jetbrains.java.decompiler.main.extern.IFernflowerLogger
 import org.jetbrains.java.decompiler.main.extern.IFernflowerPreferences
 import org.jetbrains.java.decompiler.main.extern.IResultSaver
 import java.io.File
-import java.nio.file.Files
+import java.util.jar.JarFile
 import java.util.jar.Manifest
 
 /*
@@ -17,16 +17,17 @@ class FernflowerDecompiler: BaseJarDecompiler {
     private val options = defaultOptions()
 
     /**
-     * Decompiles given [classFile] to Java using Fernflower.
+     * Decompiles given [jarFile] to Java using Fernflower.
      *
      * @return Decompiled Java code
      */
-    override fun decompile(
-        classFile: File
+    override fun decompileJar(
+        className: String,
+        jarFile: File
     ): String {
-        val bytecodeProvider = BytecodeProvider(listOf(classFile))
+        val bytecodeProvider = BytecodeProvider()
 
-        val resultSaver = ResultSaver()
+        val resultSaver = ResultSaver(className)
 
         val logger = object : IFernflowerLogger() {
             override fun writeMessage(p0: String?, p1: Severity?) {}
@@ -35,26 +36,41 @@ class FernflowerDecompiler: BaseJarDecompiler {
         }
 
         val decompiler = BaseDecompiler(bytecodeProvider, resultSaver, options, logger)
-        decompiler.addSource(classFile)
+        decompiler.addSource(jarFile)
         decompiler.decompileContext()
 
         return resultSaver.result
     }
 
-    private class BytecodeProvider(jarFiles: List<File>) : IBytecodeProvider {
-        private val pathMap = jarFiles.associateBy { File(it.path).absolutePath }
+    private class BytecodeProvider : IBytecodeProvider {
 
-        override fun getBytecode(externalPath: String, internalPath: String?): ByteArray =
-            Files.readAllBytes(pathMap[externalPath]?.toPath()) ?: throw AssertionError(externalPath + " not in " + pathMap.keys)
+        override fun getBytecode(externalPath: String, internalPath: String?): ByteArray {
+            val jar = JarFile(File(externalPath))
+
+            val entry = jar.getJarEntry(internalPath)
+
+            jar.getInputStream(entry).use {
+                return it.readBytes()
+            }
+        }
+
     }
 
-    private class ResultSaver : IResultSaver {
+    private class ResultSaver(val className: String) : IResultSaver {
         var result = ""
 
-        override fun saveClassFile(path: String, qualifiedName: String, entryName: String, content: String, mapping: IntArray?) {
-            if (result.isEmpty()) {
-                result = content
+        fun saveClass(qualifiedName: String?, content: String?) {
+            if (result.isEmpty() && qualifiedName == className) {
+                result = content.toString()
             }
+        }
+
+        override fun saveClassFile(path: String, qualifiedName: String?, entryName: String, content: String?, mapping: IntArray?) {
+            saveClass(qualifiedName, content)
+        }
+
+        override fun saveClassEntry(path: String?, archiveName: String?, qualifiedName: String?, entryName: String?, content: String?) {
+            saveClass(qualifiedName, content)
         }
 
         override fun saveFolder(path: String?) {}
@@ -66,8 +82,6 @@ class FernflowerDecompiler: BaseJarDecompiler {
         override fun saveDirEntry(path: String?, archiveName: String?, entryName: String?) {}
 
         override fun copyEntry(source: String?, path: String?, archiveName: String?, entry: String?) {}
-
-        override fun saveClassEntry(path: String?, archiveName: String?, qualifiedName: String?, entryName: String?, content: String?) {}
 
         override fun closeArchive(path: String?, archiveName: String?) {}
     }

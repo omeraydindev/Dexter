@@ -5,6 +5,7 @@ import android.os.Looper
 import ma.dexter.App
 import ma.dexter.tools.d2j.D2JInvoker
 import ma.dexter.tools.decompilers.BaseDecompiler
+import ma.dexter.tools.decompilers.BaseDecompiler.Companion.decompile
 import ma.dexter.tools.decompilers.BaseDexDecompiler
 import ma.dexter.tools.decompilers.BaseJarDecompiler
 import ma.dexter.tools.smali.SmaliInvoker
@@ -17,6 +18,7 @@ object Smali2JavaTask {
     // TODO: Make multiple files possible too (for anonymous/inner classes)
     fun execute(
         smaliCode: String,
+        className: String,
         decompiler: BaseDecompiler,
         progress: (info: String) -> Unit = {},
         callback: (result: Result) -> Unit = {}
@@ -25,9 +27,9 @@ object Smali2JavaTask {
         val handler = Handler(Looper.getMainLooper())
 
         executor.execute {
-            val invokeResult = execute(smaliCode, decompiler) { info: String ->
+            val invokeResult = execute_(smaliCode, className, decompiler) {
                 handler.post { // run progress on UI thread
-                    progress(info)
+                    progress(it)
                 }
             }
 
@@ -40,20 +42,22 @@ object Smali2JavaTask {
     /*
      * Returns decompiled Java code.
      */
-    private fun execute(
+    private fun execute_(
         smaliCode: String,
+        className: String,
         decompiler: BaseDecompiler,
         progress: (info: String) -> Unit
     ): Result {
 
         // Clear out cache
-        val parent = App.context.cacheDir
-        parent.deleteRecursively()
+        val parent = App.context.cacheDir.apply {
+            deleteRecursively()
+            mkdirs()
+        }
 
         // Initialize temp files
         val dexFile = File(parent, "out.dex")
-        val javaClassDir =  File(parent, "out/").apply { mkdirs() }
-        var classFile: File? = null
+        val jarFile = File(parent, "out.jar")
 
         // Initialize temp vars
         val isJarDecompiler = decompiler is BaseJarDecompiler
@@ -77,18 +81,10 @@ object Smali2JavaTask {
 
             // Invoke dex2jar
             progress("Converting dex to jar...")
-            val d2jResult = D2JInvoker.invoke(dexFile, javaClassDir)
+            val d2jResult = D2JInvoker.invoke(dexFile, jarFile)
 
             if (!d2jResult.success) {
-                return Error(title = "Dex2jar", message = d2jResult.error)
-            }
-
-
-            // Find generated .class file to decompile
-            javaClassDir.walkBottomUp().forEach {
-                if (it.name.endsWith(".class")) {
-                    classFile = it
-                }
+                return Error(title = "Dex2Jar", message = d2jResult.error)
             }
 
         }
@@ -97,21 +93,17 @@ object Smali2JavaTask {
         // Invoke the decompiler
         progress("Decompiling ${ if (isJarDecompiler) "jar" else "dex" } to Java...")
 
-        val javaCode = if (classFile != null || !isJarDecompiler) {
+        val javaCode = if (jarFile.exists() || !isJarDecompiler) {
 
-            when(decompiler) {
-                is BaseJarDecompiler -> {
-                    decompiler.decompile(classFile!!)
-                }
-                is BaseDexDecompiler -> {
-                    decompiler.decompileDex(dexFile)
-                }
-            }
+            decompiler.decompile(
+                className,
+                if (isJarDecompiler) jarFile else dexFile
+            )
 
         } else {
             return Error(
                 title = decompiler.getName(),
-                message = "Couldn't find generated .class file in ${javaClassDir.absolutePath}"
+                message = "Couldn't find generated .jar in ${jarFile.absolutePath}"
             )
         }
 
