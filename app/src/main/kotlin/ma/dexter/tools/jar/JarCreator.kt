@@ -20,10 +20,8 @@ class JarCreator(
             JarOutputStream(stream, manifest).use { out ->
                 val files = classesDir.listFiles()
 
-                if (files != null) {
-                    for (clazz in files) {
-                        JarPackager.add(classesDir.path, clazz, out)
-                    }
+                files?.forEach { clazz ->
+                    add(classesDir.path, clazz, out)
                 }
             }
         }
@@ -38,11 +36,10 @@ class JarCreator(
     ) {
         var name = source.path.substring(parentPath.length + 1)
 
-        // todo
+        // TODO
     }
 
     companion object {
-
         private fun getDefAttrs(): Attributes {
             return Attributes().also {
                 it[Attributes.Name("Created-By")] = BuildConfig.APPLICATION_ID

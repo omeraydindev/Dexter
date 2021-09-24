@@ -746,7 +746,7 @@ public class CodeEditor extends View implements ContentListener, TextAnalyzer.Ca
     }
 
     // me: added
-    public void setTextActionPresenter(EditorTextActionPresenter presenter) {
+    public void setTextActionPresenter(@NonNull EditorTextActionPresenter presenter) {
         mTextActionPresenter = presenter;
     }
 
