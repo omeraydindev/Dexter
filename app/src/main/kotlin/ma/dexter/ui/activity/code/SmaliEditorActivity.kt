@@ -7,11 +7,11 @@ import android.view.MenuItem
 import android.widget.Toast
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import ma.dexter.R
-import ma.dexter.managers.DexProjectManager
 import ma.dexter.databinding.ActivitySmaliEditorBinding
 import ma.dexter.editor.lang.smali.SmaliLanguage
 import ma.dexter.editor.scheme.smali.SchemeLightSmali
-import ma.dexter.editor.util.SmaliActionPopupWindow
+import ma.dexter.editor.util.smali.SmaliActionPopupWindow
+import ma.dexter.managers.DexProjectManager
 import ma.dexter.tasks.BaksmaliTask
 import ma.dexter.tasks.Smali2JavaTask
 import ma.dexter.tools.decompilers.BaseDecompiler
@@ -83,9 +83,9 @@ class SmaliEditorActivity : BaseActivity() {
 
             val line = members.firstOrNull { member ->
                 member.descriptor == desc
-            }?.line
+            }?.line ?: 0
 
-            binding.codeEditor.jumpToLine(line ?: 0)
+            binding.codeEditor.jumpToLine(line)
         }
     }
 
@@ -102,7 +102,11 @@ class SmaliEditorActivity : BaseActivity() {
                 MaterialAlertDialogBuilder(this)
                     .setTitle("Decompiler")
                     .setItems(decompilers.map { it.getName() }.toTypedArray()) { _, pos ->
-                        runSmali2Java(decompilers[pos])
+                        runSmali2Java(
+                            smaliCode  = binding.codeEditor.text.toString(),
+                            className  = getClassDefPath(dexClassDef.type),
+                            decompiler = decompilers[pos]
+                        )
                     }.show()
             }
 
@@ -125,15 +129,16 @@ class SmaliEditorActivity : BaseActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun runSmali2Java(decompiler: BaseDecompiler) {
+    private fun runSmali2Java(
+        smaliCode: String,
+        className: String,
+        decompiler: BaseDecompiler
+    ) {
         val dialog = ProgressDialog.show(this, "Loading", "")
         dialog.setCancelable(false)
 
         Smali2JavaTask.execute(
-            smaliCode  = binding.codeEditor.text.toString(),
-            className  = getClassDefPath(dexClassDef.type),
-            decompiler = decompiler,
-            progress   = dialog::setMessage
+            smaliCode, className, decompiler, progress = dialog::setMessage
         ) {
             dialog.dismiss()
 

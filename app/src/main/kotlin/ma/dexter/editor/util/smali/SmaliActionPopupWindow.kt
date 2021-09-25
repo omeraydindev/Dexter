@@ -1,4 +1,4 @@
-package ma.dexter.editor.util
+package ma.dexter.editor.util.smali
 
 import androidx.core.content.ContextCompat
 import com.google.android.material.button.MaterialButton

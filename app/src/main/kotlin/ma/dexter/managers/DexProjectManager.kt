@@ -54,7 +54,7 @@ object DexProjectManager {
             if (token.type == smaliParser.CLASS_DESCRIPTOR && line == cursor.leftLine) {
                 val endColumn = startColumn + token.text.length
 
-                if (cursor.leftColumn in startColumn..endColumn &&
+                if (cursor.leftColumn  in startColumn..endColumn &&
                     cursor.rightColumn in startColumn..endColumn) {
 
                     editor.setSelectionRegion(
