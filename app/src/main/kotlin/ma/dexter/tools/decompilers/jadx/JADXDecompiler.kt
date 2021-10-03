@@ -32,7 +32,7 @@ class JADXDecompiler(
                 }
             }
 
-            return "Error" // TODO (does this even ever happen?)
+            return "// Error: JADX couldn't decompile $className"
         }
 
     }

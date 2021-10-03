@@ -52,14 +52,12 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.6.0'
     implementation 'androidx.appcompat:appcompat:1.3.1'
     implementation 'com.google.android.material:material:1.4.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
 
-    implementation project(path: ':code-editor')
-    /*implementation 'io.github.Rosemoe.sora-editor:editor:0.6.0-dev-1'
-    implementation 'io.github.Rosemoe.sora-editor:language-base:0.6.0-dev-1'
-    implementation 'io.github.Rosemoe.sora-editor:language-universal:0.6.0-dev-1'
-    implementation 'io.github.Rosemoe.sora-editor:language-java:0.6.0-dev-1'*/
+    implementation 'io.github.Rosemoe.sora-editor:editor:0.6.0-dev-4'
+    implementation 'io.github.Rosemoe.sora-editor:language-base:0.6.0-dev-4'
+    implementation 'io.github.Rosemoe.sora-editor:language-universal:0.6.0-dev-4'
+    implementation 'io.github.Rosemoe.sora-editor:language-java:0.6.0-dev-4'
     implementation "com.github.angads25:filepicker:1.1.1"
 
     // dex2jar (maintained fork)
@@ -100,9 +98,7 @@ dependencies {
     implementation files("libs/jadx/jadx-core-0.9.0.jar")
     implementation files("libs/jadx/dx-1.16.jar") // jadx.core.utils.files.InputFile
     implementation files("libs/jadx/android-5.1.jar") // jadx.core.dex.nodes.RootNode
-    //noinspection GradleDependency
     implementation "commons-io:commons-io:2.5" // jadx.core.dex.visitors.RenameVisitor
     implementation 'uk.com.robust-it:cloning:1.9.12' // jadx.core.dex.nodes.InsnNode
-    //noinspection GradleDependency
     implementation 'org.slf4j:slf4j-api:1.7.26' // Logger
 }

@@ -11,4 +11,3 @@ dependencyResolutionManagement {
 rootProject.name = "Dexter"
 
 include ':app'
-include ':code-editor'

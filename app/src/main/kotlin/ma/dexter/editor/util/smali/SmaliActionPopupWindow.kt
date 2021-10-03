@@ -12,7 +12,7 @@ class SmaliActionPopupWindow(private val editor: CodeEditor) : TextActionPopupWi
     init {
 
         val moreButton = contentView.findViewById<MaterialButton>(
-            io.github.rosemoe.sora.R.id.tcpw_material_button_more
+            io.github.rosemoe.sora.R.id.tcpw_material_button_save_to_project
         )
 
         moreButton.run {

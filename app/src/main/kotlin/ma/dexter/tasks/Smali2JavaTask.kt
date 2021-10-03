@@ -12,10 +12,10 @@ import ma.dexter.tools.smali.SmaliInvoker
 import java.io.File
 import java.util.concurrent.Executors
 
+// TODO: migrate to coroutines
+// TODO: Make multiple files possible too (for anonymous/inner classes)
 object Smali2JavaTask {
 
-    // TODO: migrate to coroutines
-    // TODO: Make multiple files possible too (for anonymous/inner classes)
     fun execute(
         smaliCode: String,
         className: String,

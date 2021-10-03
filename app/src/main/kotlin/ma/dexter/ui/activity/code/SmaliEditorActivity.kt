@@ -51,10 +51,10 @@ class SmaliEditorActivity : BaseActivity() {
 
         with(binding.codeEditor) {
             colorScheme = SchemeLightSmali()
+            textActionPresenter = SmaliActionPopupWindow(this)
 
             setDefaults()
             setEditorLanguage(SmaliLanguage())
-            setTextActionPresenter(SmaliActionPopupWindow(this))
         }
 
         val dialog = ProgressDialog.show(
