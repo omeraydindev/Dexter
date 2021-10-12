@@ -1,5 +1,5 @@
 # Dexter
-A WIP **DEX** editor (hence the name **Dex**ter) for Android that uses [Smali](https://github.com/JesusFreke/smali).
+A work-in-progress **DEX** editor (hence the name **Dex**ter) for Android that uses [smali](https://github.com/JesusFreke/smali).
 
 ## Available decompilers
 - [JADX](https://github.com/skylot/jadx)
@@ -19,3 +19,6 @@ A WIP **DEX** editor (hence the name **Dex**ter) for Android that uses [Smali](h
 
 ## Non-Goals
 - Making it a full-fledged APK editor (Things such as ARSC editing are **OFF** the table.)
+
+## License
+Dexter is licensed under **GNU General Public License v3.0**, see [LICENSE](https://github.com/MikeAndrson/Dexter/blob/master/LICENSE) for more.
