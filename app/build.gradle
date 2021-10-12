@@ -54,10 +54,10 @@ dependencies {
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
 
-    implementation 'io.github.Rosemoe.sora-editor:editor:0.6.0-dev-4'
-    implementation 'io.github.Rosemoe.sora-editor:language-base:0.6.0-dev-4'
-    implementation 'io.github.Rosemoe.sora-editor:language-universal:0.6.0-dev-4'
-    implementation 'io.github.Rosemoe.sora-editor:language-java:0.6.0-dev-4'
+    implementation 'io.github.Rosemoe.sora-editor:editor:0.6.0'
+    implementation 'io.github.Rosemoe.sora-editor:language-base:0.6.0'
+    implementation 'io.github.Rosemoe.sora-editor:language-universal:0.6.0'
+    implementation 'io.github.Rosemoe.sora-editor:language-java:0.6.0'
     implementation "com.github.angads25:filepicker:1.1.1"
 
     // dex2jar (maintained fork)
