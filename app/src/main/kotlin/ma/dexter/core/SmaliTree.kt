@@ -4,7 +4,6 @@ import ma.dexter.model.tree.DexClassItem
 import ma.dexter.model.tree.DexItem
 import ma.dexter.ui.component.tree.TreeNode
 import ma.dexter.ui.component.tree.findChildByValue
-import ma.dexter.ui.component.tree.isLeaf
 import ma.dexter.ui.component.tree.sort
 import ma.dexter.util.getClassDefPath
 import java.io.File
@@ -21,8 +20,8 @@ class SmaliTree {
         }
 
         rootTreeNode.sort { node1, node2 ->
-            if (node1.isLeaf() != node2.isLeaf()) {
-                node1.isLeaf().compareTo(node2.isLeaf())
+            if (node1.isLeaf != node2.isLeaf) {
+                node1.isLeaf.compareTo(node2.isLeaf)
             } else {
                 node1.value.compareTo(node2.value)
             }

@@ -8,22 +8,24 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import ma.dexter.R
-import ma.dexter.managers.DexProjectManager
+import ma.dexter.core.SmaliTree
 import ma.dexter.databinding.FragmentDexEditorBinding
 import ma.dexter.databinding.ItemDexTreeNodeBinding
+import ma.dexter.managers.DexProjectManager
 import ma.dexter.model.tree.DexClassItem
 import ma.dexter.model.tree.DexItem
-import ma.dexter.ui.component.tree.*
+import ma.dexter.ui.component.tree.TreeNode
+import ma.dexter.ui.component.tree.TreeView
 import ma.dexter.ui.component.tree.base.BaseNodeViewBinder
 import ma.dexter.ui.component.tree.base.BaseNodeViewFactory
 import ma.dexter.ui.util.dp
-import ma.dexter.core.SmaliTree
 import ma.dexter.ui.util.setMargins
 import org.jf.dexlib2.dexbacked.DexBackedClassDef
 import java.io.BufferedInputStream
 import java.io.FileInputStream
 import java.io.InputStream
 import java.util.zip.ZipFile
+
 
 class DexEditorFragment : Fragment() {
     private lateinit var binding: FragmentDexEditorBinding
@@ -89,10 +91,7 @@ class DexEditorFragment : Fragment() {
 
                 override fun getNodeViewBinder(view: View, level: Int) =
 
-                    object :
-                        BaseNodeViewBinder<DexItem>(
-                            view
-                        ) {
+                    object : BaseNodeViewBinder<DexItem>(view) {
                         lateinit var icon: ImageView
 
                         override fun bindView(treeNode: TreeNode<DexItem>) {
@@ -107,7 +106,7 @@ class DexEditorFragment : Fragment() {
                             icon = binding.icon
                             icon.rotation = if (treeNode.isExpanded) 90F else 0F
                             icon.visibility =
-                                if (treeNode.isLeaf()) View.INVISIBLE else View.VISIBLE
+                                if (treeNode.isLeaf) View.INVISIBLE else View.VISIBLE
                         }
 
                         override fun onNodeToggled(
@@ -119,9 +118,9 @@ class DexEditorFragment : Fragment() {
                                 .setDuration(150)
                                 .start()
 
-                            treeNode.value.run {
-                                if (this is DexClassItem) {
-                                    dexItemClickListener?.onDexClassItemClick(this.dexClassDef)
+                            treeNode.value.also { dexItem ->
+                                if (dexItem is DexClassItem) {
+                                    dexItemClickListener?.onDexClassItemClick(dexItem.dexClassDef)
                                     return
                                 }
                             }

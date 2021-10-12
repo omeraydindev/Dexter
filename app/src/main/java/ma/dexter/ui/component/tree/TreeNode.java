@@ -71,6 +71,10 @@ public class TreeNode<D> {
         getChildren().remove(treeNode);
     }
 
+    public boolean isLeaf() {
+        return children.size() == 0;
+    }
+
     public boolean isLastChild() {
         if (parent == null) {
             return false;
