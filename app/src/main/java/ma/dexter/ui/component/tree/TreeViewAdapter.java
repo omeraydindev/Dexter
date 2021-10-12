@@ -21,11 +21,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Checkable;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import ma.dexter.ui.component.tree.base.BaseNodeViewBinder;
 import ma.dexter.ui.component.tree.base.BaseNodeViewFactory;
 import ma.dexter.ui.component.tree.base.CheckableNodeViewBinder;
@@ -100,6 +101,8 @@ public class TreeViewAdapter<D> extends RecyclerView.Adapter<RecyclerView.ViewHo
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
         final View nodeView = holder.itemView;
         final TreeNode<D> treeNode = expandedNodeList.get(position);
+
+        @SuppressWarnings("unchecked")
         final BaseNodeViewBinder<D> viewBinder = (BaseNodeViewBinder<D>) holder;
 
         if (viewBinder.getToggleTriggerViewId() != 0) {
@@ -186,6 +189,16 @@ public class TreeViewAdapter<D> extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
         } else {
             collapseNode(treeNode);
+
+            // collapse everything recursively
+            // TODO: add option to disable this behaviour
+            if (!treeNode.isLeaf()) {
+                treeNode.getChildren().forEach(subNode -> {
+                    if (!subNode.isLeaf() && subNode.isExpanded()) {
+                        onNodeToggled(subNode);
+                    }
+                });
+            }
         }
     }
 

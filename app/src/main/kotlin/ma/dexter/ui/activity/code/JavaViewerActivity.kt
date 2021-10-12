@@ -1,14 +1,14 @@
 package ma.dexter.ui.activity.code
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import io.github.rosemoe.sora.langs.java.JavaLanguage
-import ma.dexter.managers.DexProjectManager
 import ma.dexter.databinding.ActivityJavaViewerBinding
 import ma.dexter.editor.scheme.smali.SchemeLightSmali
+import ma.dexter.managers.DexProjectManager
+import ma.dexter.ui.activity.BaseActivity
 import ma.dexter.ui.util.setDefaults
 
-class JavaViewerActivity : AppCompatActivity() {
+class JavaViewerActivity : BaseActivity() {
     private lateinit var binding: ActivityJavaViewerBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
