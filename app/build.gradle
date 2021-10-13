@@ -48,20 +48,22 @@ android {
 
 dependencies {
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
-    
+
+    // AndroidX
     implementation 'androidx.core:core-ktx:1.6.0'
     implementation 'androidx.appcompat:appcompat:1.3.1'
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
 
+    // CodeEditor
     implementation 'io.github.Rosemoe.sora-editor:editor:0.6.0'
     implementation 'io.github.Rosemoe.sora-editor:language-base:0.6.0'
     implementation 'io.github.Rosemoe.sora-editor:language-universal:0.6.0'
     implementation 'io.github.Rosemoe.sora-editor:language-java:0.6.0'
-    implementation "com.github.angads25:filepicker:1.1.1"
+    implementation 'com.github.angads25:filepicker:1.1.1'
 
     // dex2jar (maintained fork)
-    def d2jVersion = "v26"
+    def d2jVersion = "v30"
     def withoutIcu = { exclude group: 'com.ibm.icu', module: 'icu4j' } // Adds ~10MB to the APK !
     implementation "com.github.ThexXTURBOXx.dex2jar:dex-tools:$d2jVersion", withoutIcu
     implementation "com.github.ThexXTURBOXx.dex2jar:dex-translator:$d2jVersion", withoutIcu
@@ -98,7 +100,7 @@ dependencies {
     implementation files("libs/jadx/jadx-core-0.9.0.jar")
     implementation files("libs/jadx/dx-1.16.jar") // jadx.core.utils.files.InputFile
     implementation files("libs/jadx/android-5.1.jar") // jadx.core.dex.nodes.RootNode
-    implementation "commons-io:commons-io:2.5" // jadx.core.dex.visitors.RenameVisitor
+    implementation 'commons-io:commons-io:2.5' // jadx.core.dex.visitors.RenameVisitor
     implementation 'uk.com.robust-it:cloning:1.9.12' // jadx.core.dex.nodes.InsnNode
     implementation 'org.slf4j:slf4j-api:1.7.26' // Logger
 }
