@@ -71,10 +71,13 @@ class DexBackedDex(
             opcodes: Opcodes? = null
         ): DexBackedDex {
 
-            DexUtil.verifyDexHeader(inputStream)
-            val buf = ByteStreams.toByteArray(inputStream)
+            inputStream.use {
+                DexUtil.verifyDexHeader(inputStream)
+                val buf = ByteStreams.toByteArray(inputStream)
 
-            return DexBackedDex(opcodes, buf, 0, false)
+                return DexBackedDex(opcodes, buf, 0, false)
+            }
+
         }
 
     }
