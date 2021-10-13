@@ -24,6 +24,7 @@ import org.jf.dexlib2.dexbacked.DexBackedClassDef
 import java.io.BufferedInputStream
 import java.io.FileInputStream
 import java.io.InputStream
+import java.lang.ref.WeakReference
 import java.util.zip.ZipFile
 
 class DexEditorFragment : Fragment() {
@@ -93,7 +94,7 @@ class DexEditorFragment : Fragment() {
                 override fun getNodeViewBinder(view: View, level: Int) =
 
                     object : BaseNodeViewBinder<DexItem>(view) {
-                        lateinit var icon: ImageView
+                        lateinit var icon: WeakReference<ImageView>
 
                         override fun bindView(treeNode: TreeNode<DexItem>) {
                             val binding = ItemDexTreeNodeBinding.bind(view).apply {
@@ -104,20 +105,23 @@ class DexEditorFragment : Fragment() {
                                 )
                             }
 
-                            icon = binding.icon
-                            icon.rotation = if (treeNode.isExpanded) 90F else 0F
-                            icon.visibility =
-                                if (treeNode.isLeaf) View.INVISIBLE else View.VISIBLE
+                            icon = WeakReference(binding.icon.apply {
+                                rotation = if (treeNode.isExpanded) 90F else 0F
+
+                                visibility =
+                                    if (treeNode.isLeaf) View.INVISIBLE else View.VISIBLE
+                            })
                         }
 
                         override fun onNodeToggled(
                             treeNode: TreeNode<DexItem>,
                             expand: Boolean
                         ) {
-                            icon.animate()
-                                .rotation(if (expand) 90F else 0F)
-                                .setDuration(150)
-                                .start()
+                            icon.get()
+                                ?.animate()
+                                ?.rotation(if (expand) 90F else 0F)
+                                ?.setDuration(150)
+                                ?.start()
 
                             treeNode.value.also { dexItem ->
                                 if (dexItem is DexClassItem) {
