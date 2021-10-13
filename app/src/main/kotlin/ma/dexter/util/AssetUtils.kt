@@ -20,12 +20,7 @@ fun extractAsset(
 
     input.use {
         output.use {
-            val buffer = ByteArray(input.available())
-            var length: Int
-
-            while (input.read(buffer).also { length = it } != -1) {
-                output.write(buffer, 0, length)
-            }
+            input.copyTo(output)
         }
     }
 }
