@@ -6,8 +6,6 @@ import ma.dexter.ui.component.tree.TreeNode
 import ma.dexter.ui.component.tree.findChildByValue
 import ma.dexter.ui.component.tree.sort
 import ma.dexter.util.getClassDefPath
-import java.io.File
-import java.io.InputStream
 
 class SmaliTree {
     val dexList = mutableListOf<DexBackedDex>()
@@ -49,13 +47,12 @@ class SmaliTree {
                     // (as in, "String" in "java/lang/String")
                     subNode = if (classDefSegments.size - 1 == level) {
                         TreeNode(
-                            DexClassItem(
-                                segment,
-                                classDef
-                            )
+                            DexClassItem(segment, classDef)
                         )
                     } else {
-                        TreeNode(DexItem(segment))
+                        TreeNode(
+                            DexItem(segment)
+                        )
                     }
 
                     currentNode.addChild(subNode)
@@ -74,35 +71,12 @@ class SmaliTree {
         return this
     }
 
-    fun addDex(dexFile: File): SmaliTree {
-        return addDex(DexBackedDex.fromFile(dexFile))
+    fun addDex(byteArray: ByteArray): SmaliTree {
+        return addDex(DexBackedDex.fromByteArray(byteArray))
     }
 
-    fun addDex(dexFilePath: String): SmaliTree {
-        return addDex(File(dexFilePath))
-    }
-
-    fun addDex(inputStream: InputStream): SmaliTree {
-        return addDex(DexBackedDex.fromInputStream(inputStream))
-    }
-
-    fun addDexes(dexBackedDexes: Array<DexBackedDex>): SmaliTree {
-        dexBackedDexes.forEach(this::addDex)
-        return this
-    }
-
-    fun addDexes(inputStreams: Array<InputStream>): SmaliTree {
-        inputStreams.forEach(this::addDex)
-        return this
-    }
-
-    fun addDexFiles(dexFiles: Array<File>): SmaliTree {
-        dexFiles.forEach(this::addDex)
-        return this
-    }
-
-    fun addDexFiles(dexFiles: Array<String>): SmaliTree {
-        dexFiles.forEach(this::addDex)
+    fun addDexes(byteArrays: List<ByteArray>): SmaliTree {
+        byteArrays.forEach(this::addDex)
         return this
     }
 

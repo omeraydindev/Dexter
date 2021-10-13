@@ -63,21 +63,28 @@ class DexBackedDex(
             file: File,
             opcodes: Opcodes? = null
         ): DexBackedDex {
-            return fromInputStream(BufferedInputStream(FileInputStream(file)), opcodes)
+            BufferedInputStream(FileInputStream(file)).use {
+                return fromInputStream(it, opcodes)
+            }
         }
 
-        fun fromInputStream(
+        /**
+         * Does NOT close the [inputStream] passed.
+         */
+        private fun fromInputStream(
             inputStream: InputStream,
             opcodes: Opcodes? = null
         ): DexBackedDex {
+            return fromByteArray(ByteStreams.toByteArray(inputStream), opcodes)
+        }
 
-            inputStream.use {
-                DexUtil.verifyDexHeader(inputStream)
-                val buf = ByteStreams.toByteArray(inputStream)
+        fun fromByteArray(
+            byteArray: ByteArray,
+            opcodes: Opcodes? = null
+        ): DexBackedDex {
+            DexUtil.verifyDexHeader(byteArray, 0)
 
-                return DexBackedDex(opcodes, buf, 0, false)
-            }
-
+            return DexBackedDex(opcodes, byteArray, 0, false)
         }
 
     }

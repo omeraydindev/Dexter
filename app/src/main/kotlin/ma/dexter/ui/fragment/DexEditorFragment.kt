@@ -26,7 +26,6 @@ import java.io.FileInputStream
 import java.io.InputStream
 import java.util.zip.ZipFile
 
-
 class DexEditorFragment : Fragment() {
     private lateinit var binding: FragmentDexEditorBinding
     private var dexItemClickListener: DexItemClickListener? = null
@@ -54,11 +53,12 @@ class DexEditorFragment : Fragment() {
 
     fun loadApk(apkPath: String) {
         val apk = ZipFile(apkPath)
-        val list = mutableListOf<InputStream>()
+        val list = mutableListOf<ByteArray>()
 
         for (entry in apk.entries()) {
             if (!entry.isDirectory && entry.name.startsWith("classes") && entry.name.endsWith(".dex")) {
                 list += BufferedInputStream(apk.getInputStream(entry))
+                    .use(InputStream::readBytes)
             }
         }
 
@@ -66,18 +66,19 @@ class DexEditorFragment : Fragment() {
     }
 
     fun loadDexes(dexPaths: Array<String>) {
-        val list = mutableListOf<InputStream>()
+        val list = mutableListOf<ByteArray>()
 
         dexPaths.forEach {
             list += BufferedInputStream(FileInputStream(it))
+                .use(InputStream::readBytes)
         }
 
         loadDexes(list)
     }
 
-    private fun loadDexes(inputStreams: List<InputStream>) {
+    private fun loadDexes(byteArrays: List<ByteArray>) {
         val dexTree = SmaliTree()
-            .addDexes(inputStreams.toTypedArray())
+            .addDexes(byteArrays)
 
         DexProjectManager.dexList = dexTree.dexList
 
