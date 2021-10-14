@@ -21,6 +21,7 @@ class JavaViewerActivity : BaseActivity() {
             with(binding.codeEditor) {
                 colorScheme = SchemeLightSmali()
                 isEditable = false
+                isHardwareAcceleratedDrawAllowed = false
 
                 setText(code.value)
                 setDefaults()

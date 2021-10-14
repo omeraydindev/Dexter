@@ -52,6 +52,7 @@ class SmaliEditorActivity : BaseActivity() {
         with(binding.codeEditor) {
             colorScheme = SchemeLightSmali()
             textActionPresenter = SmaliActionPopupWindow(this)
+            isHardwareAcceleratedDrawAllowed = false
 
             setDefaults()
             setEditorLanguage(SmaliLanguage())
@@ -79,7 +80,7 @@ class SmaliEditorActivity : BaseActivity() {
                 binding.codeEditor.text.toString()
             )
 
-            val members = smaliFile.smaliFields + smaliFile.smaliMethods
+            val members = smaliFile.smaliMembers
 
             val line = members.firstOrNull { member ->
                 member.descriptor == desc
@@ -115,7 +116,7 @@ class SmaliEditorActivity : BaseActivity() {
                     binding.codeEditor.text.toString()
                 )
 
-                val navItems = smaliFile.smaliFields + smaliFile.smaliMethods
+                val navItems = smaliFile.smaliMembers
 
                 MaterialAlertDialogBuilder(this)
                     .setTitle("Navigation")

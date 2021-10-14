@@ -9,6 +9,8 @@ class SmaliModel private constructor(
     val smaliMethods: List<SmaliMethod>,
     val smaliFields: List<SmaliField>,
 ) {
+    val smaliMembers
+        get() = smaliFields + smaliMethods
 
     companion object {
 
