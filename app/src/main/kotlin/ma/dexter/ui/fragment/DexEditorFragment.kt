@@ -21,9 +21,7 @@ import ma.dexter.ui.component.tree.base.BaseNodeViewFactory
 import ma.dexter.ui.util.dp
 import ma.dexter.ui.util.setMargins
 import org.jf.dexlib2.dexbacked.DexBackedClassDef
-import java.io.BufferedInputStream
-import java.io.FileInputStream
-import java.io.InputStream
+import java.io.File
 import java.lang.ref.WeakReference
 import java.util.zip.ZipFile
 
@@ -53,25 +51,29 @@ class DexEditorFragment : Fragment() {
     }
 
     fun loadApk(apkPath: String) {
-        val apk = ZipFile(apkPath)
-        val list = mutableListOf<ByteArray>()
 
-        for (entry in apk.entries()) {
-            if (!entry.isDirectory && entry.name.startsWith("classes") && entry.name.endsWith(".dex")) {
-                list += BufferedInputStream(apk.getInputStream(entry))
-                    .use(InputStream::readBytes)
+        ZipFile(apkPath).use { apk ->
+            val list = mutableListOf<ByteArray>()
+
+            for (entry in apk.entries()) {
+                if (!entry.isDirectory
+                    && entry.name.startsWith("classes")
+                    && entry.name.endsWith(".dex")
+                ) {
+                    list += apk.getInputStream(entry) // this is closed by ZipFile automatically
+                        .readBytes()
+                }
             }
-        }
 
-        loadDexes(list)
+            loadDexes(list)
+        }
     }
 
     fun loadDexes(dexPaths: Array<String>) {
         val list = mutableListOf<ByteArray>()
 
         dexPaths.forEach {
-            list += BufferedInputStream(FileInputStream(it))
-                .use(InputStream::readBytes)
+            list += File(it).readBytes()
         }
 
         loadDexes(list)
