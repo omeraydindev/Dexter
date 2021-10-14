@@ -1,11 +1,9 @@
 package ma.dexter.dex
 
 import com.google.common.truth.Truth.assertThat
-import ma.dexter.compile.Java2Dex
+import ma.dexter.util.compile.Java2Dex
 import ma.dexter.core.DexBackedDex
 import ma.dexter.tools.smali.BaksmaliInvoker
-import org.jf.dexlib2.DexFileFactory
-import org.jf.dexlib2.writer.io.MemoryDataStore
 import org.jf.smali.SmaliTestUtils
 import org.junit.Test
 

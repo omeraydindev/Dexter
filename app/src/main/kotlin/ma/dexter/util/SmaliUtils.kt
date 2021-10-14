@@ -19,6 +19,9 @@ import java.io.StringReader
 
 const val END_METHOD_DIRECTIVE = ".end method"
 
+/**
+ * Ltest/aaa; -> test/aaa
+ */
 fun getClassDefPath(classDefType: String) =
     if (classDefType.length >= 2) {
         classDefType.substring(1, classDefType.length - 1)

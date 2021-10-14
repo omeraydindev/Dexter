@@ -1,4 +1,4 @@
-package ma.dexter.compile
+package ma.dexter.util.compile
 
 import com.android.tools.r8.CompilationMode
 import com.android.tools.r8.D8

@@ -27,9 +27,13 @@ class JADXDecompiler(
             // jadx.save() // Saves decompiled classes to storage, we don't want that
 
             jadx.classes.forEach {
-                if (it.fullName.replace(".", "/") == className) {
+                if (it.fullName == className.replace("/", ".")) {
                     return getBanner() + it.code
                 }
+            }
+
+            if (jadx.classes.size > 0) {
+                return getBanner() + jadx.classes.first().code
             }
 
             return "// Error: JADX couldn't decompile $className"

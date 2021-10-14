@@ -34,11 +34,8 @@ class SmaliAutoCompleteProvider: AutoCompleteProvider {
 
     private fun basicItems(prefix: String, source: Array<String>, desc: String): List<CompletionItem> {
         return source
-            .filter {
-                it.startsWith(prefix)
-            }.map {
-                basicItem(it, desc)
-            }
+            .filter { it.startsWith(prefix) }
+            .map { basicItem(it, desc) }
     }
 
     private fun basicItem(label: String, desc: String): CompletionItem {
