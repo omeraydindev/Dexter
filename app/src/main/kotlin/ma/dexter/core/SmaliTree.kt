@@ -5,6 +5,8 @@ import ma.dexter.model.tree.DexItem
 import ma.dexter.ui.component.tree.TreeNode
 import ma.dexter.ui.component.tree.findChildByValue
 import ma.dexter.ui.component.tree.sort
+import ma.dexter.ui.util.compactMiddlePackages
+import ma.dexter.ui.util.reassignLevels
 import ma.dexter.util.getClassDefPath
 
 class SmaliTree {
@@ -24,6 +26,9 @@ class SmaliTree {
                 node1.value.compareTo(node2.value)
             }
         }
+
+        compactMiddlePackages(rootTreeNode)
+        reassignLevels(rootTreeNode)
 
         return rootTreeNode
     }
