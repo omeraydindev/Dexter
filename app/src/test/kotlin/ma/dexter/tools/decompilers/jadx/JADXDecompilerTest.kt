@@ -4,7 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import ma.dexter.util.compile.Java2Dex
 import org.junit.Test
 
-class JADXTests {
+class JADXDecompilerTest {
 
     @Test
     fun `JADX decompile class basic`() {

@@ -5,7 +5,7 @@ package ma.dexter.model.tree
  * Could be a class   (i.e android/widget/Toast)
  */
 open class DexItem(
-    val path: String
+    var path: String
 ) : Comparable<DexItem> {
 
     override fun equals(other: Any?): Boolean {
@@ -20,4 +20,6 @@ open class DexItem(
     }
 
     override fun compareTo(other: DexItem): Int = path.compareTo(other.path)
+
+    override fun toString() = path
 }
