@@ -1,9 +1,7 @@
-package ma.dexter.ui.util
+package ma.dexter.ui.component.tree
 
 import com.google.common.truth.Truth.assertThat
 import ma.dexter.model.tree.DexItem
-import ma.dexter.ui.component.tree.TreeNode
-
 import org.junit.Test
 
 class TreeUtilTest {
@@ -45,7 +43,7 @@ class TreeUtilTest {
                 - k
             """.trimIndent())
 
-        compactMiddlePackages(tree)
+        tree.compactMiddlePackages()
         assertThat(treeToString(tree)).isEqualTo(
             """
                 a
@@ -89,5 +87,4 @@ class TreeUtilTest {
         }
 
     }.trim()
-
 }
