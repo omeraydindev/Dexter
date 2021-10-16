@@ -16,7 +16,7 @@ import ma.dexter.managers.DexProjectManager
 import ma.dexter.ui.fragment.DexEditorFragment
 import ma.dexter.util.requestAllFilesAccessPermission
 import ma.dexter.util.storagePath
-import org.jf.dexlib2.dexbacked.DexBackedClassDef
+import org.jf.dexlib2.iface.ClassDef
 
 class MainActivity : BaseActivity(), DexEditorFragment.DexItemClickListener {
     private lateinit var binding: ActivityMainBinding
@@ -91,8 +91,8 @@ class MainActivity : BaseActivity(), DexEditorFragment.DexItemClickListener {
         }
     }
 
-    override fun onDexClassItemClick(dexClassDef: DexBackedClassDef) {
-        DexProjectManager.gotoClassDef(this, dexClassDef)
+    override fun onDexClassItemClick(classDef: ClassDef) {
+        DexProjectManager.gotoClassDef(this, classDef)
     }
 
 }

@@ -1,7 +1,6 @@
 package ma.dexter.dex
 
 import com.google.common.truth.Truth.assertThat
-import ma.dexter.core.DexBackedDex
 import ma.dexter.tools.smali.BaksmaliInvoker
 import ma.dexter.util.compile.Java2Dex
 import org.jf.dexlib2.DexFileFactory
@@ -25,7 +24,7 @@ class MutableDexTests {
             """
         )
 
-        val dex = MutableDex(DexBackedDex.fromFile(dexFile))
+        val dex = MutableDex(DexFactory.fromFile(dexFile))
 
         val newClassDef = SmaliTestUtils.compileSmali(
             dex.getSmali("Lm/A\$B;")
@@ -40,7 +39,7 @@ class MutableDexTests {
 
 
         // check if changes are applied
-        val overwrittenDex = MutableDex(DexBackedDex.fromFile(dexFile))
+        val overwrittenDex = MutableDex(DexFactory.fromFile(dexFile))
 
         assertThat(overwrittenDex.findClassDef("Lm/A\$B;"))
             .isNotNull()

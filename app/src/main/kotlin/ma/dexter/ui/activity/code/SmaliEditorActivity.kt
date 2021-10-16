@@ -18,11 +18,11 @@ import ma.dexter.tools.decompilers.BaseDecompiler
 import ma.dexter.ui.activity.BaseActivity
 import ma.dexter.ui.util.setDefaults
 import ma.dexter.util.getClassDefPath
-import org.jf.dexlib2.dexbacked.DexBackedClassDef
+import org.jf.dexlib2.iface.ClassDef
 
 class SmaliEditorActivity : BaseActivity() {
     private lateinit var binding: ActivitySmaliEditorBinding
-    private lateinit var dexClassDef: DexBackedClassDef
+    private lateinit var classDef: ClassDef
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,7 +31,7 @@ class SmaliEditorActivity : BaseActivity() {
 
         DexProjectManager.currentGotoDef.use {
             it.value?.let { def ->
-                dexClassDef = def.dexBackedClassDef
+                classDef = def.classDef
                 loadSmali(def.defDescriptor)
                 return@use
             }
@@ -44,7 +44,7 @@ class SmaliEditorActivity : BaseActivity() {
     private fun loadSmali(
         defDescriptorToGo: String? = null
     ) {
-        val path = getClassDefPath(dexClassDef.type)
+        val path = getClassDefPath(classDef.type)
 
         title    = path.substringAfterLast("/")
         subtitle = path.substringBeforeLast("/")
@@ -64,7 +64,7 @@ class SmaliEditorActivity : BaseActivity() {
         )
         dialog.setCancelable(false)
 
-        BaksmaliTask.execute(dexClassDef) {
+        BaksmaliTask.execute(classDef) {
             dialog.dismiss()
 
             binding.codeEditor.setText(it)
@@ -105,7 +105,7 @@ class SmaliEditorActivity : BaseActivity() {
                     .setItems(decompilers.map { it.getName() }.toTypedArray()) { _, pos ->
                         runSmali2Java(
                             smaliCode  = binding.codeEditor.text.toString(),
-                            className  = getClassDefPath(dexClassDef.type),
+                            className  = getClassDefPath(classDef.type),
                             decompiler = decompilers[pos]
                         )
                     }.show()

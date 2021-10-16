@@ -1,8 +1,8 @@
 package ma.dexter.core.model
 
-import org.jf.dexlib2.dexbacked.DexBackedClassDef
+import org.jf.dexlib2.iface.ClassDef
 
 class SmaliGotoDef(
-    val dexBackedClassDef: DexBackedClassDef,
+    val classDef: ClassDef,
     val defDescriptor: String? = null
 )

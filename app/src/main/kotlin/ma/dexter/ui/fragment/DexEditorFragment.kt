@@ -20,7 +20,7 @@ import ma.dexter.ui.component.tree.base.BaseNodeViewBinder
 import ma.dexter.ui.component.tree.base.BaseNodeViewFactory
 import ma.dexter.ui.util.dp
 import ma.dexter.ui.util.setMargins
-import org.jf.dexlib2.dexbacked.DexBackedClassDef
+import org.jf.dexlib2.iface.ClassDef
 import java.io.File
 import java.lang.ref.WeakReference
 import java.util.zip.ZipFile
@@ -30,7 +30,7 @@ class DexEditorFragment : Fragment() {
     private var dexItemClickListener: DexItemClickListener? = null
 
     interface DexItemClickListener {
-        fun onDexClassItemClick(dexClassDef: DexBackedClassDef)
+        fun onDexClassItemClick(classDef: ClassDef)
     }
 
     override fun onCreateView(
@@ -127,7 +127,7 @@ class DexEditorFragment : Fragment() {
 
                             treeNode.value.also { dexItem ->
                                 if (dexItem is DexClassItem) {
-                                    dexItemClickListener?.onDexClassItemClick(dexItem.dexClassDef)
+                                    dexItemClickListener?.onDexClassItemClick(dexItem.classDef)
                                     return
                                 }
                             }

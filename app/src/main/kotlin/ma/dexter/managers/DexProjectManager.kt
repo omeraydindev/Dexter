@@ -4,9 +4,9 @@ import android.content.Context
 import android.content.Intent
 import android.widget.Toast
 import io.github.rosemoe.sora.widget.CodeEditor
-import ma.dexter.core.DexBackedDex
 import ma.dexter.core.model.SmaliGotoDef
 import ma.dexter.core.model.SmaliModel
+import ma.dexter.dex.MutableDex
 import ma.dexter.model.tree.DexClassItem
 import ma.dexter.tools.smali.BaksmaliInvoker
 import ma.dexter.ui.activity.code.JavaViewerActivity
@@ -15,11 +15,11 @@ import ma.dexter.util.FIELD_METHOD_CALL_REGEX
 import ma.dexter.util.Releasable
 import ma.dexter.util.getClassDefPath
 import ma.dexter.util.tokenizeSmali
-import org.jf.dexlib2.dexbacked.DexBackedClassDef
+import org.jf.dexlib2.iface.ClassDef
 import org.jf.smali.smaliParser
 
 object DexProjectManager {
-    var dexList: List<DexBackedDex>? = null
+    var dexList: List<MutableDex>? = null
 
     private var smalis = mutableMapOf<DexClassItem, SmaliModel>()
 
@@ -99,7 +99,7 @@ object DexProjectManager {
         defDescriptorToGo: String? = null
     ) {
         dexList?.forEach { dex ->
-            dex.findClassDefByDescriptor(dexClassDef)?.let {
+            dex.findClassDef(dexClassDef)?.let {
                 gotoClassDef(context, SmaliGotoDef(it, defDescriptorToGo))
                 return
             }
@@ -110,9 +110,9 @@ object DexProjectManager {
 
     fun gotoClassDef(
         context: Context,
-        dexClassDef: DexBackedClassDef
+        classDef: ClassDef
     ) {
-        gotoClassDef(context, SmaliGotoDef(dexClassDef))
+        gotoClassDef(context, SmaliGotoDef(classDef))
     }
 
     fun gotoClassDef(
@@ -140,11 +140,11 @@ object DexProjectManager {
         return SmaliModel.create(smaliCode)
     }
 
-    fun getSmaliModel(dexClassDef: DexBackedClassDef): SmaliModel {
+    fun getSmaliModel(classDef: ClassDef): SmaliModel {
         return getSmaliModel(
             DexClassItem(
-                getClassDefPath(dexClassDef.type),
-                dexClassDef
+                getClassDefPath(classDef.type),
+                classDef
             )
         )
     }
@@ -155,7 +155,7 @@ object DexProjectManager {
         }
 
         val smaliFile = SmaliModel.create(
-            BaksmaliInvoker.disassemble(dexClassItem.dexClassDef)
+            BaksmaliInvoker.disassemble(dexClassItem.classDef)
         )
 
         smalis[dexClassItem] = smaliFile
