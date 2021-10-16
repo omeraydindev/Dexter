@@ -1,6 +1,5 @@
 package ma.dexter.dex
 
-import com.google.common.io.ByteStreams
 import org.jf.dexlib2.Opcodes
 import org.jf.dexlib2.dexbacked.DexBackedDexFile
 import org.jf.dexlib2.util.DexUtil
@@ -27,7 +26,7 @@ object DexFactory {
         inputStream: InputStream,
         opcodes: Opcodes? = null
     ): MutableDex {
-        return fromByteArray(ByteStreams.toByteArray(inputStream), opcodes)
+        return fromByteArray(inputStream.readBytes(), opcodes)
     }
 
     fun fromByteArray(

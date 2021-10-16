@@ -74,9 +74,6 @@ dependencies {
     implementation "com.github.ThexXTURBOXx.dex2jar:dex-tools:$d2jVersion", withoutIcu
     implementation "com.github.ThexXTURBOXx.dex2jar:dex-translator:$d2jVersion", withoutIcu
 
-    // for dexlib2
-    implementation 'com.google.guava:guava:27.1-android'
-
     // smali & baksmali
     def smaliVersion = "2.5.2"
     implementation "org.smali:smali:$smaliVersion"
