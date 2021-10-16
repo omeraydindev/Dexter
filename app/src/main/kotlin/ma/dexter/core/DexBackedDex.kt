@@ -84,7 +84,7 @@ class DexBackedDex(
         ): DexBackedDex {
             DexUtil.verifyDexHeader(byteArray, 0)
 
-            return DexBackedDex(opcodes, byteArray, 0, false)
+            return DexBackedDex(opcodes, byteArray, 0, true)
         }
 
     }

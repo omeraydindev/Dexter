@@ -3,13 +3,13 @@ package ma.dexter.tools.smali
 import org.jf.baksmali.Adaptors.ClassDefinition
 import org.jf.baksmali.BaksmaliOptions
 import org.jf.baksmali.formatter.BaksmaliWriter
-import org.jf.dexlib2.dexbacked.DexBackedClassDef
+import org.jf.dexlib2.iface.ClassDef
 import java.io.StringWriter
 
 object BaksmaliInvoker {
 
     fun disassemble(
-        dexClassDef: DexBackedClassDef,
+        dexClassDef: ClassDef,
         baksmaliOptions: BaksmaliOptions = BaksmaliOptions()
     ): String {
         val writer = StringWriter()

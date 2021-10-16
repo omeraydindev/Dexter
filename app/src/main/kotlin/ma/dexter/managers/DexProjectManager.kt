@@ -158,10 +158,8 @@ object DexProjectManager {
             BaksmaliInvoker.disassemble(dexClassItem.dexClassDef)
         )
 
-        smaliFile.run {
-            smalis[dexClassItem] = this
-            return this
-        }
+        smalis[dexClassItem] = smaliFile
+        return smaliFile
     }
 
 }
