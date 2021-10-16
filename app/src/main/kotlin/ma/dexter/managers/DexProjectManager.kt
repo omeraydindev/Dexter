@@ -2,19 +2,15 @@ package ma.dexter.managers
 
 import android.content.Context
 import android.content.Intent
-import android.widget.Toast
 import io.github.rosemoe.sora.widget.CodeEditor
 import ma.dexter.core.model.SmaliGotoDef
 import ma.dexter.core.model.SmaliModel
 import ma.dexter.dex.MutableDex
-import ma.dexter.model.tree.DexClassItem
+import ma.dexter.ui.tree.model.DexClassItem
 import ma.dexter.tools.smali.BaksmaliInvoker
 import ma.dexter.ui.activity.code.JavaViewerActivity
 import ma.dexter.ui.activity.code.SmaliEditorActivity
-import ma.dexter.util.FIELD_METHOD_CALL_REGEX
-import ma.dexter.util.Releasable
-import ma.dexter.util.getClassDefPath
-import ma.dexter.util.tokenizeSmali
+import ma.dexter.util.*
 import org.jf.dexlib2.iface.ClassDef
 import org.jf.smali.smaliParser
 
@@ -30,7 +26,7 @@ object DexProjectManager {
         private set
 
     /**
-     * Goes to the class definition that the cursor is at, of the given [CodeEditor].
+     * Goes to the class/member definition that the cursor is at, of the given [CodeEditor].
      * (The text doesn't necessarily have to be selected)
      *
      * Selected text will be stretched for more flexibility, for example
@@ -45,7 +41,7 @@ object DexProjectManager {
      * to match `LsomePackage/someClass;->someField:I` and will redirect
      * to that field definition.
      */
-    fun gotoDef(context: Context, editor: CodeEditor) {
+    fun gotoDef(editor: CodeEditor) {
         val cursor = editor.cursor
 
         // look for class defs
@@ -62,7 +58,7 @@ object DexProjectManager {
                         cursor.rightLine, endColumn
                     )
 
-                    gotoClassDef(context, token.text)
+                    gotoClassDef(editor.context, token.text)
                     return
                 }
             }
@@ -85,7 +81,7 @@ object DexProjectManager {
                     )
 
                     val (_, definingClass, descriptor) = it.destructured
-                    gotoClassDef(context, definingClass, descriptor)
+                    gotoClassDef(editor.context, definingClass, descriptor)
                     return
                 }
             }
@@ -105,14 +101,7 @@ object DexProjectManager {
             }
         }
 
-        Toast.makeText(context, "Couldn't find class def: $dexClassDef", Toast.LENGTH_SHORT).show()
-    }
-
-    fun gotoClassDef(
-        context: Context,
-        classDef: ClassDef
-    ) {
-        gotoClassDef(context, SmaliGotoDef(classDef))
+        toast("Couldn't find class def: $dexClassDef")
     }
 
     fun gotoClassDef(

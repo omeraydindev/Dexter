@@ -1,4 +1,4 @@
-package ma.dexter.model.tree
+package ma.dexter.ui.tree.model
 
 /**
  * Could be a package (i.e android/widget)
@@ -6,7 +6,7 @@ package ma.dexter.model.tree
  */
 open class DexItem(
     var path: String
-) : Comparable<DexItem> {
+): Comparable<DexItem> {
 
     override fun equals(other: Any?): Boolean {
         if (other == null) return false
@@ -15,11 +15,9 @@ open class DexItem(
         return path == other.path
     }
 
-    override fun hashCode(): Int {
-        return path.hashCode()
-    }
+    override fun compareTo(other: DexItem) = path.compareTo(other.path)
 
-    override fun compareTo(other: DexItem): Int = path.compareTo(other.path)
+    override fun hashCode() = path.hashCode()
 
     override fun toString() = path
 }

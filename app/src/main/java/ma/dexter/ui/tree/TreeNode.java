@@ -12,12 +12,12 @@
  * permissions and limitations under.
  */
 
-package ma.dexter.ui.component.tree;
+package ma.dexter.ui.tree;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import ma.dexter.ui.component.tree.helper.TreeHelper;
+import ma.dexter.ui.tree.helper.TreeHelper;
 
 /**
  * Created by xinyuanzhong on 2017/4/20.

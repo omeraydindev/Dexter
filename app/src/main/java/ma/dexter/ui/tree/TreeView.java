@@ -12,7 +12,7 @@
  * permissions and limitations under.
  */
 
-package ma.dexter.ui.component.tree;
+package ma.dexter.ui.tree;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -24,9 +24,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
-import ma.dexter.ui.component.tree.base.BaseNodeViewFactory;
-import ma.dexter.ui.component.tree.base.SelectableTreeAction;
-import ma.dexter.ui.component.tree.helper.TreeHelper;
+import ma.dexter.ui.tree.base.BaseNodeViewFactory;
+import ma.dexter.ui.tree.base.SelectableTreeAction;
+import ma.dexter.ui.tree.helper.TreeHelper;
 
 /**
  * Created by xinyuanzhong on 2017/4/20.

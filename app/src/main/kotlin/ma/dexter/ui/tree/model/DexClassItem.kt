@@ -1,4 +1,4 @@
-package ma.dexter.model.tree
+package ma.dexter.ui.tree.model
 
 import org.jf.dexlib2.iface.ClassDef
 

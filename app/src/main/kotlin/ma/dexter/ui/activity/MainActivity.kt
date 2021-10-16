@@ -11,11 +11,13 @@ import com.github.angads25.filepicker.model.DialogConfigs
 import com.github.angads25.filepicker.model.DialogProperties
 import com.github.angads25.filepicker.view.FilePickerDialog
 import ma.dexter.R
+import ma.dexter.core.model.SmaliGotoDef
 import ma.dexter.databinding.ActivityMainBinding
 import ma.dexter.managers.DexProjectManager
 import ma.dexter.ui.fragment.DexEditorFragment
 import ma.dexter.util.requestAllFilesAccessPermission
 import ma.dexter.util.storagePath
+import ma.dexter.util.toast
 import org.jf.dexlib2.iface.ClassDef
 
 class MainActivity : BaseActivity(), DexEditorFragment.DexItemClickListener {
@@ -76,13 +78,15 @@ class MainActivity : BaseActivity(), DexEditorFragment.DexItemClickListener {
             }
 
             FilePickerDialog(this, props).run {
-                setTitle("Select .dex file(s) or an .apk file")
-                setDialogSelectionListener {
+                setTitle("Select either .dex file(s) or a single .apk file")
+                setDialogSelectionListener { files ->
 
-                    if (it[0].endsWith(".apk")) {
-                        dexEditorFragment.loadApk(it[0])
+                    if (files.size == 1 && files[0].endsWith(".apk")) {
+                        dexEditorFragment.loadApk(files[0])
+                    } else if (files.all { it.endsWith(".dex") }) {
+                        dexEditorFragment.loadDexes(files)
                     } else {
-                        dexEditorFragment.loadDexes(it)
+                        toast("Please select either .dex file(s) or a single .apk file")
                     }
 
                 }
@@ -92,7 +96,7 @@ class MainActivity : BaseActivity(), DexEditorFragment.DexItemClickListener {
     }
 
     override fun onDexClassItemClick(classDef: ClassDef) {
-        DexProjectManager.gotoClassDef(this, classDef)
+        DexProjectManager.gotoClassDef(this, SmaliGotoDef(classDef))
     }
 
 }

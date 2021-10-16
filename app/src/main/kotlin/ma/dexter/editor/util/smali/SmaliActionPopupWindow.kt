@@ -7,7 +7,9 @@ import io.github.rosemoe.sora.widget.TextActionPopupWindow
 import ma.dexter.R
 import ma.dexter.managers.DexProjectManager
 
-class SmaliActionPopupWindow(private val editor: CodeEditor) : TextActionPopupWindow(editor) {
+class SmaliActionPopupWindow(
+    private val editor: CodeEditor
+): TextActionPopupWindow(editor) {
 
     init {
 
@@ -20,8 +22,7 @@ class SmaliActionPopupWindow(private val editor: CodeEditor) : TextActionPopupWi
             icon = ContextCompat.getDrawable(context, R.drawable.ic_baseline_arrow_right_alt_20)
 
             setOnClickListener {
-                DexProjectManager.gotoDef(context, editor)
-                hide(DISMISS)
+                DexProjectManager.gotoDef(editor)
             }
         }
 

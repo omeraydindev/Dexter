@@ -1,10 +1,9 @@
-package ma.dexter.core
+package ma.dexter.ui.tree
 
 import ma.dexter.dex.DexFactory
 import ma.dexter.dex.MutableDex
-import ma.dexter.model.tree.DexClassItem
-import ma.dexter.model.tree.DexItem
-import ma.dexter.ui.component.tree.*
+import ma.dexter.ui.tree.model.DexClassItem
+import ma.dexter.ui.tree.model.DexItem
 import ma.dexter.util.getClassDefPath
 
 class SmaliTree {
@@ -25,7 +24,10 @@ class SmaliTree {
             }
         }
 
-        rootTreeNode.compactMiddlePackages()
+        rootTreeNode.compactMiddlePackages(
+            pathGetter = DexItem::path,
+            pathSetter = { it, path -> it.path = path }
+        )
         rootTreeNode.reassignLevels()
 
         return rootTreeNode

@@ -1,6 +1,4 @@
-package ma.dexter.ui.component.tree
-
-import ma.dexter.model.tree.DexItem
+package ma.dexter.ui.tree
 
 /**
  * Sort children recursively in the TreeNode.
@@ -44,17 +42,23 @@ fun <D> TreeNode<D>.findChildByValue(value: D): TreeNode<D>? {
  * - - - j
  * - k
  *
- * See [TreeUtilTest#compactMiddlePackages]
+ * See [TreeUtilTest#compactMiddlePackages] for an example usage.
  */
-fun TreeNode<DexItem>.compactMiddlePackages() {
+fun <T> TreeNode<T>.compactMiddlePackages(
+    pathGetter: (T) -> String,
+    pathSetter: (T, path: String) -> Unit
+) {
     this.children.forEach { child ->
         if (child.children.size == 1 && !child.children.first().isLeaf) {
-            child.value.path += "." + child.children.first().value.path
+            /*child.value.path += "." + child.children.first().value.path*/
+            pathSetter(child.value,
+                pathGetter(child.value) + "." + pathGetter(child.children.first().value))
+
             child.children = child.children.first().children
 
-            child.parent.compactMiddlePackages()
+            child.parent.compactMiddlePackages(pathGetter, pathSetter)
         } else {
-            child.compactMiddlePackages()
+            child.compactMiddlePackages(pathGetter, pathSetter)
         }
     }
 }

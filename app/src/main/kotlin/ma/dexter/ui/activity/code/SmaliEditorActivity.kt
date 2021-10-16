@@ -4,7 +4,6 @@ import android.app.ProgressDialog
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import ma.dexter.R
 import ma.dexter.databinding.ActivitySmaliEditorBinding
@@ -18,6 +17,7 @@ import ma.dexter.tools.decompilers.BaseDecompiler
 import ma.dexter.ui.activity.BaseActivity
 import ma.dexter.ui.util.setDefaults
 import ma.dexter.util.getClassDefPath
+import ma.dexter.util.toast
 import org.jf.dexlib2.iface.ClassDef
 
 class SmaliEditorActivity : BaseActivity() {
@@ -36,7 +36,7 @@ class SmaliEditorActivity : BaseActivity() {
                 return@use
             }
 
-            Toast.makeText(this, "Dex was null", Toast.LENGTH_SHORT).show()
+            toast("Dex was null")
             finish()
         }
     }
@@ -59,10 +59,8 @@ class SmaliEditorActivity : BaseActivity() {
         }
 
         val dialog = ProgressDialog.show(
-            this,
-            "Loading", "Running baksmali..."
+            this, "Loading", "Running baksmali...", true, false
         )
-        dialog.setCancelable(false)
 
         BaksmaliTask.execute(classDef) {
             dialog.dismiss()

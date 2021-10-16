@@ -12,13 +12,13 @@
  * permissions and limitations under.
  */
 
-package ma.dexter.ui.component.tree.base;
+package ma.dexter.ui.tree.base;
 
 import android.view.View;
 
 import androidx.recyclerview.widget.RecyclerView;
-import ma.dexter.ui.component.tree.TreeNode;
-import ma.dexter.ui.component.tree.TreeView;
+import ma.dexter.ui.tree.TreeNode;
+import ma.dexter.ui.tree.TreeView;
 
 /**
  * Created by zxy on 17/4/23.
