@@ -72,6 +72,7 @@ dependencies {
     implementation 'io.github.Rosemoe.sora-editor:language-universal:0.7.0'
     implementation 'io.github.Rosemoe.sora-editor:language-java:0.7.0'
     implementation 'com.github.angads25:filepicker:1.1.1'
+    implementation 'me.zhanghai.android.fastscroll:library:1.1.7'
 
     // dex2jar (maintained fork)
     def d2jVersion = "v30"

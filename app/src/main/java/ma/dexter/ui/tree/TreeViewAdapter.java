@@ -35,17 +35,12 @@ import ma.dexter.ui.tree.helper.TreeHelper;
 /**
  * Created by xinyuanzhong on 2017/4/21.
  */
-
 public class TreeViewAdapter<D> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
     private final Context context;
 
     private final TreeNode<D> root;
-
     private final List<TreeNode<D>> expandedNodeList;
-
     private final BaseNodeViewFactory<D> baseNodeViewFactory;
-
     private TreeView<D> treeView;
 
     TreeViewAdapter(Context context, TreeNode<D> root,
@@ -57,6 +52,10 @@ public class TreeViewAdapter<D> extends RecyclerView.Adapter<RecyclerView.ViewHo
         this.expandedNodeList = new ArrayList<>();
 
         buildExpandedNodeList();
+    }
+
+    public List<TreeNode<D>> getExpandedNodeList() {
+        return expandedNodeList;
     }
 
     private void buildExpandedNodeList() {
@@ -102,8 +101,7 @@ public class TreeViewAdapter<D> extends RecyclerView.Adapter<RecyclerView.ViewHo
         final View nodeView = holder.itemView;
         final TreeNode<D> treeNode = expandedNodeList.get(position);
 
-        @SuppressWarnings("unchecked")
-        final BaseNodeViewBinder<D> viewBinder = (BaseNodeViewBinder<D>) holder;
+        @SuppressWarnings("unchecked") final BaseNodeViewBinder<D> viewBinder = (BaseNodeViewBinder<D>) holder;
 
         if (viewBinder.getToggleTriggerViewId() != 0) {
             View triggerToggleView = nodeView.findViewById(viewBinder.getToggleTriggerViewId());

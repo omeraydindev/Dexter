@@ -16,17 +16,18 @@ package ma.dexter.ui.tree;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.view.View;
-
-import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
+
+import java.util.List;
+
 import ma.dexter.ui.tree.base.BaseNodeViewFactory;
 import ma.dexter.ui.tree.base.SelectableTreeAction;
 import ma.dexter.ui.tree.helper.TreeHelper;
+import me.zhanghai.android.fastscroll.FastScrollerBuilder;
 
 /**
  * Created by xinyuanzhong on 2017/4/20.
@@ -40,9 +41,7 @@ public class TreeView<D> implements SelectableTreeAction<D> {
     private final BaseNodeViewFactory<D> baseNodeViewFactory;
 
     private RecyclerView rootView;
-
     private TreeViewAdapter<D> adapter;
-
     private boolean itemSelectable = true;
 
     public TreeView(@NonNull TreeNode<D> root, @NonNull Context context, @NonNull BaseNodeViewFactory<D> baseNodeViewFactory) {
@@ -51,7 +50,11 @@ public class TreeView<D> implements SelectableTreeAction<D> {
         this.baseNodeViewFactory = baseNodeViewFactory;
     }
 
-    public View getView() {
+    public TreeViewAdapter<D> getAdapter() {
+        return adapter;
+    }
+
+    public RecyclerView getView() {
         if (rootView == null) {
             this.rootView = buildRootView();
         }
@@ -65,6 +68,8 @@ public class TreeView<D> implements SelectableTreeAction<D> {
         // disable multi touch event to prevent terrible data set error when calculate list.
         recyclerView.setMotionEventSplittingEnabled(false);
         ((SimpleItemAnimator) recyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
+
+        new FastScrollerBuilder(recyclerView).build();
 
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         adapter = new TreeViewAdapter<>(context, root, baseNodeViewFactory);

@@ -78,9 +78,7 @@ class SmaliEditorActivity : BaseActivity() {
                 binding.codeEditor.text.toString()
             )
 
-            val members = smaliFile.smaliMembers
-
-            val line = members.firstOrNull { member ->
+            val line = smaliFile.smaliMembers.firstOrNull { member ->
                 member.descriptor == desc
             }?.line ?: 0
 
