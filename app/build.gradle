@@ -46,6 +46,12 @@ android {
     }
 }
 
+tasks.withType(Test) {
+    testLogging {
+        events "started", "passed", "skipped", "failed", "standardOut", "standardError"
+    }
+}
+
 dependencies {
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
 
@@ -61,11 +67,10 @@ dependencies {
     testImplementation 'org.eclipse.jdt.core.compiler:ecj:4.6.1'
     testImplementation 'com.android.tools:r8:3.0.73'
 
-    // CodeEditor
-    implementation 'io.github.Rosemoe.sora-editor:editor:0.6.0'
-    implementation 'io.github.Rosemoe.sora-editor:language-base:0.6.0'
-    implementation 'io.github.Rosemoe.sora-editor:language-universal:0.6.0'
-    implementation 'io.github.Rosemoe.sora-editor:language-java:0.6.0'
+    implementation 'io.github.Rosemoe.sora-editor:editor:0.7.0'
+    implementation 'io.github.Rosemoe.sora-editor:language-base:0.7.0'
+    implementation 'io.github.Rosemoe.sora-editor:language-universal:0.7.0'
+    implementation 'io.github.Rosemoe.sora-editor:language-java:0.7.0'
     implementation 'com.github.angads25:filepicker:1.1.1'
 
     // dex2jar (maintained fork)
@@ -75,9 +80,8 @@ dependencies {
     implementation "com.github.ThexXTURBOXx.dex2jar:dex-translator:$d2jVersion", withoutIcu
 
     // smali & baksmali
-    def smaliVersion = "2.5.2"
-    implementation "org.smali:smali:$smaliVersion"
-    implementation "org.smali:baksmali:$smaliVersion"
+    implementation "org.smali:smali:2.5.2"
+    implementation "org.smali:baksmali:2.5.2"
 
     // fernflower (mirror)
     // doesn't have a proper versioning so we're stuck with using this
