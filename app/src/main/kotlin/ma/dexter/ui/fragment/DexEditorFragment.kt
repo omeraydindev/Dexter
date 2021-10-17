@@ -7,17 +7,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import ma.dexter.R
-import ma.dexter.ui.tree.SmaliTree
 import ma.dexter.databinding.FragmentDexEditorBinding
 import ma.dexter.databinding.ItemDexTreeNodeBinding
 import ma.dexter.managers.DexProjectManager
-import ma.dexter.ui.tree.model.DexClassItem
-import ma.dexter.ui.tree.model.DexItem
+import ma.dexter.ui.activity.BaseActivity
+import ma.dexter.ui.tree.SmaliTree
 import ma.dexter.ui.tree.TreeNode
 import ma.dexter.ui.tree.TreeView
 import ma.dexter.ui.tree.base.BaseNodeViewBinder
 import ma.dexter.ui.tree.base.BaseNodeViewFactory
+import ma.dexter.ui.tree.model.DexClassItem
+import ma.dexter.ui.tree.model.DexItem
 import ma.dexter.ui.util.dp
 import ma.dexter.ui.util.setMargins
 import org.jf.dexlib2.iface.ClassDef
@@ -136,8 +138,29 @@ class DexEditorFragment : Fragment() {
                     }
             })
 
+        val treeRecyclerView = treeView.view
+
         binding.root.removeAllViews()
-        binding.root.addView(treeView.view, ViewGroup.LayoutParams(-1, -1))
+        binding.root.addView(treeRecyclerView, ViewGroup.LayoutParams(-1, -1))
+
+        // TODO: clean-up
+        treeRecyclerView.setOnScrollChangeListener { _, _, _, _, _ ->
+            val pos = (treeRecyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+
+            mutableListOf<String>().let { list ->
+                var treeNode = treeView.adapter.expandedNodeList[pos]
+
+                while (!treeNode.isRoot) {
+                    treeNode = treeNode.parent
+
+                    if (!treeNode.isLeaf && !treeNode.isRoot) {
+                        list.add(0, treeNode.value.toString())
+                    }
+                }
+
+                (requireActivity() as BaseActivity).subtitle = list.joinToString(".")
+            }
+        }
     }
 
 }
