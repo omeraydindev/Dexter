@@ -25,7 +25,7 @@ jobs:
       - name: Run unit tests
         uses: eskatos/gradle-command-action@v1
         with:
-          arguments: test
+          arguments: test -i
           distributions-cache-enabled: true
           dependencies-cache-enabled: true
           configuration-cache-enabled: true
