@@ -16,7 +16,10 @@ import ma.dexter.model.JavaGotoDef
 import ma.dexter.model.SmaliGotoDef
 import ma.dexter.tasks.BaksmaliTask
 import ma.dexter.tasks.Smali2JavaTask
+import ma.dexter.tasks.SmaliTask
 import ma.dexter.tools.decompilers.BaseDecompiler
+import ma.dexter.ui.tree.model.DexClassItem
+import ma.dexter.util.debugToast
 import ma.dexter.util.getClassDefPath
 
 class SmaliEditorFragment(
@@ -57,6 +60,35 @@ class SmaliEditorFragment(
                 callback = {
                     showSmali2JavaDialog()
                 }
+            }
+        }
+    }
+
+    override fun save() {
+        val dialog = ProgressDialog.show(
+            requireContext(), "Loading", "Running smali...", true, false
+        )
+
+        SmaliTask.execute(codeEditor.text.toString()) {
+            dialog.dismiss()
+
+            if (it.success && it.value != null) {
+                DexProjectManager.dexContainer.replaceClassDef(it.value)
+                
+                DexProjectManager.putSmali(
+                    DexClassItem(
+                        getClassDefPath(it.value.type),
+                        it.value
+                    ),
+                    codeEditor.text.toString()
+                )
+
+                debugToast("Success")
+            } else {
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("Error")
+                    .setMessage(it.error)
+                    .show()
             }
         }
     }

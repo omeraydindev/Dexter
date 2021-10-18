@@ -13,6 +13,10 @@ object DexProjectManager {
 
     private var smalis = mutableMapOf<DexClassItem, SmaliModel>()
 
+    fun putSmali(dexClassItem: DexClassItem, smaliCode: String) {
+        smalis[dexClassItem] = SmaliModel.create(smaliCode)
+    }
+
     fun getSmaliModel(smaliCode: String): SmaliModel {
         return SmaliModel.create(smaliCode)
     }

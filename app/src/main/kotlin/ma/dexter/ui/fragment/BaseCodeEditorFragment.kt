@@ -62,7 +62,8 @@ open class BaseCodeEditorFragment : BaseFragment() {
         return true
     }
 
-    private fun save() {
+    // @CallSuper
+    protected open fun save() {
 
     }
 

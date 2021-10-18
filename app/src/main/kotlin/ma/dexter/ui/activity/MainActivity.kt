@@ -7,15 +7,19 @@ import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.viewpager2.widget.ViewPager2
+import com.github.angads25.filepicker.model.DialogConfigs
+import com.github.angads25.filepicker.model.DialogProperties
+import com.github.angads25.filepicker.view.FilePickerDialog
 import com.github.zawadz88.materialpopupmenu.popupMenu
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import ma.dexter.R
 import ma.dexter.databinding.ActivityMainBinding
+import ma.dexter.managers.DexProjectManager
 import ma.dexter.ui.adapter.DexPagerAdapter
 import ma.dexter.ui.viewmodel.MainViewModel
-import ma.dexter.util.openUrl
-import ma.dexter.util.requestAllFilesAccessPermission
+import ma.dexter.util.*
+import java.io.File
 
 class MainActivity : BaseActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -57,6 +61,15 @@ class MainActivity : BaseActivity() {
                 popupMenu {
                     section {
                         item {
+                            label = "Export DEX"
+                            callback = {
+                                exportDex()
+                            }
+                        }
+                    }
+                    section {
+                        title = "About"
+                        item {
                             label = "GitHub"
                             callback = {
                                 openUrl(this@MainActivity, "https://github.com/MikeAndrson/Dexter")
@@ -68,6 +81,22 @@ class MainActivity : BaseActivity() {
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun exportDex() {
+        val properties = DialogProperties().apply {
+            root = storagePath
+            selection_type = DialogConfigs.DIR_SELECT
+        }
+
+        FilePickerDialog(this, properties).apply {
+            setTitle("Select a folder to extract DEX files to")
+            setDialogSelectionListener { files ->
+                DexProjectManager.dexContainer.exportTo(File(files[0]))
+                debugToast("Done")
+            }
+            show()
+        }
     }
 
     private fun initLiveData() {

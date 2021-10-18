@@ -18,6 +18,7 @@ import ma.dexter.ui.tree.TreeView
 import ma.dexter.ui.tree.dex.SmaliTree
 import ma.dexter.ui.tree.dex.binder.DexItemNodeViewFactory
 import ma.dexter.ui.tree.model.DexClassItem
+import ma.dexter.ui.tree.model.DexItem
 import ma.dexter.util.storagePath
 import ma.dexter.util.toast
 import java.io.File
@@ -25,6 +26,7 @@ import java.util.zip.ZipFile
 
 class DexEditorFragment : BaseFragment() {
     private lateinit var binding: FragmentDexEditorBinding
+    private lateinit var treeView: TreeView<DexItem>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -109,16 +111,31 @@ class DexEditorFragment : BaseFragment() {
                 }
             },
 
-            longClickListener = { view, _ ->
+            longClickListener = { view, treeNode ->
                 val popupMenu = PopupMenu(context, view)
                 popupMenu.menuInflater.inflate(R.menu.menu_dex_tree_item, popupMenu.menu)
+                popupMenu.setOnMenuItemClickListener {
+                    when(it.itemId) {
+                        R.id.it_add -> {}
+                        R.id.it_copy -> {}
+                        R.id.it_delete -> {
+                            DexProjectManager.dexContainer.deleteClassDef(
+                                (treeNode.value as DexClassItem).classDef
+                            )
+                            treeNode.parent.removeChild(treeNode)
+                            refreshTreeView()
+                        }
+                    }
+
+                    true
+                }
                 popupMenu.show()
 
                 true
             }
         )
 
-        val treeView = TreeView(
+        treeView = TreeView(
             dexTree.createTree(),
             requireContext(),
             binder
@@ -148,6 +165,10 @@ class DexEditorFragment : BaseFragment() {
 
             (requireActivity() as BaseActivity).subtitle = currentPackage
         }
+    }
+
+    private fun refreshTreeView() {
+        treeView.refreshTreeView()
     }
 
 }

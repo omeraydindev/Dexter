@@ -1,20 +1,44 @@
 package ma.dexter.tools.smali
 
 import android.util.Log
+import ma.dexter.dex.DexFactory
 import ma.dexter.tools.smali.catcherr.smaliCatchErrFlexLexer
 import ma.dexter.tools.smali.catcherr.smaliCatchErrParser
 import ma.dexter.tools.smali.catcherr.smaliCatchErrTreeWalker
 import org.antlr.runtime.CommonTokenStream
 import org.antlr.runtime.tree.CommonTreeNodeStream
 import org.jf.dexlib2.Opcodes
+import org.jf.dexlib2.iface.ClassDef
 import org.jf.dexlib2.writer.builder.DexBuilder
 import org.jf.dexlib2.writer.io.FileDataStore
-import org.jf.smali.*
+import org.jf.dexlib2.writer.io.MemoryDataStore
+import org.jf.smali.SmaliOptions
 import java.io.File
 import java.io.StringReader
-import java.lang.Exception
 
 object SmaliInvoker {
+
+    /**
+     * Assembles given [smaliCode] into a [ClassDef].
+     */
+    fun assemble(
+        smaliCode: String,
+        options: SmaliOptions = SmaliOptions()
+    ): Result<ClassDef> {
+        try {
+            val result: Result<DexBuilder> = assembleInternal(smaliCode, options)
+
+            if (!result.success) return Result(null, false, result.error)
+
+            val memoryDataStore = MemoryDataStore()
+            result.value?.writeTo(memoryDataStore)
+            val dex = DexFactory.fromByteArray(memoryDataStore.buffer)
+            return Result(dex.classes.first(), true)
+
+        } catch (e: Exception) { // catch everything, will be shown to the user anyway
+            return Result(null, false, Log.getStackTraceString(e))
+        }
+    }
 
     /**
      * Assembles given [smaliCode] into a dex file ([outputDex]).
@@ -26,21 +50,24 @@ object SmaliInvoker {
         smaliCode: String,
         outputDex: File,
         options: SmaliOptions = SmaliOptions()
-    ): Result {
+    ): Result<File> {
+        try {
+            val result: Result<DexBuilder> = assembleInternal(smaliCode, options)
 
-        return try {
-            assemble_(smaliCode, outputDex, options)
+            if (!result.success) return Result(null, false, result.error)
+
+            result.value?.writeTo(FileDataStore(outputDex))
+            return Result(outputDex, true)
+
         } catch (e: Exception) { // catch everything, will be shown to the user anyway
-            Result(false, Log.getStackTraceString(e))
+            return Result(null, false, Log.getStackTraceString(e))
         }
-
     }
 
-    private fun assemble_(
+    private fun assembleInternal(
         smaliCode: String,
-        outputDex: File,
         options: SmaliOptions
-    ): Result {
+    ): Result<DexBuilder> {
 
         val dexBuilder = DexBuilder(Opcodes.forApi(options.apiLevel))
 
@@ -56,11 +83,11 @@ object SmaliInvoker {
         val result = parser.smali_file()
 
         if (lexer.numberOfSyntaxErrors > 0) {
-            return Result(false, "Lexer:\n" + lexer.getErrors())
+            return Result(success = false, error = "Lexer:\n" + lexer.getErrors())
         }
 
         if (parser.numberOfSyntaxErrors > 0) {
-            return Result(false, "Parser:\n" + parser.getErrors())
+            return Result(success = false, error = "Parser:\n" + parser.getErrors())
         }
 
         val treeStream = CommonTreeNodeStream(result.tree)
@@ -74,14 +101,16 @@ object SmaliInvoker {
         }
 
         if (dexGen.numberOfSyntaxErrors > 0) {
-            return Result(false, "Tree walker:\n" + dexGen.getErrors())
+            return Result(success = false, error = "Tree walker:\n" + dexGen.getErrors())
         }
 
-        dexBuilder.writeTo(FileDataStore(outputDex))
-
-        return Result(true, "")
+        return Result(dexBuilder, true)
     }
 
-    class Result(val success: Boolean, val error: String)
+    class Result<T>(
+        val value: T? = null,
+        val success: Boolean,
+        val error: String = ""
+    )
 
 }
