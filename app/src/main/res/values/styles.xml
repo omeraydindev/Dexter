@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="TreeNodeStyle">
-        <item name="android:paddingLeft">20dp</item>
-    </style>
-
     <style name="NotAllCapsTabTextAppearance" parent="TextAppearance.Design.Tab">
         <item name="textAllCaps">false</item>
         <item name="android:textAllCaps">false</item>
