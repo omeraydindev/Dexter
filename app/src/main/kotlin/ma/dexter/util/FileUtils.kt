@@ -10,6 +10,7 @@ import android.provider.Settings
 import java.io.File
 
 val storagePath: File
+    @Suppress("DEPRECATION")
     get() = Environment.getExternalStorageDirectory()
 
 fun requestAllFilesAccessPermission(context: Context) {

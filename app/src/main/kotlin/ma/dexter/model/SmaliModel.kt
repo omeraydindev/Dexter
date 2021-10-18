@@ -1,4 +1,4 @@
-package ma.dexter.core.model
+package ma.dexter.model
 
 import ma.dexter.util.END_METHOD_DIRECTIVE
 import ma.dexter.util.FIELD_DIRECTIVE_REGEX

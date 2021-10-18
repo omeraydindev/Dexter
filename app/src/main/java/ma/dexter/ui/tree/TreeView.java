@@ -42,6 +42,7 @@ public class TreeView<D> implements SelectableTreeAction<D> {
 
     private RecyclerView rootView;
     private TreeViewAdapter<D> adapter;
+    private LinearLayoutManager layoutManager;
     private boolean itemSelectable = true;
 
     public TreeView(@NonNull TreeNode<D> root, @NonNull Context context, @NonNull BaseNodeViewFactory<D> baseNodeViewFactory) {
@@ -54,26 +55,32 @@ public class TreeView<D> implements SelectableTreeAction<D> {
         return adapter;
     }
 
+    public LinearLayoutManager getLayoutManager() {
+        return layoutManager;
+    }
+
     public RecyclerView getView() {
         if (rootView == null) {
             this.rootView = buildRootView();
         }
-
         return rootView;
     }
 
     @NonNull
     private RecyclerView buildRootView() {
         RecyclerView recyclerView = new RecyclerView(context);
-        // disable multi touch event to prevent terrible data set error when calculate list.
-        recyclerView.setMotionEventSplittingEnabled(false);
-        ((SimpleItemAnimator) recyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
+        recyclerView.setMotionEventSplittingEnabled(false); // disable multi touch event to prevent terrible data set error when calculate list.
+        ((SimpleItemAnimator) recyclerView.getItemAnimator())
+                .setSupportsChangeAnimations(false);
 
         new FastScrollerBuilder(recyclerView).build();
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        layoutManager = new LinearLayoutManager(context);
+        recyclerView.setLayoutManager(layoutManager);
+
         adapter = new TreeViewAdapter<>(context, root, baseNodeViewFactory);
         adapter.setTreeView(this);
+
         recyclerView.setAdapter(adapter);
         return recyclerView;
     }

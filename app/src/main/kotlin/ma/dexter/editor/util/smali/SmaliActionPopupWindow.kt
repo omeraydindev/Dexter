@@ -1,13 +1,15 @@
 package ma.dexter.editor.util.smali
 
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
 import com.google.android.material.button.MaterialButton
 import io.github.rosemoe.sora.widget.CodeEditor
 import io.github.rosemoe.sora.widget.TextActionPopupWindow
 import ma.dexter.R
-import ma.dexter.managers.DexProjectManager
+import ma.dexter.managers.DexGotoManager
 
 class SmaliActionPopupWindow(
+    private val fragmentActivity: FragmentActivity,
     private val editor: CodeEditor
 ): TextActionPopupWindow(editor) {
 
@@ -22,7 +24,7 @@ class SmaliActionPopupWindow(
             icon = ContextCompat.getDrawable(context, R.drawable.ic_baseline_arrow_right_alt_20)
 
             setOnClickListener {
-                DexProjectManager.gotoDef(editor)
+                DexGotoManager(fragmentActivity).gotoDef(editor)
             }
         }
 

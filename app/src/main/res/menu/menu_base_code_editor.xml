@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="HardcodedText, AlwaysShowAction">
+
+    <item
+        android:id="@+id/it_undo"
+        android:icon="@drawable/ic_baseline_undo_24"
+        android:title="Undo"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/it_redo"
+        android:icon="@drawable/ic_baseline_redo_24"
+        android:title="Redo"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/it_save"
+        android:icon="@drawable/ic_baseline_save_24"
+        android:title="Save"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/it_more"
+        android:icon="@drawable/ic_baseline_more_vert_24"
+        android:title="More"
+        app:showAsAction="always" />
+
+</menu>

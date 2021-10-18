@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Widget.MPM.Item"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/mpm_popup_menu_item_height"
+    android:clickable="true"
+    android:focusable="true"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/mpm_popup_menu_item_padding_horizontal"
+    android:paddingEnd="@dimen/mpm_popup_menu_item_padding_horizontal"
+    tools:ignore="UseCompoundDrawables"
+    tools:theme="@style/Widget.MPM.Menu">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/mpm_popup_menu_item_icon_margin_end"
+        app:tint="?attr/mpm_activeIconColor"
+        tools:ignore="PrivateResource"
+        tools:src="@drawable/abc_ic_voice_search_api_material" />
+
+    <TextView
+        android:id="@+id/label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|center_vertical"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:lines="1"
+        android:textAlignment="viewStart"
+        android:textColor="?attr/mpm_primaryTextColor"
+        android:textSize="@dimen/mpm_popup_menu_item_label_text_size"
+        tools:text="Preview" />
+
+    <CheckBox
+        android:id="@+id/checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/mpm_popup_menu_item_icon_margin_end"
+        app:tint="?attr/mpm_activeIconColor"
+        tools:checked="true" />
+
+</LinearLayout>

@@ -1,7 +1,8 @@
-package ma.dexter.ui.tree
+package ma.dexter.ui.tree.dex
 
 import ma.dexter.dex.DexFactory
 import ma.dexter.dex.MutableDex
+import ma.dexter.ui.tree.*
 import ma.dexter.ui.tree.model.DexClassItem
 import ma.dexter.ui.tree.model.DexItem
 import ma.dexter.util.getClassDefPath
@@ -71,12 +72,12 @@ class SmaliTree {
         }
     }
 
-    fun addDex(dex: MutableDex): SmaliTree {
+    private fun addDex(dex: MutableDex): SmaliTree {
         dexList += dex
         return this
     }
 
-    fun addDex(byteArray: ByteArray): SmaliTree {
+    private fun addDex(byteArray: ByteArray): SmaliTree {
         return addDex(MutableDex(DexFactory.fromByteArray(byteArray)))
     }
 

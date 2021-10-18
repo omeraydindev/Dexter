@@ -4,8 +4,11 @@ import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import io.github.rosemoe.sora.interfaces.EditorEventListener
+import io.github.rosemoe.sora.text.Cursor
 import io.github.rosemoe.sora.widget.CodeEditor
 import ma.dexter.App
+import ma.dexter.editor.util.SingleEditorEventListener
 
 val Int.dp: Int
     get() = TypedValue.applyDimension(
@@ -20,19 +23,7 @@ fun View.setMargins(left: Int? = null, top: Int? = null, right: Int? = null, bot
         left ?: params.leftMargin,
         top ?: params.topMargin,
         right ?: params.rightMargin,
-        bottom ?: params.bottomMargin)
+        bottom ?: params.bottomMargin
+    )
     layoutParams = params
-}
-
-fun CodeEditor.setDefaults() {
-    isOverScrollEnabled = false
-    inputType = EditorInfo.TYPE_TEXT_FLAG_NO_SUGGESTIONS or EditorInfo.TYPE_CLASS_TEXT or EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE or EditorInfo.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-    importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_NO
-
-    setTextSize(16f)
-}
-
-fun CodeEditor.getSelectedText(): String {
-    val content = text.subContent(cursor.leftLine, cursor.leftColumn, cursor.rightLine, cursor.rightColumn)
-    return content.toString()
 }

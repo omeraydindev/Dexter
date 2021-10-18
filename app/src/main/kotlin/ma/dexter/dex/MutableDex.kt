@@ -44,4 +44,26 @@ class MutableDex(
     fun findClassDef(classDescriptor: String) =
         _classes.firstOrNull { it.type == classDescriptor }
 
+    /**
+     * Deletes the first [ClassDef] that matches the type of
+     * the given [classDefToDelete].
+     *
+     * Does nothing if no match is found.
+     */
+    fun deleteClassDef(
+        classDefToDelete: ClassDef
+    ) {
+        deleteClassDef(classDefToDelete.type)
+    }
+
+    private fun deleteClassDef(
+        classDescriptor: String
+    ) {
+        val index = _classes.indexOfFirst { _classDef ->
+            _classDef.type == classDescriptor
+        }
+
+        if (index != -1) _classes.removeAt(index)
+    }
+
 }

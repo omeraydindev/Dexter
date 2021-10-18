@@ -1,4 +1,4 @@
-package ma.dexter.core.model
+package ma.dexter.model
 
 class SmaliMethod(
     descriptor: String,

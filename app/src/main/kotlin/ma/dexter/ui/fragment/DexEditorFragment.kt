@@ -1,39 +1,30 @@
 package ma.dexter.ui.fragment
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
+import android.widget.PopupMenu
+import com.github.angads25.filepicker.model.DialogConfigs
+import com.github.angads25.filepicker.model.DialogProperties
+import com.github.angads25.filepicker.view.FilePickerDialog
 import ma.dexter.R
 import ma.dexter.databinding.FragmentDexEditorBinding
-import ma.dexter.databinding.ItemDexTreeNodeBinding
+import ma.dexter.managers.DexGotoManager
 import ma.dexter.managers.DexProjectManager
+import ma.dexter.model.SmaliGotoDef
 import ma.dexter.ui.activity.BaseActivity
-import ma.dexter.ui.tree.SmaliTree
-import ma.dexter.ui.tree.TreeNode
 import ma.dexter.ui.tree.TreeView
-import ma.dexter.ui.tree.base.BaseNodeViewBinder
-import ma.dexter.ui.tree.base.BaseNodeViewFactory
+import ma.dexter.ui.tree.dex.SmaliTree
+import ma.dexter.ui.tree.dex.binder.DexItemNodeViewFactory
 import ma.dexter.ui.tree.model.DexClassItem
-import ma.dexter.ui.tree.model.DexItem
-import ma.dexter.ui.util.dp
-import ma.dexter.ui.util.setMargins
-import org.jf.dexlib2.iface.ClassDef
+import ma.dexter.util.storagePath
+import ma.dexter.util.toast
 import java.io.File
-import java.lang.ref.WeakReference
 import java.util.zip.ZipFile
 
-class DexEditorFragment : Fragment() {
+class DexEditorFragment : BaseFragment() {
     private lateinit var binding: FragmentDexEditorBinding
-    private var dexItemClickListener: DexItemClickListener? = null
-
-    interface DexItemClickListener {
-        fun onDexClassItemClick(classDef: ClassDef)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,16 +35,33 @@ class DexEditorFragment : Fragment() {
         return binding.root
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        binding.btnLoadDex.setOnClickListener {
+            val properties = DialogProperties().apply {
+                root = storagePath
+                extensions = arrayOf("dex", "apk")
+                selection_mode = DialogConfigs.MULTI_MODE
+            }
 
-        if (context is DexItemClickListener) {
-            dexItemClickListener = context
+            FilePickerDialog(requireContext(), properties).run {
+                setTitle("Select either .dex file(s) or a single .apk file")
+                setDialogSelectionListener { files ->
+                    if (files.size == 1 && files[0].endsWith(".apk")) {
+                        loadApk(files[0])
+                    } else if (files.all { it.endsWith(".dex") }) {
+                        loadDexes(files)
+                    } else {
+                        toast("Please select either .dex file(s) or a single .apk file")
+                    }
+                }
+                show()
+            }
         }
     }
 
-    fun loadApk(apkPath: String) {
-
+    private fun loadApk(
+        apkPath: String
+    ) {
         ZipFile(apkPath).use { apk ->
             val list = mutableListOf<ByteArray>()
 
@@ -71,7 +79,9 @@ class DexEditorFragment : Fragment() {
         }
     }
 
-    fun loadDexes(dexPaths: Array<String>) {
+    private fun loadDexes(
+        dexPaths: Array<String>
+    ) {
         val list = mutableListOf<ByteArray>()
 
         dexPaths.forEach {
@@ -81,62 +91,38 @@ class DexEditorFragment : Fragment() {
         loadDexes(list)
     }
 
-    private fun loadDexes(byteArrays: List<ByteArray>) {
+    private fun loadDexes(
+        byteArrays: List<ByteArray>
+    ) {
         val dexTree = SmaliTree()
             .addDexes(byteArrays)
 
-        DexProjectManager.dexList = dexTree.dexList
+        DexProjectManager.dexContainer.entries = dexTree.dexList
+
+        val binder = DexItemNodeViewFactory(
+            toggleListener = { treeNode ->
+                treeNode.value.also { dexItem ->
+                    if (dexItem is DexClassItem) {
+                        DexGotoManager(requireActivity())
+                            .gotoClassDef(SmaliGotoDef(dexItem.classDef))
+                    }
+                }
+            },
+
+            longClickListener = { view, _ ->
+                val popupMenu = PopupMenu(context, view)
+                popupMenu.menuInflater.inflate(R.menu.menu_dex_tree_item, popupMenu.menu)
+                popupMenu.show()
+
+                true
+            }
+        )
 
         val treeView = TreeView(
             dexTree.createTree(),
             requireContext(),
-            object :
-                BaseNodeViewFactory<DexItem>() {
-
-                override fun getNodeLayoutId(level: Int) = R.layout.item_dex_tree_node
-
-                override fun getNodeViewBinder(view: View, level: Int) =
-
-                    object : BaseNodeViewBinder<DexItem>(view) {
-                        lateinit var icon: WeakReference<ImageView>
-
-                        override fun bindView(treeNode: TreeNode<DexItem>) {
-                            val binding = ItemDexTreeNodeBinding.bind(view).apply {
-                                title.text = treeNode.value.path
-
-                                root.setMargins(
-                                    left = level * 20.dp
-                                )
-                            }
-
-                            icon = WeakReference(binding.icon.apply {
-                                rotation = if (treeNode.isExpanded) 90F else 0F
-
-                                visibility =
-                                    if (treeNode.isLeaf) View.INVISIBLE else View.VISIBLE
-                            })
-                        }
-
-                        override fun onNodeToggled(
-                            treeNode: TreeNode<DexItem>,
-                            expand: Boolean
-                        ) {
-                            icon.get()
-                                ?.animate()
-                                ?.rotation(if (expand) 90F else 0F)
-                                ?.setDuration(150)
-                                ?.start()
-
-                            treeNode.value.also { dexItem ->
-                                if (dexItem is DexClassItem) {
-                                    dexItemClickListener?.onDexClassItemClick(dexItem.classDef)
-                                    return
-                                }
-                            }
-
-                        }
-                    }
-            })
+            binder
+        )
 
         val treeRecyclerView = treeView.view
 
@@ -145,21 +131,22 @@ class DexEditorFragment : Fragment() {
 
         // TODO: clean-up
         treeRecyclerView.setOnScrollChangeListener { _, _, _, _, _ ->
-            val pos = (treeRecyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
-
-            mutableListOf<String>().let { list ->
+            val currentPackage = buildString {
+                val pos = treeView.layoutManager.findFirstVisibleItemPosition()
                 var treeNode = treeView.adapter.expandedNodeList[pos]
 
                 while (!treeNode.isRoot) {
                     treeNode = treeNode.parent
 
                     if (!treeNode.isLeaf && !treeNode.isRoot) {
-                        list.add(0, treeNode.value.toString())
+                        insert(0, treeNode.value.toString() + ".")
                     }
                 }
 
-                (requireActivity() as BaseActivity).subtitle = list.joinToString(".")
+                if (length != 0) setLength(length - 1) // strip the last "."
             }
+
+            (requireActivity() as BaseActivity).subtitle = currentPackage
         }
     }
 

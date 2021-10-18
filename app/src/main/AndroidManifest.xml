@@ -27,12 +27,5 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".ui.activity.code.SmaliEditorActivity"
-            android:windowSoftInputMode="adjustResize|stateHidden" />
-
-        <activity
-            android:name=".ui.activity.code.JavaViewerActivity" />
-
     </application>
 </manifest>

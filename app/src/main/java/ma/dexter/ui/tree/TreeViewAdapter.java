@@ -111,11 +111,19 @@ public class TreeViewAdapter<D> extends RecyclerView.Adapter<RecyclerView.ViewHo
                     onNodeToggled(treeNode);
                     viewBinder.onNodeToggled(treeNode, treeNode.isExpanded());
                 });
+
+                triggerToggleView.setOnLongClickListener(view -> {
+                    return viewBinder.onNodeLongClicked(view, treeNode, treeNode.isExpanded());
+                });
             }
         } else if (treeNode.isItemClickEnable()) {
             nodeView.setOnClickListener(v -> {
                 onNodeToggled(treeNode);
                 viewBinder.onNodeToggled(treeNode, treeNode.isExpanded());
+            });
+
+            nodeView.setOnLongClickListener(view -> {
+                return viewBinder.onNodeLongClicked(view, treeNode, treeNode.isExpanded());
             });
         }
 
