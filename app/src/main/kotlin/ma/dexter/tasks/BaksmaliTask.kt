@@ -2,7 +2,7 @@ package ma.dexter.tasks
 
 import android.os.Handler
 import android.os.Looper
-import ma.dexter.managers.DexProjectManager
+import ma.dexter.project.DexProjectManager
 import org.jf.dexlib2.iface.ClassDef
 import java.util.concurrent.Executors
 

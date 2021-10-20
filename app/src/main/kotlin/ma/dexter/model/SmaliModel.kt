@@ -16,36 +16,35 @@ class SmaliModel private constructor(
 
         fun create(smaliCode: String) = parse(smaliCode)
 
-        /*
-         * Obviously using a Parser is better, but this is good enough for now.
-         */
+        // Obviously using a Parser is better, but this is good enough for now.
         private fun parse(smaliCode: String): SmaliModel {
             val smaliMethods = mutableListOf<SmaliMethod>()
             val smaliFields = mutableListOf<SmaliField>()
 
             val lines = smaliCode.lines()
-            lines.forEachIndexed { lineNumber, line ->
+            lines.forEachIndexed { lineNumber, _line ->
+                val line = _line.trimStart()
 
                 // .method
-                METHOD_DIRECTIVE_REGEX.matchEntire(line.trimStart())?.let { result ->
-                    result.groups[1]?.let {
-                        smaliMethods += SmaliMethod(it.value, lineNumber)
+                METHOD_DIRECTIVE_REGEX.matchEntire(line)?.let { result ->
+                    result.groups[1]?.let { match ->
+                        smaliMethods += SmaliMethod(match.value, lineNumber)
                     }
                 }
 
                 // .end method
-                if (line.trimStart().startsWith(END_METHOD_DIRECTIVE)) {
-                    smaliMethods.lastOrNull()?.let {
-                        it.methodBody = lines
-                            .slice(it.line..lineNumber)
+                if (line.startsWith(END_METHOD_DIRECTIVE)) {
+                    smaliMethods.lastOrNull()?.let { last ->
+                        last.methodBody = lines
+                            .slice(last.line..lineNumber)
                             .joinToString("\n")
                     }
                 }
 
                 // .field
-                FIELD_DIRECTIVE_REGEX.matchEntire(line.trimStart())?.let { result ->
-                    result.groups[1]?.let {
-                        smaliFields += SmaliField(it.value, lineNumber)
+                FIELD_DIRECTIVE_REGEX.matchEntire(line)?.let { result ->
+                    result.groups[1]?.let { match ->
+                        smaliFields += SmaliField(match.value, lineNumber)
                     }
                 }
 

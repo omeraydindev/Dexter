@@ -10,8 +10,11 @@ import com.github.angads25.filepicker.model.DialogProperties
 import com.github.angads25.filepicker.view.FilePickerDialog
 import ma.dexter.R
 import ma.dexter.databinding.FragmentDexEditorBinding
-import ma.dexter.managers.DexGotoManager
-import ma.dexter.managers.DexProjectManager
+import ma.dexter.dex.DexEntry
+import ma.dexter.dex.DexFactory
+import ma.dexter.project.DexGotoManager
+import ma.dexter.project.DexProjectManager
+import ma.dexter.dex.MutableDexContainer
 import ma.dexter.model.SmaliGotoDef
 import ma.dexter.ui.activity.BaseActivity
 import ma.dexter.ui.tree.TreeView
@@ -19,6 +22,7 @@ import ma.dexter.ui.tree.dex.SmaliTree
 import ma.dexter.ui.tree.dex.binder.DexItemNodeViewFactory
 import ma.dexter.ui.tree.model.DexClassItem
 import ma.dexter.ui.tree.model.DexItem
+import ma.dexter.util.isValidDexFileName
 import ma.dexter.util.storagePath
 import ma.dexter.util.toast
 import java.io.File
@@ -65,41 +69,42 @@ class DexEditorFragment : BaseFragment() {
         apkPath: String
     ) {
         ZipFile(apkPath).use { apk ->
-            val list = mutableListOf<ByteArray>()
+            loadDexes(buildList {
+                apk.stream().forEach { entry ->
+                    if (!entry.isDirectory && isValidDexFileName(entry.name)) {
+                        val bytes = apk.getInputStream(entry).readBytes()
+                        val dexEntry = DexEntry(entry.name,
+                            DexFactory.fromByteArray(bytes))
 
-            for (entry in apk.entries()) {
-                if (!entry.isDirectory
-                    && entry.name.startsWith("classes")
-                    && entry.name.endsWith(".dex")
-                ) {
-                    list += apk.getInputStream(entry) // this is closed by ZipFile automatically
-                        .readBytes()
+                        add(dexEntry)
+                    }
                 }
-            }
-
-            loadDexes(list)
+            })
         }
     }
 
     private fun loadDexes(
         dexPaths: Array<String>
     ) {
-        val list = mutableListOf<ByteArray>()
+        loadDexes(buildList {
+            dexPaths.forEach {
+                val file = File(it)
+                val dexEntry = DexEntry(file.name,
+                    DexFactory.fromFile(file))
 
-        dexPaths.forEach {
-            list += File(it).readBytes()
-        }
-
-        loadDexes(list)
+                add(dexEntry)
+            }
+        })
     }
 
     private fun loadDexes(
-        byteArrays: List<ByteArray>
+        dexEntries: List<DexEntry>
     ) {
         val dexTree = SmaliTree()
-            .addDexes(byteArrays)
+            .addDexEntries(dexEntries)
 
-        DexProjectManager.dexContainer.entries = dexTree.dexList
+        DexProjectManager.dexContainer.entries.clear()
+        DexProjectManager.dexContainer.entries.addAll(dexEntries)
 
         val binder = DexItemNodeViewFactory(
             toggleListener = { treeNode ->

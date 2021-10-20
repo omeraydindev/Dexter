@@ -6,10 +6,11 @@ import org.jf.dexlib2.iface.DexFile
 
 class MutableDex(
     dexFile: DexFile
-): DexFile {
-    private val _classes = dexFile.classes.toMutableList()
-    private val _opcodes = dexFile.opcodes
+) : DexFile {
+    private val _classes: MutableList<ClassDef> = dexFile.classes.toMutableList()
+    private val _opcodes: Opcodes = dexFile.opcodes
 
+    @Deprecated("Use getMutableClasses() instead")
     override fun getClasses(): Set<ClassDef> {
         return _classes.toSet()
     }

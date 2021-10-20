@@ -38,7 +38,7 @@ class MainViewModel : ViewModel() {
 
         items.add(dexPageItem)
         dexPageItems.value = items
-        currentPosition.value = items.size - 1
+        currentPosition.value = items.lastIndex
     }
 
     fun removePageItem(position: Int) {

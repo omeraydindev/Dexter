@@ -10,8 +10,8 @@ import ma.dexter.R
 import ma.dexter.editor.lang.smali.SmaliLanguage
 import ma.dexter.editor.scheme.smali.SchemeLightSmali
 import ma.dexter.editor.util.smali.SmaliActionPopupWindow
-import ma.dexter.managers.DexGotoManager
-import ma.dexter.managers.DexProjectManager
+import ma.dexter.project.DexGotoManager
+import ma.dexter.project.DexProjectManager
 import ma.dexter.model.JavaGotoDef
 import ma.dexter.model.SmaliGotoDef
 import ma.dexter.tasks.BaksmaliTask

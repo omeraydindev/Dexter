@@ -1,4 +1,4 @@
-package ma.dexter.managers
+package ma.dexter.project
 
 import androidx.activity.viewModels
 import androidx.fragment.app.FragmentActivity
@@ -89,7 +89,7 @@ class DexGotoManager(
         defDescriptorToGo: String? = null
     ) {
         DexProjectManager.dexContainer.entries.forEach { dex ->
-            dex.findClassDef(dexClassDef)?.let {
+            dex.dex.findClassDef(dexClassDef)?.let {
                 gotoClassDef(SmaliGotoDef(it, defDescriptorToGo))
                 return
             }

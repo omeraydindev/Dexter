@@ -1,22 +1,21 @@
-package ma.dexter.managers
+package ma.dexter.dex
 
-import ma.dexter.dex.MutableDex
 import org.jf.dexlib2.DexFileFactory
 import org.jf.dexlib2.iface.ClassDef
 import java.io.File
 
-class MutableDexContainer {
+class MutableDexContainer{
 
     // TODO: handle multidex properly
-    var entries = mutableListOf<MutableDex>()
+    var entries = mutableListOf<DexEntry>()
 
     // TODO: temporary
     fun replaceClassDef(
         classDefToReplace: ClassDef
     ) {
         entries.forEach {
-            if (it.findClassDef(classDefToReplace.type) != null) {
-                it.addClassDef(classDefToReplace)
+            if (it.dex.findClassDef(classDefToReplace.type) != null) {
+                it.dex.addClassDef(classDefToReplace)
                 return
             }
         }
@@ -27,7 +26,7 @@ class MutableDexContainer {
         classDefToDelete: ClassDef
     ) {
         entries.forEach {
-            it.deleteClassDef(classDefToDelete)
+            it.dex.deleteClassDef(classDefToDelete)
         }
     }
 
@@ -35,7 +34,7 @@ class MutableDexContainer {
     fun exportTo(
         dir: File
     ) {
-        entries.forEachIndexed { index, dex ->
+        entries.forEachIndexed { index, dexEntry ->
             var name = "classes${index + 1}"
             var path = File(dir, "$name.dex")
 
@@ -44,7 +43,7 @@ class MutableDexContainer {
                 path = File(dir, "$name.dex")
             }
 
-            DexFileFactory.writeDexFile(path.absolutePath, dex)
+            DexFileFactory.writeDexFile(path.absolutePath, dexEntry.dex)
         }
     }
 

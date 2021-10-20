@@ -18,7 +18,7 @@ class DexPagerAdapter(
 
     private val data = mutableListOf<DexPageItem>()
 
-    fun submitList(newData: List<DexPageItem>) {
+    fun updateList(newData: List<DexPageItem>) {
         val diffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
             override fun getOldListSize() = data.size
 

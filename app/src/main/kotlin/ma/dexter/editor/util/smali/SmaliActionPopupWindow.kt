@@ -6,7 +6,7 @@ import com.google.android.material.button.MaterialButton
 import io.github.rosemoe.sora.widget.CodeEditor
 import io.github.rosemoe.sora.widget.TextActionPopupWindow
 import ma.dexter.R
-import ma.dexter.managers.DexGotoManager
+import ma.dexter.project.DexGotoManager
 
 class SmaliActionPopupWindow(
     private val fragmentActivity: FragmentActivity,

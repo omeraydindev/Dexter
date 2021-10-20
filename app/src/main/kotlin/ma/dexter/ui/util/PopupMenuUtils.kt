@@ -1,4 +1,4 @@
-package ma.dexter.util
+package ma.dexter.ui.util
 
 import android.graphics.drawable.Drawable
 import com.github.zawadz88.materialpopupmenu.MaterialPopupMenuBuilder.CustomItemHolder

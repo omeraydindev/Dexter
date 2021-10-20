@@ -1,5 +1,6 @@
-package ma.dexter.managers
+package ma.dexter.project
 
+import ma.dexter.dex.MutableDexContainer
 import ma.dexter.model.SmaliModel
 import ma.dexter.tools.smali.BaksmaliInvoker
 import ma.dexter.ui.tree.model.DexClassItem

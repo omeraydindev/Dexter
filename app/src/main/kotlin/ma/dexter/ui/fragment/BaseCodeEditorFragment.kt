@@ -13,7 +13,7 @@ import ma.dexter.databinding.FragmentBaseCodeEditorBinding
 import ma.dexter.editor.util.setDefaults
 import ma.dexter.editor.util.setOnTextChangedListener
 import ma.dexter.ui.viewmodel.MainViewModel
-import ma.dexter.util.checkableItem
+import ma.dexter.ui.util.checkableItem
 
 open class BaseCodeEditorFragment : BaseFragment() {
     private lateinit var binding: FragmentBaseCodeEditorBinding

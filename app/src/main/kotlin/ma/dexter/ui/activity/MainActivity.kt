@@ -15,7 +15,7 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import ma.dexter.R
 import ma.dexter.databinding.ActivityMainBinding
-import ma.dexter.managers.DexProjectManager
+import ma.dexter.project.DexProjectManager
 import ma.dexter.ui.adapter.DexPagerAdapter
 import ma.dexter.ui.viewmodel.MainViewModel
 import ma.dexter.util.*
@@ -101,7 +101,7 @@ class MainActivity : BaseActivity() {
 
     private fun initLiveData() {
         viewModel.getPageItems().observe(this) {
-            pagerAdapter.submitList(it)
+            pagerAdapter.updateList(it)
         }
 
         viewModel.currentPosition.observe(this) {
@@ -115,9 +115,14 @@ class MainActivity : BaseActivity() {
         binding.viewPager.isUserInputEnabled = false
         binding.viewPager.offscreenPageLimit = 100 // todo
         binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+            override fun onPageScrolled(
+                position: Int,
+                positionOffset: Float,
+                positionOffsetPixels: Int
+            ) {
                 viewModel.viewPagerScrolled.value = positionOffsetPixels
             }
+
             override fun onPageSelected(pos: Int) {
                 invalidateOptionsMenu()
             }

@@ -1,6 +1,6 @@
 package ma.dexter.ui.tree.dex
 
-import ma.dexter.dex.DexFactory
+import ma.dexter.dex.DexEntry
 import ma.dexter.dex.MutableDex
 import ma.dexter.ui.tree.*
 import ma.dexter.ui.tree.model.DexClassItem
@@ -8,7 +8,7 @@ import ma.dexter.ui.tree.model.DexItem
 import ma.dexter.util.getClassDefPath
 
 class SmaliTree {
-    val dexList = mutableListOf<MutableDex>()
+    private val dexList = mutableListOf<MutableDex>()
 
     fun createTree(): TreeNode<DexItem> {
         val rootTreeNode = TreeNode.root<DexItem>()
@@ -51,7 +51,7 @@ class SmaliTree {
                 if (toFind == null) {
                     // deepest level means this is the name of the class
                     // (as in, "String" in "java/lang/String")
-                    subNode = if (classDefSegments.size - 1 == level) {
+                    subNode = if (classDefSegments.lastIndex == level) {
                         TreeNode(
                             DexClassItem(segment, classDef)
                         )
@@ -77,12 +77,8 @@ class SmaliTree {
         return this
     }
 
-    private fun addDex(byteArray: ByteArray): SmaliTree {
-        return addDex(MutableDex(DexFactory.fromByteArray(byteArray)))
-    }
-
-    fun addDexes(byteArrays: List<ByteArray>): SmaliTree {
-        byteArrays.forEach(this::addDex)
+    fun addDexEntries(dexEntries: List<DexEntry>): SmaliTree {
+        dexEntries.forEach { addDex(it.dex) }
         return this
     }
 
