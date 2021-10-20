@@ -10,7 +10,7 @@ import java.util.jar.JarEntry
 import java.util.jar.JarOutputStream
 import java.util.jar.Manifest
 
-class JarCreator(
+class JarTool(
     private val classesDir: File,
     private val jarFile: File,
     private val attributes: Attributes = getDefAttrs()

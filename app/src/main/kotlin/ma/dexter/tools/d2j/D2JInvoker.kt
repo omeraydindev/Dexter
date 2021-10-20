@@ -2,7 +2,7 @@ package ma.dexter.tools.d2j
 
 import android.util.Log
 import com.googlecode.d2j.dex.Dex2jar
-import ma.dexter.tools.jar.JarCreator
+import ma.dexter.tools.jar.JarTool
 import java.io.File
 
 object D2JInvoker {
@@ -27,7 +27,7 @@ object D2JInvoker {
             _invoke(dexFile, outDir, options, handler)
 
             // create the Jar
-            JarCreator(outDir, outJar).create()
+            JarTool(outDir, outJar).create()
 
             // clean up the temp dir
             outDir.deleteRecursively()
