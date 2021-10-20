@@ -10,11 +10,10 @@ import com.github.angads25.filepicker.model.DialogProperties
 import com.github.angads25.filepicker.view.FilePickerDialog
 import ma.dexter.R
 import ma.dexter.databinding.FragmentDexEditorBinding
-import ma.dexter.dex.DexEntry
+import ma.dexter.project.DexEntry
 import ma.dexter.dex.DexFactory
 import ma.dexter.project.DexGotoManager
-import ma.dexter.project.DexProjectManager
-import ma.dexter.dex.MutableDexContainer
+import ma.dexter.project.DexProject
 import ma.dexter.model.SmaliGotoDef
 import ma.dexter.ui.activity.BaseActivity
 import ma.dexter.ui.tree.TreeView
@@ -103,8 +102,7 @@ class DexEditorFragment : BaseFragment() {
         val dexTree = SmaliTree()
             .addDexEntries(dexEntries)
 
-        DexProjectManager.dexContainer.entries.clear()
-        DexProjectManager.dexContainer.entries.addAll(dexEntries)
+        DexProject.openProject(dexEntries)
 
         val binder = DexItemNodeViewFactory(
             toggleListener = { treeNode ->
@@ -120,16 +118,10 @@ class DexEditorFragment : BaseFragment() {
                 val popupMenu = PopupMenu(context, view)
                 popupMenu.menuInflater.inflate(R.menu.menu_dex_tree_item, popupMenu.menu)
                 popupMenu.setOnMenuItemClickListener {
-                    when(it.itemId) {
+                    when(it.itemId) { // todo
                         R.id.it_add -> {}
                         R.id.it_copy -> {}
-                        R.id.it_delete -> {
-                            DexProjectManager.dexContainer.deleteClassDef(
-                                (treeNode.value as DexClassItem).classDef
-                            )
-                            treeNode.parent.removeChild(treeNode)
-                            refreshTreeView()
-                        }
+                        R.id.it_delete -> {}
                     }
 
                     true

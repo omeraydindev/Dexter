@@ -10,15 +10,15 @@ import ma.dexter.R
 import ma.dexter.editor.lang.smali.SmaliLanguage
 import ma.dexter.editor.scheme.smali.SchemeLightSmali
 import ma.dexter.editor.util.smali.SmaliActionPopupWindow
-import ma.dexter.project.DexGotoManager
-import ma.dexter.project.DexProjectManager
 import ma.dexter.model.JavaGotoDef
 import ma.dexter.model.SmaliGotoDef
+import ma.dexter.parsers.smali.parseSmali
+import ma.dexter.project.DexGotoManager
+import ma.dexter.project.DexProject
 import ma.dexter.tasks.BaksmaliTask
 import ma.dexter.tasks.Smali2JavaTask
 import ma.dexter.tasks.SmaliTask
 import ma.dexter.tools.decompilers.BaseDecompiler
-import ma.dexter.ui.tree.model.DexClassItem
 import ma.dexter.util.debugToast
 import ma.dexter.util.getClassDefPath
 
@@ -38,7 +38,7 @@ class SmaliEditorFragment(
             setEditorLanguage(SmaliLanguage())
         }
 
-        loadSmali(smaliGotoDef.defDescriptor)
+        loadSmaliCode(smaliGotoDef.defDescriptor)
     }
 
     override fun beforeBuildMoreMenu(popupMenuBuilder: MaterialPopupMenuBuilder) {
@@ -73,15 +73,11 @@ class SmaliEditorFragment(
             dialog.dismiss()
 
             if (it.success && it.value != null) {
-                DexProjectManager.dexContainer.replaceClassDef(it.value)
-                
-                DexProjectManager.putSmali(
-                    DexClassItem(
-                        getClassDefPath(it.value.type),
-                        it.value
-                    ),
-                    codeEditor.text.toString()
-                )
+                DexProject.getOpenedProject()
+                    .dexContainer.replaceClassDef(it.value)
+
+                DexProject.getOpenedProject()
+                    .smaliContainer.putSmaliCode(it.value, codeEditor.text.toString())
 
                 debugToast("Success")
             } else {
@@ -93,7 +89,7 @@ class SmaliEditorFragment(
         }
     }
 
-    private fun loadSmali(
+    private fun loadSmaliCode(
         defDescriptorToGo: String? = null
     ) {
         val dialog = ProgressDialog.show(
@@ -112,11 +108,9 @@ class SmaliEditorFragment(
         defDescriptorToGo: String? = null
     ) {
         defDescriptorToGo?.let { desc ->
-            val smaliFile = DexProjectManager.getSmaliModel(
-                codeEditor.text.toString()
-            )
+            val smaliFile = parseSmali(codeEditor.text.toString())
 
-            val line = smaliFile.smaliMembers.firstOrNull { member ->
+            val line = smaliFile.members.firstOrNull { member ->
                 member.descriptor == desc
             }?.line ?: 0
 
@@ -125,11 +119,9 @@ class SmaliEditorFragment(
     }
 
     private fun showNavigationDialog() {
-        val smaliFile = DexProjectManager.getSmaliModel(
-            codeEditor.text.toString()
-        )
+        val smaliFile = parseSmali(codeEditor.text.toString())
 
-        val navItems = smaliFile.smaliMembers
+        val navItems = smaliFile.members
 
         MaterialAlertDialogBuilder(requireContext())
             .setTitle("Navigation")

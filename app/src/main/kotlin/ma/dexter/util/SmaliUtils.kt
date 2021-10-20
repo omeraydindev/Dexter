@@ -5,15 +5,25 @@ import org.jf.smali.smaliFlexLexer
 import org.jf.smali.smaliParser
 import java.io.StringReader
 
-/* const */ val METHOD_DIRECTIVE_REGEX = Regex(
-    """^\.method (?:(?:[a-z\-]*) )*(.*)${'$'}"""
+/**
+ * group 1: full method descriptor
+ * group 2: method name
+ * group 3: method params + return type
+ */
+val METHOD_DIRECTIVE_REGEX = Regex(
+    """^\.method (?:(?:[a-z\-]*) )*((.*?)\((.*))${'$'}"""
 )
 
-/* const */ val FIELD_DIRECTIVE_REGEX = Regex(
-    """^\.field (?:(?:[a-z\-]*) )*(.*)${'$'}"""
+/**
+ * group 1: full field descriptor
+ * group 2: field name
+ * group 3: field return type
+ */
+val FIELD_DIRECTIVE_REGEX = Regex(
+    """^\.field (?:(?:[a-z\-]*) )*((.*?):(.*))${'$'}"""
 )
 
-/* const */ val FIELD_METHOD_CALL_REGEX = Regex(
+val FIELD_METHOD_CALL_REGEX = Regex(
     """^.*?((L.*?;)\s*->\s*(.*))${'$'}""", RegexOption.DOT_MATCHES_ALL
 )
 

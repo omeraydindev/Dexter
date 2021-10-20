@@ -1,6 +1,6 @@
 package ma.dexter.ui.tree.dex
 
-import ma.dexter.dex.DexEntry
+import ma.dexter.project.DexEntry
 import ma.dexter.dex.MutableDex
 import ma.dexter.ui.tree.*
 import ma.dexter.ui.tree.model.DexClassItem

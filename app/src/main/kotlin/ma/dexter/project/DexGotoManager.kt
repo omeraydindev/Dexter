@@ -88,7 +88,7 @@ class DexGotoManager(
         dexClassDef: String,
         defDescriptorToGo: String? = null
     ) {
-        DexProjectManager.dexContainer.entries.forEach { dex ->
+        DexProject.getOpenedProject().dexContainer.entries.forEach { dex ->
             dex.dex.findClassDef(dexClassDef)?.let {
                 gotoClassDef(SmaliGotoDef(it, defDescriptorToGo))
                 return

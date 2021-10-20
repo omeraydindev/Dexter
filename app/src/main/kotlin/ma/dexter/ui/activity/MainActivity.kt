@@ -15,7 +15,7 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import ma.dexter.R
 import ma.dexter.databinding.ActivityMainBinding
-import ma.dexter.project.DexProjectManager
+import ma.dexter.project.DexProject
 import ma.dexter.ui.adapter.DexPagerAdapter
 import ma.dexter.ui.viewmodel.MainViewModel
 import ma.dexter.util.*
@@ -92,7 +92,8 @@ class MainActivity : BaseActivity() {
         FilePickerDialog(this, properties).apply {
             setTitle("Select a folder to extract DEX files to")
             setDialogSelectionListener { files ->
-                DexProjectManager.dexContainer.exportTo(File(files[0]))
+                DexProject.getOpenedProject()
+                    .dexContainer.exportTo(File(files[0]))
                 debugToast("Done")
             }
             show()
@@ -106,6 +107,7 @@ class MainActivity : BaseActivity() {
 
         viewModel.currentPosition.observe(this) {
             binding.viewPager.currentItem = it
+            hideKeyboard(binding.viewPager)
         }
     }
 

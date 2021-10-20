@@ -1,14 +1,12 @@
-package ma.dexter.dex
+package ma.dexter.project
 
 import org.jf.dexlib2.DexFileFactory
 import org.jf.dexlib2.iface.ClassDef
 import java.io.File
 
-class MutableDexContainer{
-
-    // TODO: handle multidex properly
-    var entries = mutableListOf<DexEntry>()
-
+class MutableDexContainer(
+    val entries: List<DexEntry>
+){
     // TODO: temporary
     fun replaceClassDef(
         classDefToReplace: ClassDef
