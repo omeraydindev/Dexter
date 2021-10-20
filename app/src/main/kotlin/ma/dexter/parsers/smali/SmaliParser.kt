@@ -18,8 +18,9 @@ fun parseSmali(
         METHOD_DIRECTIVE_REGEX.matchEntire(line)?.let { result ->
             val descriptor = result.groups[1]!!.value
             val name = result.groups[2]!!.value
+            val nameIndex = result.groups[2]!!.range.first
 
-            smaliMethods += SmaliMethod(descriptor, name, lineNumber)
+            smaliMethods += SmaliMethod(descriptor, name, nameIndex, lineNumber)
         }
 
         // .end method
@@ -35,8 +36,9 @@ fun parseSmali(
         FIELD_DIRECTIVE_REGEX.matchEntire(line)?.let { result ->
             val descriptor = result.groups[1]!!.value
             val name = result.groups[2]!!.value
+            val nameIndex = result.groups[2]!!.range.first
 
-            smaliFields += SmaliField(descriptor, name, lineNumber)
+            smaliFields += SmaliField(descriptor, name, nameIndex, lineNumber)
         }
     }
 

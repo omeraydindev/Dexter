@@ -12,6 +12,7 @@ import ma.dexter.editor.scheme.smali.SchemeLightSmali
 import ma.dexter.editor.util.smali.SmaliActionPopupWindow
 import ma.dexter.model.JavaGotoDef
 import ma.dexter.model.SmaliGotoDef
+import ma.dexter.parsers.smali.SmaliMember
 import ma.dexter.parsers.smali.parseSmali
 import ma.dexter.project.DexGotoManager
 import ma.dexter.project.DexProject
@@ -21,6 +22,7 @@ import ma.dexter.tasks.SmaliTask
 import ma.dexter.tools.decompilers.BaseDecompiler
 import ma.dexter.util.debugToast
 import ma.dexter.util.getClassDefPath
+import ma.dexter.util.hideKeyboard
 
 class SmaliEditorFragment(
     private val smaliGotoDef: SmaliGotoDef
@@ -110,11 +112,13 @@ class SmaliEditorFragment(
         defDescriptorToGo?.let { desc ->
             val smaliFile = parseSmali(codeEditor.text.toString())
 
-            val line = smaliFile.members.firstOrNull { member ->
+            val member = smaliFile.members.firstOrNull { member ->
                 member.descriptor == desc
-            }?.line ?: 0
+            }
 
-            codeEditor.jumpToLine(line)
+            if (member != null) {
+                gotoMemberDefinition(member)
+            }
         }
     }
 
@@ -126,9 +130,19 @@ class SmaliEditorFragment(
         MaterialAlertDialogBuilder(requireContext())
             .setTitle("Navigation")
             .setItems(navItems.map { it.descriptor }.toTypedArray()) { _, pos ->
-                codeEditor.jumpToLine(navItems[pos].line)
+                gotoMemberDefinition(navItems[pos])
             }
             .show()
+    }
+
+    private fun gotoMemberDefinition(member: SmaliMember) {
+        hideKeyboard(codeEditor)
+
+        codeEditor.setSelectionRegion(
+            member.line, member.nameIndex,
+            member.line, member.nameIndex + member.name.length,
+            true
+        )
     }
 
     private fun showSmali2JavaDialog() {
