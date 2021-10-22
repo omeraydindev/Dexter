@@ -11,6 +11,22 @@ class MutableDexContainer(
         entries.associateWith { it.dexFile?.name ?: "" }
     )
 
+    fun getInnerClasses(
+        classDef: MutableClassDef
+    ): List<MutableClassDef> {
+        val classDefPrefix = classDef.type.dropLast(1) + "$" // strip the ";" in "La/b;", add $
+
+        return buildList {
+            entries.forEach { dexEntry ->
+                dexEntry.classes.forEach { cd ->
+                    if (cd.type.startsWith(classDefPrefix)) {
+                        add(cd)
+                    }
+                }
+            }
+        }
+    }
+
     fun findClassDef(classDescriptor: String?): MutableClassDef? {
         if (classDescriptor == null) return null
 

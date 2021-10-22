@@ -3,21 +3,21 @@ package ma.dexter.tasks
 import android.os.Handler
 import android.os.Looper
 import ma.dexter.App
+import ma.dexter.dex.MutableClassDef
+import ma.dexter.dex.MutableDexFile
 import ma.dexter.tools.d2j.D2JInvoker
 import ma.dexter.tools.decompilers.BaseDecompiler
 import ma.dexter.tools.decompilers.BaseDecompiler.Companion.decompile
 import ma.dexter.tools.decompilers.BaseDexDecompiler
 import ma.dexter.tools.decompilers.BaseJarDecompiler
-import ma.dexter.tools.smali.SmaliInvoker
 import java.io.File
 import java.util.concurrent.Executors
 
 // TODO: migrate to coroutines
-// TODO: Make multiple files possible too (for anonymous/inner classes)
 object Smali2JavaTask {
 
     fun execute(
-        smaliCode: String,
+        classDefs: List<MutableClassDef>,
         className: String,
         decompiler: BaseDecompiler,
         progress: (info: String) -> Unit = {},
@@ -27,8 +27,8 @@ object Smali2JavaTask {
         val handler = Handler(Looper.getMainLooper())
 
         executor.execute {
-            val invokeResult = execute_(smaliCode, className, decompiler) {
-                handler.post { // run progress on UI thread
+            val invokeResult = executeInternal(classDefs, className, decompiler) {
+                handler.post {
                     progress(it)
                 }
             }
@@ -42,8 +42,8 @@ object Smali2JavaTask {
     /*
      * Returns decompiled Java code.
      */
-    private fun execute_(
-        smaliCode: String,
+    private fun executeInternal(
+        classDefs: List<MutableClassDef>,
         className: String,
         decompiler: BaseDecompiler,
         progress: (info: String) -> Unit
@@ -63,13 +63,9 @@ object Smali2JavaTask {
         val isJarDecompiler = decompiler is BaseJarDecompiler
 
 
-        // Invoke smali
-        progress("Assembling smali to DEX...")
-        val smaliResult = SmaliInvoker.assemble(smaliCode, dexFile)
-
-        if (!smaliResult.success) {
-            return Error(title = "Smali", message = smaliResult.error)
-        }
+        // Assemble ClassDefs to DEX
+        progress("Assembling DEX...")
+        MutableDexFile(classDefs).writeToFile(dexFile)
 
 
         /**
@@ -88,10 +84,10 @@ object Smali2JavaTask {
             }
 
         }
-        
+
 
         // Invoke the decompiler
-        progress("Decompiling ${ if (isJarDecompiler) "JAR" else "DEX" } to Java...")
+        progress("Decompiling ${if (isJarDecompiler) "JAR" else "DEX"} to Java...")
 
         val javaCode = if (jarFile.exists() || !isJarDecompiler) {
 
@@ -115,11 +111,11 @@ object Smali2JavaTask {
 
     class Success(
         val javaCode: String
-    ): Result
+    ) : Result
 
     class Error(
         val title: String,
         val message: String
-    ): Result
+    ) : Result
 
 }

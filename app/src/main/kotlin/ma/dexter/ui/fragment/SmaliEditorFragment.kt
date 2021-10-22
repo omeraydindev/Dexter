@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat
 import com.github.zawadz88.materialpopupmenu.MaterialPopupMenuBuilder
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import ma.dexter.R
+import ma.dexter.dex.MutableClassDef
 import ma.dexter.editor.lang.smali.SmaliLanguage
 import ma.dexter.editor.scheme.smali.SchemeLightSmali
 import ma.dexter.editor.util.smali.SmaliActionPopupWindow
@@ -20,15 +21,13 @@ import ma.dexter.tasks.BaksmaliTask
 import ma.dexter.tasks.Smali2JavaTask
 import ma.dexter.tasks.SmaliTask
 import ma.dexter.tools.decompilers.BaseDecompiler
-import ma.dexter.util.debugToast
-import ma.dexter.util.getClassDefPath
-import ma.dexter.util.hideKeyboard
+import ma.dexter.util.*
 
 class SmaliEditorFragment(
     private val smaliGotoDef: SmaliGotoDef
 ) : BaseCodeEditorFragment() {
 
-    private val classDef = smaliGotoDef.classDef
+    private var classDef = smaliGotoDef.classDef
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -70,6 +69,8 @@ class SmaliEditorFragment(
             dialog.dismiss()
 
             if (it.success && it.value != null) {
+                classDef = MutableClassDef(classDef.parentDex, it.value)
+
                 classDef.parentDex.replaceClassDef(it.value)
 
                 DexProject.getOpenedProject()
@@ -140,13 +141,41 @@ class SmaliEditorFragment(
     }
 
     private fun showSmali2JavaDialog() {
+        val innerClasses =
+            DexProject.getOpenedProject().dexContainer.getInnerClasses(classDef)
+
+        if (innerClasses.isNotEmpty()) {
+            val innerClassesArray = innerClasses.map { getNameFromSmaliPath(it.type) }.toTypedArray()
+            val checkedArray = BooleanArray(innerClassesArray.size) { true }
+
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Select inner classes to decompile")
+                .setMultiChoiceItems(innerClassesArray, checkedArray) { _, _, _ -> }
+                .setPositiveButton("OK") { _, _ ->
+
+                    showDecompilerDialog(buildList {
+                        innerClasses.forEachIndexed { index, mutableClassDef ->
+                            if (checkedArray[index]) {
+                                add(mutableClassDef)
+                            }
+                        }
+                    })
+
+                }
+                .show()
+        } else {
+            showDecompilerDialog(listOf())
+        }
+    }
+
+    private fun showDecompilerDialog(innerClassDefs: List<MutableClassDef>) {
         val decompilers = BaseDecompiler.getDecompilers()
 
         MaterialAlertDialogBuilder(requireContext())
             .setTitle("Decompiler")
             .setItems(decompilers.map { it.getName() }.toTypedArray()) { _, pos ->
                 runSmali2Java(
-                    smaliCode = codeEditor.text.toString(),
+                    innerClassDefs,
                     className = getClassDefPath(classDef.type),
                     decompiler = decompilers[pos]
                 )
@@ -154,7 +183,7 @@ class SmaliEditorFragment(
     }
 
     private fun runSmali2Java(
-        smaliCode: String,
+        innerClassDefs: List<MutableClassDef>,
         className: String,
         decompiler: BaseDecompiler
     ) {
@@ -162,7 +191,8 @@ class SmaliEditorFragment(
         dialog.setCancelable(false)
 
         Smali2JavaTask.execute(
-            smaliCode, className, decompiler, progress = dialog::setMessage
+            innerClassDefs + classDef,
+            className, decompiler, progress = dialog::setMessage
         ) {
             dialog.dismiss()
 

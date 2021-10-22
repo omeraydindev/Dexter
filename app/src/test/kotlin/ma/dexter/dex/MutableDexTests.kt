@@ -13,11 +13,7 @@ class MutableDexTests {
         val dexFile = Java2Dex.compile(
             fileName = "A.java",
             javaCode = """
-                class A {
-                    static class B {
-                        void replaceMe() {}
-                    }
-                }
+                class A { static class B {} }
             """
         )
 

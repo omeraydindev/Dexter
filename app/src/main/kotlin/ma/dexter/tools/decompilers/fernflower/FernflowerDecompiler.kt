@@ -13,7 +13,7 @@ import java.util.jar.Manifest
 /*
  * Adapted from [https://github.com/JetBrains/intellij-community/blob/master/plugins/java-decompiler/plugin/src/org/jetbrains/java/decompiler/IdeaDecompiler.kt]
  */
-class FernflowerDecompiler: BaseJarDecompiler {
+class FernflowerDecompiler : BaseJarDecompiler {
     private val options = defaultOptions()
 
     /**
@@ -65,11 +65,23 @@ class FernflowerDecompiler: BaseJarDecompiler {
             }
         }
 
-        override fun saveClassFile(path: String, qualifiedName: String?, entryName: String, content: String?, mapping: IntArray?) {
+        override fun saveClassFile(
+            path: String,
+            qualifiedName: String?,
+            entryName: String,
+            content: String?,
+            mapping: IntArray?
+        ) {
             saveClass(qualifiedName, content)
         }
 
-        override fun saveClassEntry(path: String?, archiveName: String?, qualifiedName: String?, entryName: String?, content: String?) {
+        override fun saveClassEntry(
+            path: String?,
+            archiveName: String?,
+            qualifiedName: String?,
+            entryName: String?,
+            content: String?
+        ) {
             saveClass(qualifiedName, content)
         }
 
@@ -81,7 +93,13 @@ class FernflowerDecompiler: BaseJarDecompiler {
 
         override fun saveDirEntry(path: String?, archiveName: String?, entryName: String?) {}
 
-        override fun copyEntry(source: String?, path: String?, archiveName: String?, entry: String?) {}
+        override fun copyEntry(
+            source: String?,
+            path: String?,
+            archiveName: String?,
+            entry: String?
+        ) {
+        }
 
         override fun closeArchive(path: String?, archiveName: String?) {}
     }
@@ -104,5 +122,6 @@ class FernflowerDecompiler: BaseJarDecompiler {
         IFernflowerPreferences.BANNER to getBanner(),
         IFernflowerPreferences.MAX_PROCESSING_METHOD to 60,
         IFernflowerPreferences.IGNORE_INVALID_BYTECODE to "1",
+        IFernflowerPreferences.VERIFY_ANONYMOUS_CLASSES to "1"
     )
 }

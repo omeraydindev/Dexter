@@ -40,6 +40,12 @@ fun getClassDefPath(classDefType: String) =
     }
 
 /**
+ * Ltest/aaa; -> aaa
+ */
+fun getNameFromSmaliPath(classDefType: String) =
+    getClassDefPath(classDefType).substringAfterLast("/")
+
+/**
  * Utility method to tokenize smali.
  */
 inline fun tokenizeSmali(

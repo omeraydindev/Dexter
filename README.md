@@ -11,8 +11,8 @@ A work-in-progress **DEX** editor (hence the name **Dex**ter) for Android that u
 ## TO-DO
 - [x] Add "Goto" for fields/methods.
 - [x] Add smali navigation.
+- [x] Decompile multiple classes at a time.
 - [ ] Implement recompilation of decompiled Java sources.
-- [ ] Decompile multiple classes at a time.
 - [ ] Add decompiling single method bodies.
 - [ ] Underline smali syntax errors in realtime.
 - [ ] Add a (dis)assembler for Java, like [Krakatau](https://github.com/Storyyeller/Krakatau).

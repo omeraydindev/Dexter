@@ -24,7 +24,7 @@ object D2JInvoker {
             val outDir = File(outJar.parent, outJar.name + "_").also { it.mkdirs() }
 
             // invoke dex2jar
-            _invoke(dexFile, outDir, options, handler)
+            invokeInternal(dexFile, outDir, options, handler)
 
             // create the Jar
             JarTool(outDir, outJar).create()
@@ -41,7 +41,7 @@ object D2JInvoker {
     /**
      * Adapted from [com.googlecode.dex2jar.tools.Dex2jarCmd.doCommandLine].
      */
-    private fun _invoke(
+    private fun invokeInternal(
         dexFile: File,
         outPath: File,
         options: D2JOptions,

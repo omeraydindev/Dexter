@@ -171,7 +171,7 @@ class DexEditorFragment : BaseFragment() {
                 val packagePath = dialogBinding.etPackageName.text.toString()
                 val dexFile = dialogBinding.etDexFile.text.toString()
 
-                if (className.isEmpty() || packagePath.isEmpty() || dexFile.isEmpty()) {
+                if (className.isEmpty() || dexFile.isEmpty()) {
                     toast("Please fill in all fields")
                     return@setPositiveButton
                 }

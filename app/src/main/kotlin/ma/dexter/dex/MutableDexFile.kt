@@ -8,19 +8,41 @@ import org.jf.dexlib2.writer.io.FileDataStore
 import org.jf.dexlib2.writer.pool.DexPool
 import java.io.File
 
-class MutableDexFile(
-    val dexFile: File?,
-    byteArray: ByteArray
-) {
-    private val dexVersion = DexUtil.verifyDexHeader(byteArray, 0)
-    private val opcodes = Opcodes.forDexVersion(dexVersion)
-    private val dexBackedDexFile = DexBackedDexFile(opcodes, byteArray) // to simplify reading stuff
+class MutableDexFile {
+    private val dexVersion: Int
+    private val opcodes: Opcodes
+    private val _classes: MutableList<MutableClassDef>
 
-    private val _classes = dexBackedDexFile.classes.map {
-        MutableClassDef(this, it)
-    }.toMutableList()
+    val dexFile: File?
+    val classes: List<MutableClassDef>
 
-    val classes = _classes as List<MutableClassDef>
+    constructor(
+        dexFile: File?,
+        byteArray: ByteArray
+    ) {
+        this.dexFile = dexFile
+        this.dexVersion = DexUtil.verifyDexHeader(byteArray, 0)
+        this.opcodes = Opcodes.forDexVersion(dexVersion)
+
+        val dexBacked = DexBackedDexFile(opcodes, byteArray)
+        this._classes = dexBacked.classes.map {
+            MutableClassDef(this, it)
+        }.toMutableList()
+        this.classes = _classes
+    }
+
+    constructor(
+        classDefs: List<MutableClassDef>,
+        opcodes: Opcodes = Opcodes.getDefault()
+    ) {
+        this.dexFile = null
+        this.dexVersion = 0
+        this.opcodes = opcodes
+
+        this._classes = classDefs.toMutableList()
+        this.classes = _classes
+    }
+
 
     /**
      * Adds a [ClassDef] if it doesn't exist.
