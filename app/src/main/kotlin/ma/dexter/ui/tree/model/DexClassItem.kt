@@ -1,11 +1,11 @@
 package ma.dexter.ui.tree.model
 
-import org.jf.dexlib2.iface.ClassDef
+import ma.dexter.dex.MutableClassDef
 
 /**
  * path: somepackage/SomeClass
  */
 class DexClassItem(
     path: String,
-    val classDef: ClassDef
+    val classDef: MutableClassDef
 ): DexItem(path)

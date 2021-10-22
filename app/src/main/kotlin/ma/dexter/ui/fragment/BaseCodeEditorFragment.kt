@@ -79,9 +79,7 @@ open class BaseCodeEditorFragment : BaseFragment() {
                 label = "Search"
                 iconDrawable =
                     ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_search_24)
-                callback = {
-                    codeEditor.beginSearchMode()
-                }
+                callback = codeEditor::beginSearchMode
             }
 
             customItem {

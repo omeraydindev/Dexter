@@ -1,35 +1,40 @@
 package ma.dexter.ui.fragment
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.PopupMenu
-import com.github.angads25.filepicker.model.DialogConfigs
-import com.github.angads25.filepicker.model.DialogProperties
-import com.github.angads25.filepicker.view.FilePickerDialog
+import androidx.fragment.app.activityViewModels
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import ma.dexter.R
+import ma.dexter.databinding.DialogCreateSmaliFileBinding
 import ma.dexter.databinding.FragmentDexEditorBinding
-import ma.dexter.project.DexEntry
 import ma.dexter.dex.DexFactory
+import ma.dexter.dex.MutableDexFile
+import ma.dexter.model.SmaliGotoDef
 import ma.dexter.project.DexGotoManager
 import ma.dexter.project.DexProject
-import ma.dexter.model.SmaliGotoDef
 import ma.dexter.ui.activity.BaseActivity
+import ma.dexter.ui.tree.TreeNode
 import ma.dexter.ui.tree.TreeView
 import ma.dexter.ui.tree.dex.SmaliTree
 import ma.dexter.ui.tree.dex.binder.DexItemNodeViewFactory
 import ma.dexter.ui.tree.model.DexClassItem
 import ma.dexter.ui.tree.model.DexItem
-import ma.dexter.util.isValidDexFileName
-import ma.dexter.util.storagePath
+import ma.dexter.ui.viewmodel.MainViewModel
+import ma.dexter.util.createClassDef
+import ma.dexter.util.getPackageName
 import ma.dexter.util.toast
 import java.io.File
-import java.util.zip.ZipFile
 
 class DexEditorFragment : BaseFragment() {
     private lateinit var binding: FragmentDexEditorBinding
     private lateinit var treeView: TreeView<DexItem>
+
+    private val viewModel: MainViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,63 +46,20 @@ class DexEditorFragment : BaseFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.btnLoadDex.setOnClickListener {
-            val properties = DialogProperties().apply {
-                root = storagePath
-                extensions = arrayOf("dex", "apk")
-                selection_mode = DialogConfigs.MULTI_MODE
-            }
-
-            FilePickerDialog(requireContext(), properties).run {
-                setTitle("Select either .dex file(s) or a single .apk file")
-                setDialogSelectionListener { files ->
-                    if (files.size == 1 && files[0].endsWith(".apk")) {
-                        loadApk(files[0])
-                    } else if (files.all { it.endsWith(".dex") }) {
-                        loadDexes(files)
-                    } else {
-                        toast("Please select either .dex file(s) or a single .apk file")
-                    }
-                }
-                show()
-            }
-        }
-    }
-
-    private fun loadApk(
-        apkPath: String
-    ) {
-        ZipFile(apkPath).use { apk ->
-            loadDexes(buildList {
-                apk.stream().forEach { entry ->
-                    if (!entry.isDirectory && isValidDexFileName(entry.name)) {
-                        val bytes = apk.getInputStream(entry).readBytes()
-                        val dexEntry = DexEntry(entry.name,
-                            DexFactory.fromByteArray(bytes))
-
-                        add(dexEntry)
-                    }
-                }
-            })
-        }
+        viewModel.dexPaths.observe(viewLifecycleOwner, ::loadDexes)
     }
 
     private fun loadDexes(
         dexPaths: Array<String>
     ) {
-        loadDexes(buildList {
-            dexPaths.forEach {
-                val file = File(it)
-                val dexEntry = DexEntry(file.name,
-                    DexFactory.fromFile(file))
-
-                add(dexEntry)
-            }
+        loadDexes(dexPaths.map {
+            DexFactory.fromFile(File(it))
         })
     }
 
+    @SuppressLint("CheckResult")
     private fun loadDexes(
-        dexEntries: List<DexEntry>
+        dexEntries: List<MutableDexFile>
     ) {
         val dexTree = SmaliTree()
             .addDexEntries(dexEntries)
@@ -106,11 +68,11 @@ class DexEditorFragment : BaseFragment() {
 
         val binder = DexItemNodeViewFactory(
             toggleListener = { treeNode ->
-                treeNode.value.also { dexItem ->
-                    if (dexItem is DexClassItem) {
-                        DexGotoManager(requireActivity())
-                            .gotoClassDef(SmaliGotoDef(dexItem.classDef))
-                    }
+                val dexItem = treeNode.value
+
+                if (dexItem is DexClassItem) {
+                    DexGotoManager(requireActivity())
+                        .gotoClassDef(SmaliGotoDef(dexItem.classDef))
                 }
             },
 
@@ -118,10 +80,9 @@ class DexEditorFragment : BaseFragment() {
                 val popupMenu = PopupMenu(context, view)
                 popupMenu.menuInflater.inflate(R.menu.menu_dex_tree_item, popupMenu.menu)
                 popupMenu.setOnMenuItemClickListener {
-                    when(it.itemId) { // todo
-                        R.id.it_add -> {}
-                        R.id.it_copy -> {}
-                        R.id.it_delete -> {}
+                    when (it.itemId) {
+                        R.id.it_add -> addClass(treeNode)
+                        R.id.it_delete -> deleteClass(treeNode)
                     }
 
                     true
@@ -162,6 +123,69 @@ class DexEditorFragment : BaseFragment() {
 
             (requireActivity() as BaseActivity).subtitle = currentPackage
         }
+    }
+
+    private fun deleteClass(
+        treeNode: TreeNode<DexItem>
+    ) {
+        val item = treeNode.value
+
+        if (item is DexClassItem) {
+            item.classDef.parentDex.deleteClassDef(item.classDef)
+        } else {
+            DexProject.getOpenedProject()
+                .dexContainer.deletePackage(treeNode.getPackageName())
+        }
+
+        treeNode.parent.removeChild(treeNode)
+        refreshTreeView()
+    }
+
+    private fun addClass(
+        treeNode: TreeNode<DexItem>?
+    ) {
+        if (treeNode == null) return
+
+        if (treeNode.value is DexClassItem) {
+            addClass(treeNode.parent)
+            return
+        }
+
+        val dialogBinding = DialogCreateSmaliFileBinding.inflate(layoutInflater)
+        val biMap = DexProject.getOpenedProject().dexContainer.biMap
+
+        dialogBinding.etDexFile.setAdapter(
+            ArrayAdapter(
+                requireContext(), android.R.layout.simple_list_item_1,
+                biMap.values.toList()
+            )
+        )
+
+        dialogBinding.etPackageName.setText(treeNode.getPackageName())
+
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Create class")
+            .setView(dialogBinding.root)
+            .setPositiveButton("OK") { _, _ ->
+                val className = dialogBinding.etClassName.text.toString()
+                val packagePath = dialogBinding.etPackageName.text.toString()
+                val dexFile = dialogBinding.etDexFile.text.toString()
+
+                if (className.isEmpty() || packagePath.isEmpty() || dexFile.isEmpty()) {
+                    toast("Please fill in all fields")
+                    return@setPositiveButton
+                }
+
+                val classDef = createClassDef("L$packagePath/$className;")
+                val dex = biMap.inverse()[dexFile]!!
+
+                dex.addClassDef(classDef)
+
+                // costly operation but ensures that the tree is structured correctly
+                // TODO: optimize
+                loadDexes(DexProject.getOpenedProject().dexContainer.entries)
+            }
+            .show()
     }
 
     private fun refreshTreeView() {

@@ -51,17 +51,12 @@ class SmaliEditorFragment(
                     requireContext(),
                     R.drawable.ic_baseline_view_stream_24
                 )
-                callback = {
-                    showNavigationDialog()
-                }
+                callback = ::showNavigationDialog
             }
-
             item {
                 label = "Smali to Java"
                 iconDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.ic_java)
-                callback = {
-                    showSmali2JavaDialog()
-                }
+                callback = ::showSmali2JavaDialog
             }
         }
     }
@@ -75,11 +70,10 @@ class SmaliEditorFragment(
             dialog.dismiss()
 
             if (it.success && it.value != null) {
-                DexProject.getOpenedProject()
-                    .dexContainer.replaceClassDef(it.value)
+                classDef.parentDex.replaceClassDef(it.value)
 
                 DexProject.getOpenedProject()
-                    .smaliContainer.putSmaliCode(it.value, codeEditor.text.toString())
+                    .smaliContainer.putSmaliCode(it.value.type, codeEditor.text.toString())
 
                 debugToast("Success")
             } else {

@@ -75,6 +75,7 @@ dependencies {
     implementation 'com.github.angads25:filepicker:1.1.1'
     implementation 'me.zhanghai.android.fastscroll:library:1.1.7'
     implementation 'com.github.zawadz88.materialpopupmenu:material-popup-menu:4.1.0'
+    implementation 'com.google.guava:guava:27.1-android'
 
     // dex2jar (maintained fork)
     def d2jVersion = "v30"

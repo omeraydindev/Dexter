@@ -1,6 +1,7 @@
 package ma.dexter.ui.activity
 
 import android.Manifest
+import android.app.ProgressDialog
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -19,7 +20,7 @@ import ma.dexter.project.DexProject
 import ma.dexter.ui.adapter.DexPagerAdapter
 import ma.dexter.ui.viewmodel.MainViewModel
 import ma.dexter.util.*
-import java.io.File
+import java.util.concurrent.Executors
 
 class MainActivity : BaseActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -60,11 +61,14 @@ class MainActivity : BaseActivity() {
             R.id.it_more -> {
                 popupMenu {
                     section {
+                        title = "DEX"
                         item {
-                            label = "Export DEX"
-                            callback = {
-                                exportDex()
-                            }
+                            label = "Open..."
+                            callback = ::openDexFiles
+                        }
+                        item {
+                            label = "Save"
+                            callback = ::saveDexFiles
                         }
                     }
                     section {
@@ -83,20 +87,34 @@ class MainActivity : BaseActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun exportDex() {
+    private fun openDexFiles() {
         val properties = DialogProperties().apply {
             root = storagePath
-            selection_type = DialogConfigs.DIR_SELECT
+            extensions = arrayOf("dex")
+            selection_mode = DialogConfigs.MULTI_MODE
         }
 
-        FilePickerDialog(this, properties).apply {
-            setTitle("Select a folder to extract DEX files to")
-            setDialogSelectionListener { files ->
-                DexProject.getOpenedProject()
-                    .dexContainer.exportTo(File(files[0]))
-                debugToast("Done")
+        FilePickerDialog(this, properties).run {
+            setTitle("Select DEX file(s)")
+            setDialogSelectionListener {
+                viewModel.dexPaths.value = it
+                viewModel.removeAllPageItems()
             }
             show()
+        }
+    }
+
+    private fun saveDexFiles() {
+        val dialog = ProgressDialog.show(this, "Loading", "Saving DEX files...", true, false)
+
+        Executors.newSingleThreadExecutor().execute {
+            DexProject.getOpenedProject()
+                .dexContainer.saveDexFiles()
+
+            runOnUiThread {
+                dialog.dismiss()
+                debugToast("Saved successfully")
+            }
         }
     }
 

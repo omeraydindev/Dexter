@@ -1,12 +1,12 @@
 package ma.dexter.model
 
+import ma.dexter.dex.MutableClassDef
 import org.jf.dexlib2.iface.ClassDef
 
 sealed class GotoDef
 
-// do "equals" and "hashCode" work well for ClassDef subclasses?
 data class SmaliGotoDef(
-    val classDef: ClassDef,
+    val classDef: MutableClassDef,
     val defDescriptor: String? = null
 ): GotoDef()
 

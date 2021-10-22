@@ -45,8 +45,9 @@ class DexGotoManager(
             if (token.type == smaliParser.CLASS_DESCRIPTOR && line == cursor.leftLine) {
                 val endColumn = startColumn + token.text.length
 
-                if (cursor.leftColumn  in startColumn..endColumn &&
-                    cursor.rightColumn in startColumn..endColumn) {
+                if (cursor.leftColumn in startColumn..endColumn &&
+                    cursor.rightColumn in startColumn..endColumn
+                ) {
 
                     editor.setSelectionRegion(
                         cursor.leftLine, startColumn,
@@ -66,7 +67,8 @@ class DexGotoManager(
                 val range = it.groups[1]!!.range
 
                 if (cursor.leftLine == lineNumber &&
-                    cursor.leftColumn in range) {
+                    cursor.leftColumn in range
+                ) {
 
                     editor.setSelectionRegion(
                         cursor.leftLine,
@@ -88,12 +90,11 @@ class DexGotoManager(
         dexClassDef: String,
         defDescriptorToGo: String? = null
     ) {
-        DexProject.getOpenedProject().dexContainer.entries.forEach { dex ->
-            dex.dex.findClassDef(dexClassDef)?.let {
+        DexProject.getOpenedProject()
+            .dexContainer.findClassDef(defDescriptorToGo)?.let {
                 gotoClassDef(SmaliGotoDef(it, defDescriptorToGo))
                 return
             }
-        }
 
         toast("Couldn't find class def: $dexClassDef")
     }

@@ -3,11 +3,32 @@ package ma.dexter.dex
 import com.google.common.truth.Truth.assertThat
 import ma.dexter.tools.smali.BaksmaliInvoker
 import ma.dexter.util.compile.Java2Dex
-import org.jf.dexlib2.DexFileFactory
 import org.jf.smali.SmaliTestUtils
 import org.junit.Test
 
 class MutableDexTests {
+
+    @Test
+    fun `find & delete ClassDefs`() {
+        val dexFile = Java2Dex.compile(
+            fileName = "A.java",
+            javaCode = """
+                class A {
+                    static class B {
+                        void replaceMe() {}
+                    }
+                }
+            """
+        )
+
+        val dex = DexFactory.fromFile(dexFile)
+
+        val cd = dex.findClassDef("LA;")
+        assert(cd != null)
+
+        dex.deleteClassDef(cd!!)
+        assert(dex.findClassDef("LA;") == null)
+    }
 
     @Test
     fun `disassemble smali and edit it, then reassemble the dex`() {
@@ -24,22 +45,22 @@ class MutableDexTests {
             """
         )
 
-        val dex = MutableDex(DexFactory.fromFile(dexFile))
+        val dex = DexFactory.fromFile(dexFile)
 
         val newClassDef = SmaliTestUtils.compileSmali(
             dex.getSmali("Lm/A\$B;")
                 .replace("replaceMe", "replacedYou")
         )
-        dex.addClassDef(newClassDef) // will replace the existing ClassDef
+        dex.replaceClassDef(newClassDef)
 
         val otherClassDef = SmaliTestUtils.compileSmali(".class Lm/C; .super Lm/A;")
         dex.addClassDef(otherClassDef)
 
-        DexFileFactory.writeDexFile(dexFile.absolutePath, dex) // overwrite the dex
+        dex.writeToFile(dex.dexFile!!)
 
 
         // check if changes are applied
-        val overwrittenDex = MutableDex(DexFactory.fromFile(dexFile))
+        val overwrittenDex = DexFactory.fromFile(dexFile)
 
         assertThat(overwrittenDex.findClassDef("Lm/A\$B;"))
             .isNotNull()
@@ -54,7 +75,7 @@ class MutableDexTests {
             .isNotNull()
     }
 
-    private fun MutableDex.getSmali(classDescriptor: String): String {
+    private fun MutableDexFile.getSmali(classDescriptor: String): String {
         val classDef = findClassDef(classDescriptor)!!
 
         return BaksmaliInvoker.disassemble(classDef)

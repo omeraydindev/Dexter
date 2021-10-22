@@ -1,47 +1,42 @@
 package ma.dexter.project
 
-import org.jf.dexlib2.DexFileFactory
-import org.jf.dexlib2.iface.ClassDef
-import java.io.File
+import com.google.common.collect.ImmutableBiMap
+import ma.dexter.dex.MutableClassDef
+import ma.dexter.dex.MutableDexFile
 
 class MutableDexContainer(
-    val entries: List<DexEntry>
-){
-    // TODO: temporary
-    fun replaceClassDef(
-        classDefToReplace: ClassDef
-    ) {
-        entries.forEach {
-            if (it.dex.findClassDef(classDefToReplace.type) != null) {
-                it.dex.addClassDef(classDefToReplace)
-                return
+    val entries: List<MutableDexFile>
+) {
+    val biMap: ImmutableBiMap<MutableDexFile, String> = ImmutableBiMap.copyOf(
+        entries.associateWith { it.dexFile?.name ?: "" }
+    )
+
+    fun findClassDef(classDescriptor: String?): MutableClassDef? {
+        if (classDescriptor == null) return null
+
+        entries.forEach { dexEntry ->
+            dexEntry.findClassDef(classDescriptor)?.let {
+                return it
             }
+        }
+
+        return null
+    }
+
+    /**
+     * Deletes [MutableClassDef]s in the given package.
+     *
+     * [packagePath] being in the somePackage/someClass format.
+     */
+    fun deletePackage(packagePath: String) {
+        entries.forEach { dex ->
+            dex.deletePackage(packagePath)
         }
     }
 
-    // TODO: temporary
-    fun deleteClassDef(
-        classDefToDelete: ClassDef
-    ) {
-        entries.forEach {
-            it.dex.deleteClassDef(classDefToDelete)
-        }
-    }
-
-    // TODO: temporary
-    fun exportTo(
-        dir: File
-    ) {
-        entries.forEachIndexed { index, dexEntry ->
-            var name = "classes${index + 1}"
-            var path = File(dir, "$name.dex")
-
-            while (path.exists()) {
-                name += "_d"
-                path = File(dir, "$name.dex")
-            }
-
-            DexFileFactory.writeDexFile(path.absolutePath, dexEntry.dex)
+    fun saveDexFiles() {
+        entries.forEach { dexEntry ->
+            dexEntry.writeToFile(dexEntry.dexFile!!) // todo: handle APKs
         }
     }
 

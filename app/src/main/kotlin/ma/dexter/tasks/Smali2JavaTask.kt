@@ -64,7 +64,7 @@ object Smali2JavaTask {
 
 
         // Invoke smali
-        progress("Assembling smali to dex...")
+        progress("Assembling smali to DEX...")
         val smaliResult = SmaliInvoker.assemble(smaliCode, dexFile)
 
         if (!smaliResult.success) {
@@ -80,7 +80,7 @@ object Smali2JavaTask {
         if (isJarDecompiler) {
 
             // Invoke dex2jar
-            progress("Converting dex to jar...")
+            progress("Converting DEX to JAR...")
             val d2jResult = D2JInvoker.invoke(dexFile, jarFile)
 
             if (!d2jResult.success) {
@@ -91,7 +91,7 @@ object Smali2JavaTask {
         
 
         // Invoke the decompiler
-        progress("Decompiling ${ if (isJarDecompiler) "jar" else "dex" } to Java...")
+        progress("Decompiling ${ if (isJarDecompiler) "JAR" else "DEX" } to Java...")
 
         val javaCode = if (jarFile.exists() || !isJarDecompiler) {
 
@@ -103,7 +103,7 @@ object Smali2JavaTask {
         } else {
             return Error(
                 title = decompiler.getName(),
-                message = "Couldn't find generated .jar in ${jarFile.absolutePath}"
+                message = "Couldn't find generated JAR in ${jarFile.absolutePath}"
             )
         }
 

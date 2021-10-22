@@ -1,6 +1,9 @@
 package ma.dexter.ui.tree.dex.binder
 
 import android.view.View
+import androidx.core.content.ContextCompat
+import ma.dexter.App
+import ma.dexter.R
 import ma.dexter.databinding.ItemDexTreeNodeBinding
 import ma.dexter.ui.tree.TreeNode
 import ma.dexter.ui.tree.base.BaseNodeViewBinder
@@ -34,21 +37,24 @@ class DexItemNodeViewBinder(
             binding.icExpand.visibility = View.GONE
             binding.cvClassDef.visibility = View.VISIBLE
 
+            val colorClass = ContextCompat.getColor(App.context, R.color.colorClass)
+            val colorInterface = ContextCompat.getColor(App.context, R.color.colorInterface)
+
             binding.txClassDef.text = when {
                 item.classDef.isAnnotation() -> {
-                    binding.cvClassDef.setCardBackgroundColor(COLOR_INTERFACE)
+                    binding.cvClassDef.setCardBackgroundColor(colorInterface)
                     "@"
                 }
                 item.classDef.isEnum() -> {
-                    binding.cvClassDef.setCardBackgroundColor(COLOR_CLASS)
+                    binding.cvClassDef.setCardBackgroundColor(colorClass)
                     "E"
                 }
                 item.classDef.isInterface() -> {
-                    binding.cvClassDef.setCardBackgroundColor(COLOR_INTERFACE)
+                    binding.cvClassDef.setCardBackgroundColor(colorInterface)
                     "I"
                 }
                 else -> { // Class
-                    binding.cvClassDef.setCardBackgroundColor(COLOR_CLASS)
+                    binding.cvClassDef.setCardBackgroundColor(colorClass)
                     "C"
                 }
             }
@@ -83,10 +89,5 @@ class DexItemNodeViewBinder(
 
     fun interface DexItemNodeLongClickListener {
         fun onNodeLongClicked(view: View, treeNode: TreeNode<DexItem>): Boolean
-    }
-
-    companion object {
-        const val COLOR_CLASS = 0xff67bed9.toInt()
-        const val COLOR_INTERFACE = 0xff487c39.toInt()
     }
 }

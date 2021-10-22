@@ -33,7 +33,7 @@ object SmaliInvoker {
             val memoryDataStore = MemoryDataStore()
             result.value?.writeTo(memoryDataStore)
             val dex = DexFactory.fromByteArray(memoryDataStore.buffer)
-            return Result(dex.classes.first(), true)
+            return Result(dex.classes.first().classDef, true)
 
         } catch (e: Exception) { // catch everything, will be shown to the user anyway
             return Result(null, false, Log.getStackTraceString(e))

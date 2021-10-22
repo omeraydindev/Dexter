@@ -1,7 +1,9 @@
 package ma.dexter.project
 
+import ma.dexter.dex.MutableDexFile
+
 class DexProject private constructor(
-    dexEntries: List<DexEntry>
+    dexEntries: List<MutableDexFile>
 ) {
     val dexContainer = MutableDexContainer(dexEntries)
 
@@ -12,7 +14,7 @@ class DexProject private constructor(
 
         fun getOpenedProject() = project ?: throw IllegalStateException("No project is opened!")
 
-        fun openProject(dexEntries: List<DexEntry>): DexProject {
+        fun openProject(dexEntries: List<MutableDexFile>): DexProject {
             project = DexProject(dexEntries)
             return project!!
         }

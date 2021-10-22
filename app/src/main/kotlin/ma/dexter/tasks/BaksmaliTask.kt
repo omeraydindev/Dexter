@@ -2,14 +2,14 @@ package ma.dexter.tasks
 
 import android.os.Handler
 import android.os.Looper
+import ma.dexter.dex.MutableClassDef
 import ma.dexter.project.DexProject
-import org.jf.dexlib2.iface.ClassDef
 import java.util.concurrent.Executors
 
 object BaksmaliTask {
 
     fun execute(
-        classDef: ClassDef,
+        classDef: MutableClassDef,
         callback: (smali: String) -> Unit
     ) {
         val executor = Executors.newSingleThreadExecutor()

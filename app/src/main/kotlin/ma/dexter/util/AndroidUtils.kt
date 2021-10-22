@@ -7,6 +7,9 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import ma.dexter.App
+import android.content.ClipData
+import android.content.ClipboardManager
+
 
 // to later remove them easily
 fun debugToast(
@@ -46,4 +49,17 @@ fun hideKeyboard(view: View?) {
     } catch (e: Exception) {
         // eat it
     }
+}
+
+fun copyToClipboard(text: String) {
+    val clipboard = App.context
+        .getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    val clip = ClipData.newPlainText("", text) // is label important?
+    clipboard.setPrimaryClip(clip)
+}
+
+fun copyToClipboard(text: String, showToast: Boolean) {
+    copyToClipboard(text)
+
+    if (showToast) toast("Copied \"$text\" to clipboard")
 }

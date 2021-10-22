@@ -11,7 +11,9 @@ class MainViewModel : ViewModel() {
 
     val currentPosition = MutableLiveData(0)
 
+    // todo: find a better solution for these?
     val viewPagerScrolled = MutableLiveData(0)
+    val dexPaths = MutableLiveData(arrayOf<String>())
 
     fun getPageItems(): LiveData<out List<DexPageItem>> {
         return dexPageItems

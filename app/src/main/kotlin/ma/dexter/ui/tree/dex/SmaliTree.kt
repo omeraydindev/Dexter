@@ -1,14 +1,13 @@
 package ma.dexter.ui.tree.dex
 
-import ma.dexter.project.DexEntry
-import ma.dexter.dex.MutableDex
+import ma.dexter.dex.MutableDexFile
 import ma.dexter.ui.tree.*
 import ma.dexter.ui.tree.model.DexClassItem
 import ma.dexter.ui.tree.model.DexItem
 import ma.dexter.util.getClassDefPath
 
 class SmaliTree {
-    private val dexList = mutableListOf<MutableDex>()
+    private val dexList = mutableListOf<MutableDexFile>()
 
     fun createTree(): TreeNode<DexItem> {
         val rootTreeNode = TreeNode.root<DexItem>()
@@ -37,7 +36,7 @@ class SmaliTree {
     // TODO: use a faster algorithm
     private fun addToTree(
         rootTreeNode: TreeNode<DexItem>,
-        dex: MutableDex
+        dex: MutableDexFile
     ) {
         dex.classes.forEach { classDef ->
             var currentNode = rootTreeNode
@@ -72,13 +71,13 @@ class SmaliTree {
         }
     }
 
-    private fun addDex(dex: MutableDex): SmaliTree {
+    private fun addDex(dex: MutableDexFile): SmaliTree {
         dexList += dex
         return this
     }
 
-    fun addDexEntries(dexEntries: List<DexEntry>): SmaliTree {
-        dexEntries.forEach { addDex(it.dex) }
+    fun addDexEntries(dexEntries: List<MutableDexFile>): SmaliTree {
+        dexEntries.forEach { addDex(it) }
         return this
     }
 
