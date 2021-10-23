@@ -50,10 +50,10 @@ object D2JInvoker {
         Dex2jar.from(dexFile)
             .withExceptionHandler(handler)
             .reUseReg(options.reuseReg)
-            .topoLogicalSort()
+            .topoLogicalSort(options.topoLogicalSort)
             .skipDebug(!options.debugInfo)
             .optimizeSynchronized(options.optimizeSynchronized)
-            .printIR(false)
+            .printIR(options.printIR)
             .noCode(options.skipMethodBodies)
             .skipExceptions(options.skipExceptions)
             .to(outPath.toPath()) // Careful!

@@ -33,11 +33,11 @@ class MutableDexFile {
 
     constructor(
         classDefs: List<MutableClassDef>,
-        opcodes: Opcodes = Opcodes.getDefault()
+        dexVersion: Int? = null
     ) {
         this.dexFile = null
-        this.dexVersion = 0
-        this.opcodes = opcodes
+        this.dexVersion = dexVersion ?: classDefs.maxOf { it.parentDex.dexVersion }
+        this.opcodes = Opcodes.forDexVersion(this.dexVersion)
 
         this._classes = classDefs.toMutableList()
         this.classes = _classes

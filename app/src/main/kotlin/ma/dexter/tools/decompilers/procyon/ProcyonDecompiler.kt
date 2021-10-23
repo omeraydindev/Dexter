@@ -28,7 +28,6 @@ class ProcyonDecompiler: BaseJarDecompiler {
         val options = DecompilerSettings().apply {
             // without this option, java.util.List becomes java.util.* in imports
             forceExplicitImports = true
-            isUnicodeOutputEnabled = true
 
             RT_JAR = JarFile(rtJar)
             typeLoader = JarTypeLoader(JarFile(jarFile))

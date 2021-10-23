@@ -39,7 +39,9 @@ class FernflowerDecompiler : BaseJarDecompiler {
         decompiler.addSource(jarFile)
         decompiler.decompileContext()
 
-        return resultSaver.result
+        return resultSaver.result.ifEmpty {
+            "// Error: Fernflower couldn't decompile $className"
+        }
     }
 
     private class BytecodeProvider : IBytecodeProvider {
