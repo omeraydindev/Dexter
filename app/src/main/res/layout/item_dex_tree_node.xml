@@ -7,7 +7,10 @@
     android:background="?android:attr/selectableItemBackground"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:padding="6dp">
+    android:paddingLeft="10dp"
+    android:paddingTop="6dp"
+    android:paddingRight="10dp"
+    android:paddingBottom="6dp">
 
     <ImageView
         android:id="@+id/ic_expand"
@@ -22,14 +25,14 @@
         android:layout_width="18dp"
         android:layout_height="18dp"
         android:visibility="gone"
-        app:cardBackgroundColor="#67bed9"
-        app:cardCornerRadius="100dp"
+        app:cardCornerRadius="9dp"
         tools:visibility="visible">
 
         <TextView
             android:id="@+id/tx_class_def"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="#67bed9"
             android:gravity="center"
             android:textColor="#21252b"
             android:textSize="11sp"

@@ -4,7 +4,7 @@ import org.benf.cfr.reader.api.ClassFileSource
 import org.benf.cfr.reader.bytecode.analysis.parse.utils.Pair
 import java.util.jar.JarFile
 
-class JarSource(
+class CFRJarSource(
     private val jarFile: JarFile
 ) : ClassFileSource {
 

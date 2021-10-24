@@ -1,6 +1,5 @@
 package ma.dexter.ui.fragment
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -57,7 +56,6 @@ class DexEditorFragment : BaseFragment() {
         })
     }
 
-    @SuppressLint("CheckResult")
     private fun loadDexes(
         dexEntries: List<MutableDexFile>
     ) {

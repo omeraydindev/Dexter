@@ -1,6 +1,5 @@
 package ma.dexter.ui.fragment
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.*
 import androidx.annotation.CallSuper
@@ -12,8 +11,8 @@ import ma.dexter.R
 import ma.dexter.databinding.FragmentBaseCodeEditorBinding
 import ma.dexter.editor.util.setDefaults
 import ma.dexter.editor.util.setOnTextChangedListener
-import ma.dexter.ui.viewmodel.MainViewModel
 import ma.dexter.ui.util.checkableItem
+import ma.dexter.ui.viewmodel.MainViewModel
 
 open class BaseCodeEditorFragment : BaseFragment() {
     private lateinit var binding: FragmentBaseCodeEditorBinding
@@ -67,7 +66,6 @@ open class BaseCodeEditorFragment : BaseFragment() {
 
     }
 
-    @SuppressLint("SetTextI18n")
     private fun showMoreMenu(anchorView: View) {
         val builder = MaterialPopupMenuBuilder()
 

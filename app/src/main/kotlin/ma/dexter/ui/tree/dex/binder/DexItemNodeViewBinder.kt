@@ -42,19 +42,19 @@ class DexItemNodeViewBinder(
 
             binding.txClassDef.text = when {
                 item.classDef.isAnnotation() -> {
-                    binding.cvClassDef.setCardBackgroundColor(colorInterface)
+                    binding.txClassDef.setBackgroundColor(colorInterface)
                     "@"
                 }
                 item.classDef.isEnum() -> {
-                    binding.cvClassDef.setCardBackgroundColor(colorClass)
+                    binding.txClassDef.setBackgroundColor(colorClass)
                     "E"
                 }
                 item.classDef.isInterface() -> {
-                    binding.cvClassDef.setCardBackgroundColor(colorInterface)
+                    binding.txClassDef.setBackgroundColor(colorInterface)
                     "I"
                 }
                 else -> { // Class
-                    binding.cvClassDef.setCardBackgroundColor(colorClass)
+                    binding.txClassDef.setBackgroundColor(colorClass)
                     "C"
                 }
             }

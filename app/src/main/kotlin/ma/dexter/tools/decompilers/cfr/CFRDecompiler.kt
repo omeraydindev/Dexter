@@ -17,9 +17,9 @@ class CFRDecompiler : BaseJarDecompiler {
     ): String {
         val jar = JarFile(jarFile)
 
-        val outputSink = OutputSink()
+        val outputSink = CFROutputSink()
 
-        val jarSource = JarSource(jar)
+        val jarSource = CFRJarSource(jar)
 
         val driver = CfrDriver.Builder()
             .withClassFileSource(jarSource)

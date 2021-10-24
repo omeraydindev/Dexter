@@ -4,7 +4,7 @@ import org.benf.cfr.reader.api.OutputSinkFactory
 import org.benf.cfr.reader.api.SinkReturns
 import java.util.*
 
-class OutputSink : OutputSinkFactory {
+class CFROutputSink : OutputSinkFactory {
     private val _javaCode = StringBuilder()
 
     val javaCode: String
