@@ -78,7 +78,7 @@ dependencies {
     implementation 'com.google.guava:guava:27.1-android'
 
     // dex2jar (maintained fork)
-    def d2jVersion = "v33"
+    def d2jVersion = "v34"
     def withoutIcu = { exclude group: 'com.ibm.icu', module: 'icu4j' } // Adds ~10MB to the APK !
     implementation "com.github.ThexXTURBOXx.dex2jar:dex-tools:$d2jVersion", withoutIcu
     implementation "com.github.ThexXTURBOXx.dex2jar:dex-translator:$d2jVersion", withoutIcu
