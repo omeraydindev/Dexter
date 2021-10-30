@@ -1,6 +1,7 @@
 package ma.dexter.editor.lang.smali
 
 import io.github.rosemoe.sora.data.BlockLine
+import io.github.rosemoe.sora.data.Span
 import io.github.rosemoe.sora.interfaces.CodeAnalyzer
 import io.github.rosemoe.sora.text.TextAnalyzeResult
 import io.github.rosemoe.sora.text.TextAnalyzer
@@ -8,12 +9,15 @@ import io.github.rosemoe.sora.widget.EditorColorScheme
 import ma.dexter.editor.lang.smali.model.SmaliAutoCompleteModel
 import ma.dexter.editor.lang.smali.model.SmaliClassDesc
 import ma.dexter.editor.scheme.smali.SmaliBaseScheme
+import ma.dexter.tools.smali.catcherr.smaliCatchErrFlexLexer
+import ma.dexter.tools.smali.catcherr.smaliCatchErrParser
+import org.antlr.runtime.CommonTokenStream
 import org.antlr.runtime.Token
 import org.jf.smali.smaliFlexLexer
 import org.jf.smali.smaliParser
 import java.io.StringReader
 
-class SmaliAnalyzer: CodeAnalyzer {
+class SmaliAnalyzer : CodeAnalyzer {
 
     override fun analyze(
         content: CharSequence,
@@ -46,7 +50,7 @@ class SmaliAnalyzer: CodeAnalyzer {
             lastLine = line
             val column = token.charPositionInLine
 
-            when(token.type) {
+            when (token.type) {
 
                 in directives -> {
                     colors.addIfNeeded(line, column, SmaliBaseScheme.DIRECTIVE)
@@ -114,12 +118,34 @@ class SmaliAnalyzer: CodeAnalyzer {
                     colors.addIfNeeded(line, column, EditorColorScheme.TEXT_NORMAL)
                 }
             }
-
-            // todo: underline spans for syntax errors
         }
 
         colors.extra = SmaliAutoCompleteModel(classDescList)
         colors.determine(lastLine)
+
+        markSyntaxErrors(text.toString(), colors)
+    }
+
+    // todo: should we care about the errors produced by [org.jf.smali.smaliTreeWalker] ?
+    private fun markSyntaxErrors(
+        smaliCode: String,
+        colors: TextAnalyzeResult
+    ) {
+        val lexer = smaliCatchErrFlexLexer(StringReader(smaliCode), 31)
+        val parser = smaliCatchErrParser(CommonTokenStream(lexer))
+
+        parser.smali_file()
+
+        // todo: show error message somehow
+        (lexer.getErrors() + parser.getErrors()).forEach {
+            colors.markProblemRegion(
+                Span.FLAG_ERROR,
+                it.startLine - 1,
+                it.startColumn,
+                it.endLine - 1,
+                it.endColumn
+            )
+        }
     }
 
     companion object {

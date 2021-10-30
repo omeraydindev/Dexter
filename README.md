@@ -1,5 +1,5 @@
 # Dexter
-A work-in-progress **DEX** editor (hence the name **Dex**ter) for Android that uses [smali](https://github.com/JesusFreke/smali) & [dexlib2](https://github.com/JesusFreke/smali/tree/master/dexlib2).
+A work-in-progress **DEX** editor for Android, using mainly [smali](https://github.com/JesusFreke/smali) & [dexlib2](https://github.com/JesusFreke/smali/tree/master/dexlib2).
 
 ## Available decompilers
 - [JADX](https://github.com/skylot/jadx)
@@ -12,10 +12,10 @@ A work-in-progress **DEX** editor (hence the name **Dex**ter) for Android that u
 - [x] Add "Goto" for fields/methods.
 - [x] Add smali navigation.
 - [x] Decompile multiple classes at a time.
+- [x] Underline smali syntax errors in realtime.
 - [ ] Implement recompilation of decompiled Java sources.
 - [ ] Add decompiling single method bodies.
-- [ ] Underline smali syntax errors in realtime.
-- [ ] Add a (dis)assembler for Java, like [Krakatau](https://github.com/Storyyeller/Krakatau).
+- [ ] Add a (dis-)assembler for Java bytecode as well, like [Krakatau](https://github.com/Storyyeller/Krakatau) or [raung](https://github.com/skylot/raung).
 
 ## License
 Dexter is licensed under **GNU General Public License v3.0**, see [LICENSE](https://github.com/MikeAndrson/Dexter/blob/master/LICENSE) for more.

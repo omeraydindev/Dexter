@@ -39,6 +39,8 @@ class SchemeLightSmali : EditorColorScheme() {
         color(BLOCK_LINE, 0xffdddddd)
         color(BLOCK_LINE_CURRENT, 0xff999999)
         color(NON_PRINTABLE_CHAR, 0xffdddddd)
+
+        color(PROBLEM_ERROR, 0xFFFF0000)
     }
 
     // Quick workaround for Kotlin's naiveness
