@@ -39,6 +39,14 @@ class MutableDexContainer(
         return null
     }
 
+    fun deleteClassDef(classDescriptor: String) {
+        entries.forEach { dex ->
+            if (dex.deleteClassDef(classDescriptor)) {
+                return
+            }
+        }
+    }
+
     /**
      * Deletes [MutableClassDef]s in the given package.
      *
@@ -47,12 +55,6 @@ class MutableDexContainer(
     fun deletePackage(packagePath: String) {
         entries.forEach { dex ->
             dex.deletePackage(packagePath)
-        }
-    }
-
-    fun saveDexFiles() {
-        entries.forEach { dexEntry ->
-            dexEntry.writeToFile(dexEntry.dexFile!!) // todo: handle APKs
         }
     }
 

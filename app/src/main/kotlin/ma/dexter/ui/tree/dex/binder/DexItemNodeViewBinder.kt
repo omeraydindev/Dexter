@@ -7,64 +7,42 @@ import ma.dexter.R
 import ma.dexter.databinding.ItemDexTreeNodeBinding
 import ma.dexter.ui.tree.TreeNode
 import ma.dexter.ui.tree.base.BaseNodeViewBinder
-import ma.dexter.ui.tree.model.DexClassItem
-import ma.dexter.ui.tree.model.DexItem
+import ma.dexter.ui.tree.dex.DexClassNode
 import ma.dexter.ui.util.dp
 import ma.dexter.ui.util.setMargins
-import ma.dexter.util.isAnnotation
-import ma.dexter.util.isEnum
-import ma.dexter.util.isInterface
 
 class DexItemNodeViewBinder(
     itemView: View,
     private val level: Int,
     private val toggleListener: DexItemNodeToggleListener,
     private val longClickListener: DexItemNodeLongClickListener
-) : BaseNodeViewBinder<DexItem>(itemView) {
+) : BaseNodeViewBinder<DexClassNode>(itemView) {
 
     private lateinit var binding: ItemDexTreeNodeBinding
 
-    override fun bindView(treeNode: TreeNode<DexItem>) {
+    override fun bindView(treeNode: TreeNode<DexClassNode>) {
         binding = ItemDexTreeNodeBinding.bind(itemView)
 
         binding.root.setMargins(left = level * 20.dp)
-        binding.title.text = treeNode.value.path
+        binding.title.text = treeNode.value.name
 
         binding.icExpand.rotation = if (treeNode.isExpanded) 90F else 0F
 
-        val item = treeNode.value
-        if (item is DexClassItem) {
+        if (treeNode.isLeaf) {
             binding.icExpand.visibility = View.GONE
             binding.cvClassDef.visibility = View.VISIBLE
 
             val colorClass = ContextCompat.getColor(App.context, R.color.colorClass)
-            val colorInterface = ContextCompat.getColor(App.context, R.color.colorInterface)
 
-            binding.txClassDef.text = when {
-                item.classDef.isAnnotation() -> {
-                    binding.txClassDef.setBackgroundColor(colorInterface)
-                    "@"
-                }
-                item.classDef.isEnum() -> {
-                    binding.txClassDef.setBackgroundColor(colorClass)
-                    "E"
-                }
-                item.classDef.isInterface() -> {
-                    binding.txClassDef.setBackgroundColor(colorInterface)
-                    "I"
-                }
-                else -> { // Class
-                    binding.txClassDef.setBackgroundColor(colorClass)
-                    "C"
-                }
-            }
+            binding.txClassDef.setBackgroundColor(colorClass)
+            binding.txClassDef.text = "C"
         } else {
             binding.icExpand.visibility = View.VISIBLE
             binding.cvClassDef.visibility = View.GONE
         }
     }
 
-    override fun onNodeToggled(treeNode: TreeNode<DexItem>, expand: Boolean) {
+    override fun onNodeToggled(treeNode: TreeNode<DexClassNode>, expand: Boolean) {
         if (binding.icExpand.visibility == View.VISIBLE) {
             binding.icExpand.animate()
                 .rotation(if (expand) 90F else 0F)
@@ -77,17 +55,17 @@ class DexItemNodeViewBinder(
 
     override fun onNodeLongClicked(
         view: View,
-        treeNode: TreeNode<DexItem>,
+        treeNode: TreeNode<DexClassNode>,
         expanded: Boolean
     ): Boolean {
         return longClickListener.onNodeLongClicked(view, treeNode)
     }
 
     fun interface DexItemNodeToggleListener {
-        fun onNodeToggled(treeNode: TreeNode<DexItem>)
+        fun onNodeToggled(treeNode: TreeNode<DexClassNode>)
     }
 
     fun interface DexItemNodeLongClickListener {
-        fun onNodeLongClicked(view: View, treeNode: TreeNode<DexItem>): Boolean
+        fun onNodeLongClicked(view: View, treeNode: TreeNode<DexClassNode>): Boolean
     }
 }

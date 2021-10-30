@@ -1,30 +1,30 @@
 package ma.dexter.ui.tree
 
 import com.google.common.truth.Truth.assertThat
-import ma.dexter.ui.tree.model.DexItem
+import ma.dexter.ui.tree.dex.DexClassNode
 import org.junit.Test
 
 class TreeUtilTest {
 
     @Test
     fun compactMiddlePackages() {
-        val tree = root<DexItem> {
-            child(DexItem("a"))
-            child(DexItem("b"))
-            child(DexItem("c")) {
-                child(DexItem("d")) {
-                    child(DexItem("e")) {
-                        child(DexItem("f"))
+        val tree = root<DexClassNode> {
+            child(DexClassNode("a"))
+            child(DexClassNode("b"))
+            child(DexClassNode("c")) {
+                child(DexClassNode("d")) {
+                    child(DexClassNode("e")) {
+                        child(DexClassNode("f"))
                     }
                 }
             }
-            child(DexItem("g")) {
-                child(DexItem("h")) {
-                    child(DexItem("i")) {
-                        child(DexItem("j"))
+            child(DexClassNode("g")) {
+                child(DexClassNode("h")) {
+                    child(DexClassNode("i")) {
+                        child(DexClassNode("j"))
                     }
                 }
-                child(DexItem("k"))
+                child(DexClassNode("k"))
             }
         }
 
@@ -44,8 +44,8 @@ class TreeUtilTest {
             """.trimIndent())
 
         tree.compactMiddlePackages(
-            pathGetter = DexItem::path,
-            pathSetter = { it, path -> it.path = path }
+            pathGetter = DexClassNode::name,
+            pathSetter = { it, path -> it.name = path }
         )
         assertThat(treeToString(tree)).isEqualTo(
             """

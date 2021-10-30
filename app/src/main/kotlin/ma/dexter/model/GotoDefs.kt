@@ -7,7 +7,7 @@ sealed class GotoDef
 
 data class SmaliGotoDef(
     val classDef: MutableClassDef,
-    val defDescriptor: String? = null
+    val memberDescriptorToGo: String? = null
 ): GotoDef()
 
 data class JavaGotoDef(

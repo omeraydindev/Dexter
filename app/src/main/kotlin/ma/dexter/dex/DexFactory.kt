@@ -11,9 +11,9 @@ object DexFactory {
         return fromByteArray(file.readBytes(), file)
     }
 
-    fun fromByteArray(
+    private fun fromByteArray(
         byteArray: ByteArray,
-        file: File? = null
+        file: File
     ): MutableDexFile {
         DexUtil.verifyDexHeader(byteArray, 0)
 

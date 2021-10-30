@@ -7,7 +7,7 @@ import java.io.FileOutputStream
 /**
  * Extracts an asset to the given [destinationFile].
  *
- * Doesn't do anything if [destinationFile] already exists.
+ * Silently returns if [destinationFile] already exists.
  */
 fun extractAsset(
     assetFileName: String,

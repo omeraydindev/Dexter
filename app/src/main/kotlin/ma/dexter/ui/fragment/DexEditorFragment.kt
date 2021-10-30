@@ -13,26 +13,25 @@ import ma.dexter.databinding.DialogCreateSmaliFileBinding
 import ma.dexter.databinding.FragmentDexEditorBinding
 import ma.dexter.dex.DexFactory
 import ma.dexter.dex.MutableDexFile
-import ma.dexter.model.SmaliGotoDef
 import ma.dexter.project.DexGotoManager
 import ma.dexter.project.DexProject
 import ma.dexter.ui.base.BaseActivity
 import ma.dexter.ui.base.BaseFragment
 import ma.dexter.ui.tree.TreeNode
 import ma.dexter.ui.tree.TreeView
+import ma.dexter.ui.tree.dex.DexClassNode
 import ma.dexter.ui.tree.dex.SmaliTree
 import ma.dexter.ui.tree.dex.binder.DexItemNodeViewFactory
-import ma.dexter.ui.tree.model.DexClassItem
-import ma.dexter.ui.tree.model.DexItem
 import ma.dexter.ui.viewmodel.MainViewModel
 import ma.dexter.util.createClassDef
-import ma.dexter.util.getPackageName
+import ma.dexter.util.getClassDescriptor
+import ma.dexter.util.getPath
 import ma.dexter.util.toast
 import java.io.File
 
 class DexEditorFragment : BaseFragment() {
     private lateinit var binding: FragmentDexEditorBinding
-    private lateinit var treeView: TreeView<DexItem>
+    private lateinit var treeView: TreeView<DexClassNode>
 
     private val viewModel: MainViewModel by activityViewModels()
 
@@ -67,11 +66,9 @@ class DexEditorFragment : BaseFragment() {
 
         val binder = DexItemNodeViewFactory(
             toggleListener = { treeNode ->
-                val dexItem = treeNode.value
-
-                if (dexItem is DexClassItem) {
+                if (treeNode.isLeaf) {
                     DexGotoManager(requireActivity())
-                        .gotoClassDef(SmaliGotoDef(dexItem.classDef))
+                        .gotoClassDef(treeNode.getClassDescriptor())
                 }
             },
 
@@ -125,15 +122,14 @@ class DexEditorFragment : BaseFragment() {
     }
 
     private fun deleteClass(
-        treeNode: TreeNode<DexItem>
+        treeNode: TreeNode<DexClassNode>
     ) {
-        val item = treeNode.value
-
-        if (item is DexClassItem) {
-            item.classDef.parentDex.deleteClassDef(item.classDef)
+        if (treeNode.isLeaf) {
+            DexProject.getOpenedProject()
+                .dexContainer.deleteClassDef(treeNode.getClassDescriptor())
         } else {
             DexProject.getOpenedProject()
-                .dexContainer.deletePackage(treeNode.getPackageName())
+                .dexContainer.deletePackage(treeNode.getPath())
         }
 
         treeNode.parent.removeChild(treeNode)
@@ -141,11 +137,11 @@ class DexEditorFragment : BaseFragment() {
     }
 
     private fun addClass(
-        treeNode: TreeNode<DexItem>?
+        treeNode: TreeNode<DexClassNode>?
     ) {
         if (treeNode == null) return
 
-        if (treeNode.value is DexClassItem) {
+        if (treeNode.isLeaf) {
             addClass(treeNode.parent)
             return
         }
@@ -160,14 +156,25 @@ class DexEditorFragment : BaseFragment() {
             )
         )
 
-        dialogBinding.etPackageName.setText(treeNode.getPackageName())
+        dialogBinding.etPackageName.setText(treeNode.getPath())
 
         MaterialAlertDialogBuilder(requireContext())
             .setTitle("Create class")
             .setView(dialogBinding.root)
             .setPositiveButton("OK") { _, _ ->
                 val className = dialogBinding.etClassName.text.toString()
-                val packagePath = dialogBinding.etPackageName.text.toString()
+                var packagePath = dialogBinding.etPackageName.text.toString()
+
+                // ""   -> ""
+                // "/"  -> ""
+                // "a"  -> "a/"
+                // "a/" -> "a/"
+                if (packagePath == "/") {
+                    packagePath = ""
+                } else if (packagePath.isNotEmpty() && !packagePath.endsWith("/")) {
+                    packagePath += "/"
+                }
+
                 val dexFile = dialogBinding.etDexFile.text.toString()
 
                 if (className.isEmpty() || dexFile.isEmpty()) {
@@ -175,7 +182,7 @@ class DexEditorFragment : BaseFragment() {
                     return@setPositiveButton
                 }
 
-                val classDef = createClassDef("L$packagePath/$className;")
+                val classDef = createClassDef("L$packagePath$className;")
                 val dex = biMap.inverse()[dexFile]!!
 
                 dex.addClassDef(classDef)

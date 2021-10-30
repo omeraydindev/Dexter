@@ -7,9 +7,6 @@ import java.io.PrintStream
  * Listens for System.out/err logs and invokes the callback
  * when received.
  *
- * **NOTE**: Using System.out logs as a way to catch logs/errors from
- * non-Android libraries should always be considered a last resort.
- *
  * @param errLogsEnabled Specifies whether it should listen for System.err logs as well
  * @param callback Callback to be invoked when a log is received
  */

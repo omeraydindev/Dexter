@@ -21,9 +21,9 @@ import ma.dexter.tasks.SmaliTask
 import ma.dexter.tasks.runWithDialog
 import ma.dexter.tools.decompilers.BaseDecompiler
 import ma.dexter.util.debugToast
-import ma.dexter.util.normalizeSmaliPath
 import ma.dexter.util.getNameFromSmaliPath
 import ma.dexter.util.hideKeyboard
+import ma.dexter.util.normalizeSmaliPath
 
 class SmaliEditorFragment(
     private val smaliGotoDef: SmaliGotoDef
@@ -41,7 +41,7 @@ class SmaliEditorFragment(
             setEditorLanguage(SmaliLanguage())
         }
 
-        loadSmaliCode(smaliGotoDef.defDescriptor)
+        loadSmaliCode(smaliGotoDef.memberDescriptorToGo)
     }
 
     override fun beforeBuildMoreMenu(popupMenuBuilder: MaterialPopupMenuBuilder) {
@@ -83,19 +83,19 @@ class SmaliEditorFragment(
     }
 
     private fun loadSmaliCode(
-        defDescriptorToGo: String? = null
+        memberDescriptorToGo: String? = null
     ) {
         BaksmaliTask(classDef)
             .runWithDialog(requireContext(), "Loading", "Running baksmali...") {
                 codeEditor.setText(it.value)
-                gotoDefDescriptor(defDescriptorToGo)
+                gotoMemberDescriptor(memberDescriptorToGo)
             }
     }
 
-    private fun gotoDefDescriptor(
-        defDescriptorToGo: String? = null
+    private fun gotoMemberDescriptor(
+        memberDescriptorToGo: String? = null
     ) {
-        defDescriptorToGo?.let { desc ->
+        memberDescriptorToGo?.let { desc ->
             val smaliFile = parseSmali(codeEditor.text.toString())
 
             val member = smaliFile.members.firstOrNull { member ->

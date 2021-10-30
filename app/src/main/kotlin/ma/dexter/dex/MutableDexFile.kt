@@ -10,11 +10,12 @@ import java.io.File
 
 class MutableDexFile {
     private val dexVersion: Int
-    val opcodes: Opcodes
     private val _classes: MutableList<MutableClassDef>
 
     val dexFile: File?
+    val opcodes: Opcodes
     val classes: List<MutableClassDef>
+        get() = _classes
 
     constructor(
         dexFile: File?,
@@ -28,7 +29,6 @@ class MutableDexFile {
         this._classes = dexBacked.classes.map {
             MutableClassDef(this, it)
         }.toMutableList()
-        this.classes = _classes
     }
 
     constructor(
@@ -40,7 +40,6 @@ class MutableDexFile {
         this.opcodes = Opcodes.forDexVersion(this.dexVersion)
 
         this._classes = classDefs.toMutableList()
-        this.classes = _classes
     }
 
 
@@ -77,8 +76,19 @@ class MutableDexFile {
     /**
      * Deletes a [ClassDef] if it exists.
      */
-    fun deleteClassDef(classDef: MutableClassDef) {
-        _classes.remove(classDef)
+    fun deleteClassDef(classDescriptor: String): Boolean {
+        val element = _classes.find { it.type == classDescriptor }
+        if (element != null) {
+            return deleteClassDef(element)
+        }
+        return false
+    }
+
+    /**
+     * Deletes a [ClassDef] if it exists.
+     */
+    fun deleteClassDef(classDef: MutableClassDef): Boolean {
+        return _classes.remove(classDef)
     }
 
     /**

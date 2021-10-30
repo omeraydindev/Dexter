@@ -2,7 +2,7 @@ package ma.dexter.util
 
 import ma.dexter.dex.MutableClassDef
 import ma.dexter.ui.tree.TreeNode
-import ma.dexter.ui.tree.model.DexItem
+import ma.dexter.ui.tree.dex.DexClassNode
 import org.jf.dexlib2.AccessFlags
 import org.jf.dexlib2.iface.ClassDef
 import org.jf.dexlib2.immutable.ImmutableClassDef
@@ -37,13 +37,13 @@ fun createClassDef(
     )
 }
 
-fun TreeNode<DexItem>.getPackageName(): String {
+fun TreeNode<DexClassNode>.getPath(): String {
     val treeNode = this
 
     val list = buildList {
         var node = treeNode
         while (!node.isRoot) {
-            add(node.value.path)
+            add(node.value.name)
             node = node.parent
         }
     }
@@ -52,4 +52,8 @@ fun TreeNode<DexItem>.getPackageName(): String {
         .reversed()
         .joinToString(".")
         .replace(".", "/")
+}
+
+fun TreeNode<DexClassNode>.getClassDescriptor(): String {
+    return "L" + getPath() + ";"
 }

@@ -86,13 +86,13 @@ class DexGotoManager(
 
     }
 
-    private fun gotoClassDef(
+    fun gotoClassDef(
         dexClassDef: String,
-        defDescriptorToGo: String? = null
+        memberDescriptorToGo: String? = null
     ) {
         DexProject.getOpenedProject()
-            .dexContainer.findClassDef(defDescriptorToGo)?.let {
-                gotoClassDef(SmaliGotoDef(it, defDescriptorToGo))
+            .dexContainer.findClassDef(dexClassDef)?.let {
+                gotoClassDef(SmaliGotoDef(it, memberDescriptorToGo))
                 return
             }
 
