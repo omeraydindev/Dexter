@@ -10,7 +10,7 @@ import java.io.File
 
 class MutableDexFile {
     private val dexVersion: Int
-    private val opcodes: Opcodes
+    val opcodes: Opcodes
     private val _classes: MutableList<MutableClassDef>
 
     val dexFile: File?
