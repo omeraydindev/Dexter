@@ -26,8 +26,8 @@ class ProcyonDecompiler: BaseJarDecompiler {
         extractAsset("rt.jar", rtJar)
 
         val options = DecompilerSettings().apply {
-            // without this option, java.util.List becomes java.util.* in imports
             forceExplicitImports = true
+            showSyntheticMembers = false
 
             RT_JAR = JarFile(rtJar)
             typeLoader = JarTypeLoader(JarFile(jarFile))

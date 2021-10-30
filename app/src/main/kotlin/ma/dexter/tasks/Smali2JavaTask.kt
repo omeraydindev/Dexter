@@ -1,7 +1,5 @@
 package ma.dexter.tasks
 
-import android.os.Handler
-import android.os.Looper
 import ma.dexter.App
 import ma.dexter.dex.MutableClassDef
 import ma.dexter.dex.MutableDexFile
@@ -11,43 +9,16 @@ import ma.dexter.tools.decompilers.BaseDecompiler.Companion.decompile
 import ma.dexter.tools.decompilers.BaseDexDecompiler
 import ma.dexter.tools.decompilers.BaseJarDecompiler
 import java.io.File
-import java.util.concurrent.Executors
 
-// TODO: migrate to coroutines
-object Smali2JavaTask {
+class Smali2JavaTask(
+    private val classDefs: List<MutableClassDef>,
+    private val className: String,
+    private val decompiler: BaseDecompiler
+) : ProgressTask<String>() {
 
-    fun execute(
-        classDefs: List<MutableClassDef>,
-        className: String,
-        decompiler: BaseDecompiler,
-        progress: (info: String) -> Unit = {},
-        callback: (result: Result) -> Unit = {}
-    ) {
-        val executor = Executors.newSingleThreadExecutor()
-        val handler = Handler(Looper.getMainLooper())
-
-        executor.execute {
-            val invokeResult = executeInternal(classDefs, className, decompiler) {
-                handler.post {
-                    progress(it)
-                }
-            }
-
-            handler.post {
-                callback(invokeResult)
-            }
-        }
-    }
-
-    /*
-     * Returns decompiled Java code.
-     */
-    private fun executeInternal(
-        classDefs: List<MutableClassDef>,
-        className: String,
-        decompiler: BaseDecompiler,
-        progress: (info: String) -> Unit
-    ): Result {
+    override fun run(
+        progress: (String) -> Unit
+    ): Result<String> {
 
         // Clear out cache
         val parent = App.context.cacheDir.apply {
@@ -62,11 +33,9 @@ object Smali2JavaTask {
         // Initialize temp vars
         val isJarDecompiler = decompiler is BaseJarDecompiler
 
-
         // Assemble ClassDefs to DEX
         progress("Assembling DEX...")
         MutableDexFile(classDefs).writeToFile(dexFile)
-
 
         /**
          * if the decompiler is not a [BaseJarDecompiler] (which could only mean
@@ -80,11 +49,13 @@ object Smali2JavaTask {
             val d2jResult = D2JInvoker.invoke(dexFile, jarFile)
 
             if (!d2jResult.success) {
-                return Error(title = "Dex2Jar", message = d2jResult.error)
+                return Result(
+                    success = false,
+                    error = Error("Dex2Jar", d2jResult.error)
+                )
             }
 
         }
-
 
         // Invoke the decompiler
         progress("Decompiling ${if (isJarDecompiler) "JAR" else "DEX"} to Java...")
@@ -97,25 +68,19 @@ object Smali2JavaTask {
             )
 
         } else {
-            return Error(
-                title = decompiler.getName(),
-                message = "Couldn't find generated JAR in ${jarFile.absolutePath}"
+            return Result(
+                success = false,
+                error = Error(
+                    decompiler.getName(),
+                    "Couldn't find generated JAR in ${jarFile.absolutePath}"
+                )
             )
         }
 
-
-        return Success(javaCode)
+        return Result(
+            success = true,
+            value = javaCode
+        )
     }
-
-    sealed interface Result
-
-    class Success(
-        val javaCode: String
-    ) : Result
-
-    class Error(
-        val title: String,
-        val message: String
-    ) : Result
 
 }

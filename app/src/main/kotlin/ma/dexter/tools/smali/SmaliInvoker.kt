@@ -1,7 +1,8 @@
 package ma.dexter.tools.smali
 
-import android.util.Log
 import ma.dexter.dex.DexFactory
+import ma.dexter.tasks.Error
+import ma.dexter.tasks.Result
 import ma.dexter.tools.smali.catcherr.smaliCatchErrFlexLexer
 import ma.dexter.tools.smali.catcherr.smaliCatchErrParser
 import ma.dexter.tools.smali.catcherr.smaliCatchErrTreeWalker
@@ -36,7 +37,7 @@ object SmaliInvoker {
             return Result(dex.classes.first().classDef, true)
 
         } catch (e: Exception) { // catch everything, will be shown to the user anyway
-            return Result(null, false, Log.getStackTraceString(e))
+            return Result(success = false, error = Error.fromException(e))
         }
     }
 
@@ -60,7 +61,7 @@ object SmaliInvoker {
             return Result(outputDex, true)
 
         } catch (e: Exception) { // catch everything, will be shown to the user anyway
-            return Result(null, false, Log.getStackTraceString(e))
+            return Result(success = false, error = Error.fromException(e))
         }
     }
 
@@ -83,34 +84,37 @@ object SmaliInvoker {
         val result = parser.smali_file()
 
         if (lexer.numberOfSyntaxErrors > 0) {
-            return Result(success = false, error = "Lexer:\n" + lexer.getErrors())
+            return Result(
+                success = false,
+                error = Error("Lexer", lexer.getErrorsString())
+            )
         }
 
         if (parser.numberOfSyntaxErrors > 0) {
-            return Result(success = false, error = "Parser:\n" + parser.getErrors())
+            return Result(
+                success = false,
+                error = Error("Parser", parser.getErrorsString())
+            )
         }
 
         val treeStream = CommonTreeNodeStream(result.tree)
         treeStream.tokenStream = tokens
 
-        val dexGen = smaliCatchErrTreeWalker(treeStream).apply {
+        val treeWalker = smaliCatchErrTreeWalker(treeStream).apply {
             setApiLevel(options.apiLevel)
             setVerboseErrors(options.verboseErrors)
             setDexBuilder(dexBuilder)
             smali_file()
         }
 
-        if (dexGen.numberOfSyntaxErrors > 0) {
-            return Result(success = false, error = "Tree walker:\n" + dexGen.getErrors())
+        if (treeWalker.numberOfSyntaxErrors > 0) {
+            return Result(
+                success = false,
+                error = Error("Tree walker", treeWalker.getErrorsString())
+            )
         }
 
         return Result(dexBuilder, true)
     }
-
-    class Result<T>(
-        val value: T? = null,
-        val success: Boolean,
-        val error: String = ""
-    )
 
 }

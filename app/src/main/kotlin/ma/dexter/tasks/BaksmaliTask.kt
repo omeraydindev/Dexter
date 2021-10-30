@@ -1,28 +1,17 @@
 package ma.dexter.tasks
 
-import android.os.Handler
-import android.os.Looper
 import ma.dexter.dex.MutableClassDef
 import ma.dexter.project.DexProject
-import java.util.concurrent.Executors
 
-object BaksmaliTask {
+class BaksmaliTask(
+    private val classDef: MutableClassDef
+) : Task<String>() {
 
-    fun execute(
-        classDef: MutableClassDef,
-        callback: (smali: String) -> Unit
-    ) {
-        val executor = Executors.newSingleThreadExecutor()
-        val handler = Handler(Looper.getMainLooper())
+    override fun run(): Result<String> {
+        val smali = DexProject.getOpenedProject()
+            .smaliContainer.getSmaliCode(classDef)
 
-        executor.execute {
-            val smali = DexProject.getOpenedProject()
-                .smaliContainer.getSmaliCode(classDef)
-
-            handler.post {
-                callback(smali)
-            }
-        }
+        return Result(smali, true)
     }
 
 }
