@@ -4,7 +4,7 @@ import ma.dexter.dex.MutableDexFile
 import ma.dexter.ui.tree.*
 import ma.dexter.ui.tree.model.DexClassItem
 import ma.dexter.ui.tree.model.DexItem
-import ma.dexter.util.getClassDefPath
+import ma.dexter.util.normalizeSmaliPath
 
 class SmaliTree {
     private val dexList = mutableListOf<MutableDexFile>()
@@ -41,7 +41,7 @@ class SmaliTree {
         dex.classes.forEach { classDef ->
             var currentNode = rootTreeNode
 
-            val classDefSegments = getClassDefPath(classDef.type).split("/")
+            val classDefSegments = normalizeSmaliPath(classDef.type).split("/")
 
             classDefSegments.forEachIndexed { level, segment ->
                 val subNode: TreeNode<DexItem>

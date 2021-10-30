@@ -1,4 +1,4 @@
-package ma.dexter.ui.activity
+package ma.dexter.ui.base
 
 import androidx.appcompat.app.AppCompatActivity
 

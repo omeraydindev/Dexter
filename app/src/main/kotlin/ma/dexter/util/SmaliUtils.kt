@@ -32,8 +32,8 @@ const val END_METHOD_DIRECTIVE = ".end method"
 /**
  * Ltest/aaa; -> test/aaa
  */
-fun getClassDefPath(classDefType: String) =
-    if (classDefType.length >= 2) {
+fun normalizeSmaliPath(classDefType: String) =
+    if (classDefType.startsWith("L") && classDefType.endsWith(";")) {
         classDefType.substring(1, classDefType.length - 1)
     } else {
         classDefType
@@ -43,7 +43,7 @@ fun getClassDefPath(classDefType: String) =
  * Ltest/aaa; -> aaa
  */
 fun getNameFromSmaliPath(classDefType: String) =
-    getClassDefPath(classDefType).substringAfterLast("/")
+    normalizeSmaliPath(classDefType).substringAfterLast("/")
 
 /**
  * Utility method to tokenize smali.

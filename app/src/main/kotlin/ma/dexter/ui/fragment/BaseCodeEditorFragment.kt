@@ -3,7 +3,6 @@ package ma.dexter.ui.fragment
 import android.os.Bundle
 import android.view.*
 import androidx.annotation.CallSuper
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import com.github.zawadz88.materialpopupmenu.MaterialPopupMenuBuilder
 import io.github.rosemoe.sora.widget.CodeEditor
@@ -11,6 +10,7 @@ import ma.dexter.R
 import ma.dexter.databinding.FragmentBaseCodeEditorBinding
 import ma.dexter.editor.util.setDefaults
 import ma.dexter.editor.util.setOnTextChangedListener
+import ma.dexter.ui.base.BaseFragment
 import ma.dexter.ui.util.checkableItem
 import ma.dexter.ui.viewmodel.MainViewModel
 
@@ -19,7 +19,7 @@ open class BaseCodeEditorFragment : BaseFragment() {
     private val viewModel: MainViewModel by activityViewModels()
 
     protected lateinit var codeEditor: CodeEditor
-    protected var isEdited = false
+    private var isEdited = false
 
     @CallSuper
     override fun onCreateView(
@@ -75,18 +75,14 @@ open class BaseCodeEditorFragment : BaseFragment() {
 
             item {
                 label = "Search"
-                iconDrawable =
-                    ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_search_24)
+                iconDrawable = drawable(R.drawable.ic_baseline_search_24)
                 callback = codeEditor::beginSearchMode
             }
 
             customItem {
                 checkableItem {
                     label = "Word wrap"
-                    iconDrawable = ContextCompat.getDrawable(
-                        requireContext(),
-                        R.drawable.ic_baseline_wrap_text_24
-                    )
+                    iconDrawable = drawable(R.drawable.ic_baseline_wrap_text_24)
                     checked = codeEditor.isWordwrap
                     callback = {
                         codeEditor.isWordwrap = it
@@ -97,13 +93,21 @@ open class BaseCodeEditorFragment : BaseFragment() {
             customItem {
                 checkableItem {
                     label = "Auto complete"
-                    iconDrawable = ContextCompat.getDrawable(
-                        requireContext(),
-                        R.drawable.ic_baseline_copyright_24
-                    )
+                    iconDrawable = drawable(R.drawable.ic_baseline_copyright_24)
                     checked = codeEditor.isAutoCompletionEnabled
                     callback = {
                         codeEditor.isAutoCompletionEnabled = it
+                    }
+                }
+            }
+
+            customItem {
+                checkableItem {
+                    label = "Magnifier"
+                    iconDrawable = drawable(R.drawable.ic_baseline_zoom_in_24)
+                    checked = codeEditor.isMagnifierEnabled
+                    callback = {
+                        codeEditor.isMagnifierEnabled = it
                     }
                 }
             }

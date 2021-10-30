@@ -5,12 +5,13 @@ import android.view.inputmethod.EditorInfo
 import io.github.rosemoe.sora.widget.CodeEditor
 
 fun CodeEditor.setDefaults() {
+    isLigatureEnabled = true
     isOverScrollEnabled = false
     inputType =
         EditorInfo.TYPE_TEXT_FLAG_NO_SUGGESTIONS or EditorInfo.TYPE_CLASS_TEXT or EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE or EditorInfo.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
     importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_NO
 
-    setTextSize(16f)
+    setTextSize(12f)
 }
 
 fun CodeEditor.setOnTextChangedListener(
