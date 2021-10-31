@@ -43,7 +43,7 @@ class JADXDecompiler(
 
     override fun getBanner() = """
             /*
-             * Decompiled with JADX v0.9.0.
+             * Decompiled with JADX v1.2.0.
              */
         """.trimIndent() + "\n"
 
