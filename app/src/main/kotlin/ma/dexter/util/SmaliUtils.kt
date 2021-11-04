@@ -42,7 +42,7 @@ fun normalizeSmaliPath(classDefType: String) =
 /**
  * Ltest/aaa; -> aaa
  */
-fun getNameFromSmaliPath(classDefType: String) =
+fun getClassNameFromSmaliPath(classDefType: String) =
     normalizeSmaliPath(classDefType).substringAfterLast("/")
 
 /**

@@ -21,16 +21,20 @@ class Result<T>(
     val value: T? = null,
     val success: Boolean,
     val error: Error = Error()
-)
+) {
+    companion object {
+        fun <T> fromException(e: Throwable) =
+            Result<T>(
+                success = false,
+                error = Error("Exception", Log.getStackTraceString(e))
+            )
+    }
+}
 
 class Error(
     val title: String = "",
     val message: String = ""
-) {
-    companion object {
-        fun fromException(e: Exception) = Error("Exception", Log.getStackTraceString(e))
-    }
-}
+)
 
 fun <T> ITask<T>.runWithDialog(
     context: Context,
@@ -42,13 +46,17 @@ fun <T> ITask<T>.runWithDialog(
     val handler = Handler(Looper.getMainLooper())
 
     Executors.newSingleThreadExecutor().execute {
-        val result = when (this) {
-            is ProgressTask -> run {
-                handler.post {
-                    dialog.setMessage(it)
+        val result = try {
+            when (this) {
+                is ProgressTask -> run {
+                    handler.post {
+                        dialog.setMessage(it)
+                    }
                 }
+                is Task -> run()
             }
-            is Task -> run()
+        } catch (e: Throwable) {
+            Result.fromException(e)
         }
 
         handler.post {

@@ -41,14 +41,12 @@ class DexGotoManager(
 
         // look for class defs
         tokenizeSmali(editor.text.toString()) { token, line, startColumn ->
-
             if (token.type == smaliParser.CLASS_DESCRIPTOR && line == cursor.leftLine) {
                 val endColumn = startColumn + token.text.length
 
                 if (cursor.leftColumn in startColumn..endColumn &&
                     cursor.rightColumn in startColumn..endColumn
                 ) {
-
                     editor.setSelectionRegion(
                         cursor.leftLine, startColumn,
                         cursor.rightLine, endColumn
@@ -62,19 +60,15 @@ class DexGotoManager(
 
         // look for field/method calls (on a line-by-line basis)
         editor.text.toString().lines().forEachIndexed { lineNumber, line ->
-
             FIELD_METHOD_CALL_REGEX.matchEntire(line)?.let {
                 val range = it.groups[1]!!.range
 
                 if (cursor.leftLine == lineNumber &&
                     cursor.leftColumn in range
                 ) {
-
                     editor.setSelectionRegion(
-                        cursor.leftLine,
-                        range.first + 0,
-                        cursor.rightLine,
-                        range.last + 1 // to make it exclusive
+                        cursor.leftLine, range.first,
+                        cursor.rightLine,range.last + 1 // to make it exclusive
                     )
 
                     val (_, definingClass, descriptor) = it.destructured

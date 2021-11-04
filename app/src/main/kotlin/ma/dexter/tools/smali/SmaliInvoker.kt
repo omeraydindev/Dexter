@@ -22,17 +22,6 @@ object SmaliInvoker {
         smaliCode: String,
         options: SmaliOptions = SmaliOptions()
     ): Result<ClassDef> {
-        return try {
-            assembleInternal(smaliCode, options)
-        } catch (e: Exception) { // catch everything, will be shown to the user anyway
-            Result(success = false, error = Error.fromException(e))
-        }
-    }
-
-    private fun assembleInternal(
-        smaliCode: String,
-        options: SmaliOptions
-    ): Result<ClassDef> {
 
         val dexBuilder = DexBuilder(Opcodes.forApi(options.apiLevel))
 

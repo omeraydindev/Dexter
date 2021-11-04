@@ -4,7 +4,7 @@ import ma.dexter.R
 import ma.dexter.model.GotoDef
 import ma.dexter.model.JavaGotoDef
 import ma.dexter.model.SmaliGotoDef
-import ma.dexter.util.getNameFromSmaliPath
+import ma.dexter.util.getClassNameFromSmaliPath
 
 sealed class DexPageItem(val typeDef: String?) {
     abstract fun getTitle(): String
@@ -24,7 +24,7 @@ class SmaliItem(
 ) : DexPageItem(smaliGotoDef.classDef.type) {
 
     override fun getTitle() =
-        getNameFromSmaliPath(smaliGotoDef.classDef.type) + ".smali"
+        getClassNameFromSmaliPath(smaliGotoDef.classDef.type) + ".smali"
 
     override fun getIconResId() = R.drawable.ic_letter_s_24
 

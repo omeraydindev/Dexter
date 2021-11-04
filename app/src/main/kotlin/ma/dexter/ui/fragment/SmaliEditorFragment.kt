@@ -21,7 +21,7 @@ import ma.dexter.tasks.SmaliTask
 import ma.dexter.tasks.runWithDialog
 import ma.dexter.tools.decompilers.BaseDecompiler
 import ma.dexter.util.debugToast
-import ma.dexter.util.getNameFromSmaliPath
+import ma.dexter.util.getClassNameFromSmaliPath
 import ma.dexter.util.hideKeyboard
 import ma.dexter.util.normalizeSmaliPath
 
@@ -137,7 +137,7 @@ class SmaliEditorFragment(
 
         if (innerClasses.isNotEmpty()) {
             val innerClassesArray =
-                innerClasses.map { getNameFromSmaliPath(it.type) }.toTypedArray()
+                innerClasses.map { getClassNameFromSmaliPath(it.type) }.toTypedArray()
             val checkedArray = BooleanArray(innerClassesArray.size) { true }
 
             MaterialAlertDialogBuilder(requireContext())
