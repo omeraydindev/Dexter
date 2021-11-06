@@ -1,4 +1,4 @@
-package ma.dexter.editor.util
+package ma.dexter.ui.editor.util
 
 import android.view.View
 import android.view.inputmethod.EditorInfo

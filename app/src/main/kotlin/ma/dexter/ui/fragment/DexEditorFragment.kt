@@ -15,8 +15,8 @@ import ma.dexter.dex.DexFactory
 import ma.dexter.dex.MutableDexFile
 import ma.dexter.project.DexGotoManager
 import ma.dexter.project.DexProject
-import ma.dexter.ui.base.BaseActivity
-import ma.dexter.ui.base.BaseFragment
+import ma.dexter.ui.BaseActivity
+import ma.dexter.ui.BaseFragment
 import ma.dexter.ui.tree.TreeNode
 import ma.dexter.ui.tree.TreeView
 import ma.dexter.ui.tree.dex.DexClassNode

@@ -8,9 +8,9 @@ import com.github.zawadz88.materialpopupmenu.MaterialPopupMenuBuilder
 import io.github.rosemoe.sora.widget.CodeEditor
 import ma.dexter.R
 import ma.dexter.databinding.FragmentBaseCodeEditorBinding
-import ma.dexter.editor.util.setDefaults
-import ma.dexter.editor.util.setOnTextChangedListener
-import ma.dexter.ui.base.BaseFragment
+import ma.dexter.ui.BaseFragment
+import ma.dexter.ui.editor.util.setDefaults
+import ma.dexter.ui.editor.util.setOnTextChangedListener
 import ma.dexter.ui.util.checkableItem
 import ma.dexter.ui.viewmodel.MainViewModel
 

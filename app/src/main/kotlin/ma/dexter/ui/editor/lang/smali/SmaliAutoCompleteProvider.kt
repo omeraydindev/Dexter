@@ -1,10 +1,10 @@
-package ma.dexter.editor.lang.smali
+package ma.dexter.ui.editor.lang.smali
 
 import io.github.rosemoe.sora.data.CompletionItem
 import io.github.rosemoe.sora.interfaces.AutoCompleteProvider
 import io.github.rosemoe.sora.text.TextAnalyzeResult
-import ma.dexter.editor.lang.smali.model.SmaliAutoCompleteModel
-import ma.dexter.editor.lang.smali.model.SmaliClassDesc
+import ma.dexter.ui.editor.lang.smali.model.SmaliAutoCompleteModel
+import ma.dexter.ui.editor.lang.smali.model.SmaliClassDesc
 
 class SmaliAutoCompleteProvider: AutoCompleteProvider {
 

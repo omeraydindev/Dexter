@@ -1,4 +1,4 @@
-package ma.dexter.editor.lang.smali
+package ma.dexter.ui.editor.lang.smali
 
 import io.github.rosemoe.sora.interfaces.EditorLanguage
 import io.github.rosemoe.sora.interfaces.NewlineHandler

@@ -1,4 +1,4 @@
-package ma.dexter.editor.lang.smali.model
+package ma.dexter.ui.editor.lang.smali.model
 
 data class SmaliClassDesc(
     val name: String

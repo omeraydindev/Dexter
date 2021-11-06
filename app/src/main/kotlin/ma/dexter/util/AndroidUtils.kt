@@ -1,5 +1,7 @@
 package ma.dexter.util
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -7,16 +9,6 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import ma.dexter.App
-import android.content.ClipData
-import android.content.ClipboardManager
-
-
-// to later remove them easily
-fun debugToast(
-    message: String
-) {
-    toast(message)
-}
 
 fun toast(
     message: String,
@@ -46,15 +38,13 @@ fun hideKeyboard(view: View?) {
         if (imm.isActive) {
             imm.hideSoftInputFromWindow(view.windowToken, 0)
         }
-    } catch (e: Exception) {
-        // eat it
-    }
+    } catch (ignored: Exception) {}
 }
 
 fun copyToClipboard(text: String) {
     val clipboard = App.context
         .getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-    val clip = ClipData.newPlainText("", text) // is label important?
+    val clip = ClipData.newPlainText("", text)
     clipboard.setPrimaryClip(clip)
 }
 

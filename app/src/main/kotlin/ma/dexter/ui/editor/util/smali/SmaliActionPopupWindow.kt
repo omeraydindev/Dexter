@@ -1,4 +1,4 @@
-package ma.dexter.editor.util.smali
+package ma.dexter.ui.editor.util.smali
 
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity

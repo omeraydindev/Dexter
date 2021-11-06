@@ -1,4 +1,4 @@
-package ma.dexter.editor.lang.smali
+package ma.dexter.ui.editor.lang.smali
 
 import io.github.rosemoe.sora.data.BlockLine
 import io.github.rosemoe.sora.data.Span
@@ -6,9 +6,9 @@ import io.github.rosemoe.sora.interfaces.CodeAnalyzer
 import io.github.rosemoe.sora.text.TextAnalyzeResult
 import io.github.rosemoe.sora.text.TextAnalyzer
 import io.github.rosemoe.sora.widget.EditorColorScheme
-import ma.dexter.editor.lang.smali.model.SmaliAutoCompleteModel
-import ma.dexter.editor.lang.smali.model.SmaliClassDesc
-import ma.dexter.editor.scheme.smali.SmaliBaseScheme
+import ma.dexter.ui.editor.lang.smali.model.SmaliAutoCompleteModel
+import ma.dexter.ui.editor.lang.smali.model.SmaliClassDesc
+import ma.dexter.ui.editor.scheme.smali.SmaliBaseScheme
 import ma.dexter.tools.smali.catcherr.smaliCatchErrFlexLexer
 import ma.dexter.tools.smali.catcherr.smaliCatchErrParser
 import org.antlr.runtime.CommonTokenStream

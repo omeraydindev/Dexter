@@ -3,12 +3,7 @@ package ma.dexter.ui.util
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
-import io.github.rosemoe.sora.interfaces.EditorEventListener
-import io.github.rosemoe.sora.text.Cursor
-import io.github.rosemoe.sora.widget.CodeEditor
 import ma.dexter.App
-import ma.dexter.editor.util.SingleEditorEventListener
 
 val Int.dp: Int
     get() = TypedValue.applyDimension(

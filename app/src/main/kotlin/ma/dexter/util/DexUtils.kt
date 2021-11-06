@@ -7,12 +7,6 @@ import org.jf.dexlib2.AccessFlags
 import org.jf.dexlib2.iface.ClassDef
 import org.jf.dexlib2.immutable.ImmutableClassDef
 
-fun isValidDexFileName(
-    fileName: String
-): Boolean {
-    return fileName.startsWith("classes") && fileName.endsWith(".dex")
-}
-
 fun MutableClassDef.isInterface(): Boolean {
     return (this.accessFlags and AccessFlags.INTERFACE.value) != 0
 }

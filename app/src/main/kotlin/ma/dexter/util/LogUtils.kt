@@ -15,7 +15,7 @@ fun listenForSystemLogs(
     callback: (String) -> Unit
 ) {
     val outStream = PrintStream(object : OutputStream() {
-        private var cache = StringBuilder()
+        private val cache = StringBuilder()
 
         override fun write(b: Int) {
             // print line by line

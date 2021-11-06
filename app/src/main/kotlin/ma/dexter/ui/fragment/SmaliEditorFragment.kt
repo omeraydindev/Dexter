@@ -6,9 +6,6 @@ import com.github.zawadz88.materialpopupmenu.MaterialPopupMenuBuilder
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import ma.dexter.R
 import ma.dexter.dex.MutableClassDef
-import ma.dexter.editor.lang.smali.SmaliLanguage
-import ma.dexter.editor.scheme.smali.SchemeLightSmali
-import ma.dexter.editor.util.smali.SmaliActionPopupWindow
 import ma.dexter.model.JavaGotoDef
 import ma.dexter.model.SmaliGotoDef
 import ma.dexter.parsers.smali.SmaliMember
@@ -20,10 +17,13 @@ import ma.dexter.tasks.Smali2JavaTask
 import ma.dexter.tasks.SmaliTask
 import ma.dexter.tasks.runWithDialog
 import ma.dexter.tools.decompilers.BaseDecompiler
-import ma.dexter.util.debugToast
+import ma.dexter.ui.editor.lang.smali.SmaliLanguage
+import ma.dexter.ui.editor.scheme.smali.SchemeLightSmali
+import ma.dexter.ui.editor.util.smali.SmaliActionPopupWindow
 import ma.dexter.util.getClassNameFromSmaliPath
 import ma.dexter.util.hideKeyboard
 import ma.dexter.util.normalizeSmaliPath
+import ma.dexter.util.toast
 
 class SmaliEditorFragment(
     private val smaliGotoDef: SmaliGotoDef
@@ -71,7 +71,7 @@ class SmaliEditorFragment(
                     DexProject.getOpenedProject()
                         .smaliContainer.putSmaliCode(it.value.type, codeEditor.text.toString())
 
-                    debugToast("Success")
+                    toast("Saved successfully")
                 } else {
                     MaterialAlertDialogBuilder(requireContext())
                         .setTitle("Error: " + it.error.title)

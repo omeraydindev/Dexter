@@ -1,4 +1,4 @@
-package ma.dexter.editor.util
+package ma.dexter.ui.editor.util
 
 import io.github.rosemoe.sora.interfaces.EditorEventListener
 import io.github.rosemoe.sora.text.Cursor

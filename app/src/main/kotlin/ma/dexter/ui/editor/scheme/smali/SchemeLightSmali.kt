@@ -1,4 +1,4 @@
-package ma.dexter.editor.scheme.smali
+package ma.dexter.ui.editor.scheme.smali
 
 import io.github.rosemoe.sora.widget.EditorColorScheme
 
