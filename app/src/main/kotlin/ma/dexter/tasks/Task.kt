@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.util.concurrent.Executors
 
 sealed interface ITask<T>
@@ -40,6 +41,7 @@ fun <T> ITask<T>.runWithDialog(
     context: Context,
     title: String,
     message: String,
+    showDialogOnError: Boolean = true,
     callback: (Result<T>) -> Unit
 ) {
     val dialog = ProgressDialog.show(context, title, message, true, false)
@@ -62,6 +64,12 @@ fun <T> ITask<T>.runWithDialog(
         handler.post {
             dialog.dismiss()
 
+            if (showDialogOnError && !result.success) {
+                MaterialAlertDialogBuilder(context)
+                    .setTitle("Error: " + result.error.title)
+                    .setMessage(result.error.message)
+                    .show()
+            }
             callback(result)
         }
     }

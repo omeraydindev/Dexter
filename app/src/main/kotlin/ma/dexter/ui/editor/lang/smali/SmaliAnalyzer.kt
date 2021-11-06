@@ -152,15 +152,13 @@ class SmaliAnalyzer : CodeAnalyzer {
         private val instructions = 44..94 // see smaliParser
 
         private val directives by lazy {  // see smaliParser
-            val list = mutableListOf<Int>()
-
-            smaliParser.tokenNames.forEachIndexed { index, s ->
-                if (s.endsWith("_DIRECTIVE")) {
-                    list.add(index)
+            buildList {
+                smaliParser.tokenNames.forEachIndexed { index, s ->
+                    if (s.endsWith("_DIRECTIVE")) {
+                        add(index)
+                    }
                 }
             }
-
-            list
         }
     }
 }

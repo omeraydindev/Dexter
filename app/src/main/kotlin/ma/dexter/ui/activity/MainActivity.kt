@@ -16,6 +16,7 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import ma.dexter.R
 import ma.dexter.databinding.ActivityMainBinding
+import ma.dexter.tasks.MergeDexTask
 import ma.dexter.tasks.SaveDexTask
 import ma.dexter.tasks.runWithDialog
 import ma.dexter.ui.BaseActivity
@@ -73,6 +74,13 @@ class MainActivity : BaseActivity() {
                         }
                     }
                     section {
+                        title = "Tools"
+                        item {
+                            label = "DEX Merger"
+                            callback = ::mergeDexFiles
+                        }
+                    }
+                    section {
                         title = "About"
                         item {
                             label = "GitHub"
@@ -108,11 +116,37 @@ class MainActivity : BaseActivity() {
     private fun saveDexFiles() {
         SaveDexTask()
             .runWithDialog(this, "Saving DEX files", "") {
-                MaterialAlertDialogBuilder(this)
-                    .setTitle("Saved successfully")
-                    .setMessage(it.value!!)
-                    .show()
+                if (it.value != null) {
+                    MaterialAlertDialogBuilder(this)
+                        .setTitle("Saved successfully")
+                        .setMessage(it.value)
+                        .show()
+                }
             }
+    }
+
+    private fun mergeDexFiles() {
+        val properties = DialogProperties().apply {
+            root = storagePath
+            extensions = arrayOf("dex")
+            selection_mode = DialogConfigs.MULTI_MODE
+        }
+
+        FilePickerDialog(this, properties).run {
+            setTitle("Select DEX files to merge")
+            setDialogSelectionListener { paths ->
+                MergeDexTask(paths)
+                    .runWithDialog(this@MainActivity, "Merging DEX files", "") {
+                        if (it.value != null) {
+                            MaterialAlertDialogBuilder(this@MainActivity)
+                                .setTitle("Merged successfully")
+                                .setMessage(it.value)
+                                .show()
+                        }
+                    }
+            }
+            show()
+        }
     }
 
     private fun initLiveData() {

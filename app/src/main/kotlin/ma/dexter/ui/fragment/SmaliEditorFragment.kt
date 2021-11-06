@@ -62,23 +62,15 @@ class SmaliEditorFragment(
     override fun save() {
         SmaliTask(codeEditor.text.toString())
             .runWithDialog(requireContext(), "Loading", "Running smali...") {
-
-                if (it.success && it.value != null) {
+                if (it.value != null) {
                     classDef = MutableClassDef(classDef.parentDex, it.value)
-
                     classDef.parentDex.replaceClassDef(it.value)
 
                     DexProject.getOpenedProject()
                         .smaliContainer.putSmaliCode(it.value.type, codeEditor.text.toString())
 
                     toast("Saved successfully")
-                } else {
-                    MaterialAlertDialogBuilder(requireContext())
-                        .setTitle("Error: " + it.error.title)
-                        .setMessage(it.error.message)
-                        .show()
                 }
-
             }
     }
 
@@ -87,8 +79,10 @@ class SmaliEditorFragment(
     ) {
         BaksmaliTask(classDef)
             .runWithDialog(requireContext(), "Loading", "Running baksmali...") {
-                codeEditor.setText(it.value)
-                gotoMemberDescriptor(memberDescriptorToGo)
+                if (it.value != null) {
+                    codeEditor.setText(it.value)
+                    gotoMemberDescriptor(memberDescriptorToGo)
+                }
             }
     }
 
@@ -183,17 +177,10 @@ class SmaliEditorFragment(
             classDefs = innerClassDefs + classDef,
             className, decompiler
         ).runWithDialog(requireContext(), "Decompiling", "") {
-
-            if (it.success && it.value != null) {
+            if (it.value != null) {
                 DexGotoManager(requireActivity())
                     .gotoJavaViewer(JavaGotoDef(className, it.value))
-            } else {
-                MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("Error: " + it.error.title)
-                    .setMessage(it.error.message)
-                    .show()
             }
-
         }
     }
 
