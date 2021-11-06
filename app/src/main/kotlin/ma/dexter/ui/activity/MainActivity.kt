@@ -11,14 +11,15 @@ import com.github.angads25.filepicker.model.DialogConfigs
 import com.github.angads25.filepicker.model.DialogProperties
 import com.github.angads25.filepicker.view.FilePickerDialog
 import com.github.zawadz88.materialpopupmenu.popupMenu
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import ma.dexter.R
 import ma.dexter.databinding.ActivityMainBinding
 import ma.dexter.tasks.SaveDexTask
 import ma.dexter.tasks.runWithDialog
+import ma.dexter.ui.BaseActivity
 import ma.dexter.ui.adapter.DexPagerAdapter
-import ma.dexter.ui.base.BaseActivity
 import ma.dexter.ui.viewmodel.MainViewModel
 import ma.dexter.util.*
 
@@ -107,7 +108,10 @@ class MainActivity : BaseActivity() {
     private fun saveDexFiles() {
         SaveDexTask()
             .runWithDialog(this, "Saving DEX files", "") {
-                debugToast("Saved successfully")
+                MaterialAlertDialogBuilder(this)
+                    .setTitle("Saved successfully")
+                    .setMessage(it.value!!)
+                    .show()
             }
     }
 

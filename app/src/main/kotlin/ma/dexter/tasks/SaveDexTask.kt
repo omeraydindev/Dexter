@@ -4,28 +4,47 @@ import ma.dexter.project.DexProject
 import ma.dexter.util.normalizeSmaliPath
 import org.jf.dexlib2.writer.io.FileDataStore
 import org.jf.dexlib2.writer.pool.DexPool
+import kotlin.system.measureTimeMillis
 
-class SaveDexTask : ProgressTask<Nothing>() {
+class SaveDexTask : ProgressTask<String>() {
 
     // todo: move to [MutableDexContainer]
     override fun run(
         progress: (String) -> Unit
-    ): Result<Nothing> {
+    ): Result<String> {
         val dexEntries = DexProject.getOpenedProject().dexContainer.entries
+
+        var totalTime = 0L
+        val statistics = StringBuilder()
 
         dexEntries.forEach { dexEntry ->
             val dexPool = DexPool(dexEntry.opcodes)
             val dexFile = dexEntry.dexFile!!
+            statistics.append("${dexFile.name}:\n")
 
-            dexEntry.classes.forEach { classDefEntry ->
-                progress("Writing: ${normalizeSmaliPath(classDefEntry.type)} in ${dexFile.name}")
-                dexPool.internClass(classDefEntry.classDef)
+            val interningTime = measureTimeMillis {
+                dexEntry.classes.forEach { classDefEntry ->
+                    progress("Interning: ${normalizeSmaliPath(classDefEntry.type)}")
+                    dexPool.internClass(classDefEntry.classDef)
+                }
             }
 
-            dexPool.writeTo(FileDataStore(dexFile))
+            val writingTime = measureTimeMillis {
+                progress("Writing to ${dexFile.name}")
+                dexPool.writeTo(FileDataStore(dexFile))
+            }
+
+            totalTime += interningTime + writingTime
+            statistics.append("  Interning: $interningTime ms\n")
+            statistics.append("  Writing: $writingTime ms\n\n")
         }
 
-        return Result(success = true)
+        statistics.append("TOTAL: $totalTime ms")
+
+        return Result(
+            success = true,
+            value = statistics.toString()
+        )
     }
 
 }
