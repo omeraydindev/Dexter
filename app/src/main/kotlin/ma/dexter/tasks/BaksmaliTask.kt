@@ -11,7 +11,7 @@ class BaksmaliTask(
         val smali = DexProject.getOpenedProject()
             .smaliContainer.getSmaliCode(classDef)
 
-        return Result(smali, true)
+        return Result.success(smali)
     }
 
 }

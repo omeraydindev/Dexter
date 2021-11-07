@@ -7,6 +7,8 @@ import org.jf.dexlib2.AccessFlags
 import org.jf.dexlib2.iface.ClassDef
 import org.jf.dexlib2.immutable.ImmutableClassDef
 
+const val DEFAULT_DEX_VERSION = 35
+
 fun MutableClassDef.isInterface(): Boolean {
     return (this.accessFlags and AccessFlags.INTERFACE.value) != 0
 }

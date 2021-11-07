@@ -77,7 +77,6 @@ class DexGotoManager(
                 }
             }
         }
-
     }
 
     fun gotoClassDef(

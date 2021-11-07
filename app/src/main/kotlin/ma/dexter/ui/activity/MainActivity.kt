@@ -23,6 +23,7 @@ import ma.dexter.ui.BaseActivity
 import ma.dexter.ui.adapter.DexPagerAdapter
 import ma.dexter.ui.viewmodel.MainViewModel
 import ma.dexter.util.*
+import java.io.File
 
 class MainActivity : BaseActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -135,7 +136,9 @@ class MainActivity : BaseActivity() {
         FilePickerDialog(this, properties).run {
             setTitle("Select DEX files to merge")
             setDialogSelectionListener { paths ->
-                MergeDexTask(paths)
+                val mergedDexFile = File(File(paths[0]).parent, "classes_MERGED.dex")
+
+                MergeDexTask(paths, mergedDexFile)
                     .runWithDialog(this@MainActivity, "Merging DEX files", "") {
                         if (it.value != null) {
                             MaterialAlertDialogBuilder(this@MainActivity)

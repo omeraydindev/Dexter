@@ -9,7 +9,8 @@ import java.io.File
 import kotlin.system.measureTimeMillis
 
 class MergeDexTask(
-    private val dexPaths: Array<String>
+    private val dexPaths: Array<String>,
+    private val mergedDexFile: File
 ) : ProgressTask<String>() {
 
     override fun run(progress: (String) -> Unit): Result<String> {
@@ -34,7 +35,6 @@ class MergeDexTask(
         }
 
         val writingTime = measureTimeMillis {
-            val mergedDexFile = File(File(dexPaths[0]).parent, "classes_MERGED.dex")
             progress("Writing to ${mergedDexFile.name}")
             dexPool.writeTo(FileDataStore(mergedDexFile))
         }
@@ -43,10 +43,7 @@ class MergeDexTask(
         statistics.append("Writing: $writingTime ms\n")
         statistics.append("TOTAL: $totalTime ms")
 
-        return Result(
-            success = true,
-            value = statistics.toString()
-        )
+        return Result.success(statistics.toString())
     }
 
 }

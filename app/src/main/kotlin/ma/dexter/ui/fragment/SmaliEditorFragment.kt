@@ -126,8 +126,8 @@ class SmaliEditorFragment(
     }
 
     private fun showSmali2JavaDialog() {
-        val innerClasses =
-            DexProject.getOpenedProject().dexContainer.getInnerClasses(classDef)
+        val innerClasses = DexProject.getOpenedProject()
+            .dexContainer.getInnerClasses(classDef)
 
         if (innerClasses.isNotEmpty()) {
             val innerClassesArray =

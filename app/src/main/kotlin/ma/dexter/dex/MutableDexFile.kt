@@ -1,5 +1,6 @@
 package ma.dexter.dex
 
+import ma.dexter.util.DEFAULT_DEX_VERSION
 import org.jf.dexlib2.Opcodes
 import org.jf.dexlib2.dexbacked.DexBackedDexFile
 import org.jf.dexlib2.iface.ClassDef
@@ -12,7 +13,7 @@ class MutableDexFile {
     private val dexVersion: Int
     private val _classes: MutableList<MutableClassDef>
 
-    val dexFile: File?
+    val dexFile: File? // todo
     val opcodes: Opcodes
     val classes: List<MutableClassDef>
         get() = _classes
@@ -32,11 +33,12 @@ class MutableDexFile {
     }
 
     constructor(
-        classDefs: List<MutableClassDef>,
+        classDefs: List<MutableClassDef> = listOf(),
         dexVersion: Int? = null
     ) {
         this.dexFile = null
-        this.dexVersion = dexVersion ?: classDefs.maxOf { it.parentDex.dexVersion }
+        this.dexVersion =
+            dexVersion ?: classDefs.maxOfOrNull { it.parentDex.dexVersion } ?: DEFAULT_DEX_VERSION
         this.opcodes = Opcodes.forDexVersion(this.dexVersion)
 
         this._classes = classDefs.toMutableList()

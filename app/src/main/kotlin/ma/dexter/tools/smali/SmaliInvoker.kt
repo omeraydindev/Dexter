@@ -1,6 +1,5 @@
 package ma.dexter.tools.smali
 
-import ma.dexter.tasks.Error
 import ma.dexter.tasks.Result
 import ma.dexter.tools.smali.catcherr.smaliCatchErrFlexLexer
 import ma.dexter.tools.smali.catcherr.smaliCatchErrParser
@@ -37,17 +36,11 @@ object SmaliInvoker {
         val result = parser.smali_file()
 
         if (lexer.numberOfSyntaxErrors > 0) {
-            return Result(
-                success = false,
-                error = Error("Lexer", lexer.getErrorsString())
-            )
+            return Result.failure("Lexer", lexer.getErrorsString())
         }
 
         if (parser.numberOfSyntaxErrors > 0) {
-            return Result(
-                success = false,
-                error = Error("Parser", parser.getErrorsString())
-            )
+            return Result.failure("Parser", parser.getErrorsString())
         }
 
         val treeStream = CommonTreeNodeStream(result.tree)
@@ -61,13 +54,10 @@ object SmaliInvoker {
         val classDef = treeWalker.smali_file()
 
         if (treeWalker.numberOfSyntaxErrors > 0) {
-            return Result(
-                success = false,
-                error = Error("Tree walker", treeWalker.getErrorsString())
-            )
+            return Result.failure("Tree walker", treeWalker.getErrorsString())
         }
 
-        return Result(classDef, true)
+        return Result.success(classDef)
     }
 
 }

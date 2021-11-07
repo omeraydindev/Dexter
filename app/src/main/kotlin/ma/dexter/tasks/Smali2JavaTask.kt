@@ -8,6 +8,7 @@ import ma.dexter.tools.decompilers.BaseDecompiler
 import ma.dexter.tools.decompilers.BaseDecompiler.Companion.decompile
 import ma.dexter.tools.decompilers.BaseDexDecompiler
 import ma.dexter.tools.decompilers.BaseJarDecompiler
+import ma.dexter.util.getStackTraceString
 import java.io.File
 
 class Smali2JavaTask(
@@ -43,44 +44,40 @@ class Smali2JavaTask(
          * JADX operates on dex anyway.
          */
         if (isJarDecompiler) {
-
             // Invoke dex2jar
             progress("Converting DEX to JAR...")
             val d2jResult = D2JInvoker.invoke(dexFile, jarFile)
 
             if (!d2jResult.success) {
-                return Result(
-                    success = false,
-                    error = Error("Dex2Jar", d2jResult.error)
-                )
+                return Result.failure("Dex2Jar", d2jResult.error)
             }
-
         }
 
         // Invoke the decompiler
         progress("Decompiling ${if (isJarDecompiler) "JAR" else "DEX"} to Java...")
 
-        val javaCode = if (jarFile.exists() || !isJarDecompiler) {
+        if (isJarDecompiler && !jarFile.exists()) {
+            return Result.failure(
+                decompiler.getName(),
+                "Couldn't find generated JAR in ${jarFile.absolutePath}"
+            )
+        }
+
+        val javaCode = try {
 
             decompiler.decompile(
                 className,
                 if (isJarDecompiler) jarFile else dexFile
             )
 
-        } else {
-            return Result(
-                success = false,
-                error = Error(
-                    decompiler.getName(),
-                    "Couldn't find generated JAR in ${jarFile.absolutePath}"
-                )
+        } catch (e: Throwable) {
+            return Result.failure(
+                decompiler.getName(),
+                "Couldn't decompile $className, logs:\n\n${getStackTraceString(e)}"
             )
         }
 
-        return Result(
-            success = true,
-            value = javaCode
-        )
+        return Result.success(javaCode)
     }
 
 }

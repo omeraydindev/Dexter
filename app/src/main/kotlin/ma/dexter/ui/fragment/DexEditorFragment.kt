@@ -124,12 +124,12 @@ class DexEditorFragment : BaseFragment() {
     private fun deleteClass(
         treeNode: TreeNode<DexClassNode>
     ) {
+        val dexContainer = DexProject.getOpenedProject().dexContainer
+
         if (treeNode.isLeaf) {
-            DexProject.getOpenedProject()
-                .dexContainer.deleteClassDef(treeNode.getClassDescriptor())
+            dexContainer.deleteClassDef(treeNode.getClassDescriptor())
         } else {
-            DexProject.getOpenedProject()
-                .dexContainer.deletePackage(treeNode.getPath())
+            dexContainer.deletePackage(treeNode.getPath())
         }
 
         treeNode.parent.removeChild(treeNode)
@@ -147,7 +147,8 @@ class DexEditorFragment : BaseFragment() {
         }
 
         val dialogBinding = DialogCreateSmaliFileBinding.inflate(layoutInflater)
-        val biMap = DexProject.getOpenedProject().dexContainer.biMap
+        val biMap = DexProject.getOpenedProject()
+            .dexContainer.biMap
 
         dialogBinding.etDexFile.setAdapter(
             ArrayAdapter(
@@ -189,7 +190,8 @@ class DexEditorFragment : BaseFragment() {
 
                 // costly operation but ensures that the tree is structured correctly
                 // TODO: optimize
-                loadDexes(DexProject.getOpenedProject().dexContainer.entries)
+                loadDexes(DexProject.getOpenedProject()
+                    .dexContainer.entries)
             }
             .show()
     }

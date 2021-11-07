@@ -1,19 +1,18 @@
 package ma.dexter.tools.d2j
 
-import android.util.Log
 import com.googlecode.d2j.Method
 import com.googlecode.d2j.dex.DexExceptionHandler
 import com.googlecode.d2j.node.DexMethodNode
+import ma.dexter.util.getStackTraceString
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
 import java.io.PrintWriter
 import java.io.StringWriter
-import java.lang.Exception
 
 /**
  * See [com.googlecode.dex2jar.tools.BaksmaliBaseDexExceptionHandler]
  */
-class D2JExceptionHandler: DexExceptionHandler {
+class D2JExceptionHandler : DexExceptionHandler {
 
     private val exceptionMap = mutableMapOf<DexMethodNode, Exception>()
     private var fileExceptions = mutableListOf<Exception>()
@@ -28,7 +27,7 @@ class D2JExceptionHandler: DexExceptionHandler {
         return buildString {
             append("File exceptions:\n")
             fileExceptions.forEach {
-                append(Log.getStackTraceString(it))
+                append(getStackTraceString(it))
                 append("\n")
             }
 
@@ -36,7 +35,7 @@ class D2JExceptionHandler: DexExceptionHandler {
 
             append("Method exceptions:\n")
             exceptionMap.forEach {
-                append(Log.getStackTraceString(it.value))
+                append(getStackTraceString(it.value))
                 append("\n")
             }
         }

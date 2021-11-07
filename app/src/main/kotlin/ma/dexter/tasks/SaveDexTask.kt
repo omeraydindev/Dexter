@@ -12,7 +12,8 @@ class SaveDexTask : ProgressTask<String>() {
     override fun run(
         progress: (String) -> Unit
     ): Result<String> {
-        val dexEntries = DexProject.getOpenedProject().dexContainer.entries
+        val dexEntries = DexProject.getOpenedProject()
+            .dexContainer.entries
 
         var totalTime = 0L
         val statistics = StringBuilder()
@@ -41,10 +42,7 @@ class SaveDexTask : ProgressTask<String>() {
 
         statistics.append("TOTAL: $totalTime ms")
 
-        return Result(
-            success = true,
-            value = statistics.toString()
-        )
+        return Result.success(statistics.toString())
     }
 
 }
