@@ -88,24 +88,22 @@ dependencies {
     implementation "org.smali:smali:2.5.2"
     implementation "org.smali:baksmali:2.5.2"
 
-    // fernflower (mirror)
-    // doesn't have a proper versioning so we're stuck with using this
-    implementation 'com.github.fesh0r:fernflower:e19aab61ce'
-
     // cfr
     implementation 'org.benf:cfr:0.151'
-
-    // jd-core
-    /*
-     * jd-core's repo fixed some critical bugs in their commits
-     * since the last release (v1.1.3), that's why we're using the
-     * hash of the latest commit (might fork and release myself later)
-     */
-    implementation 'com.github.java-decompiler:jd-core:fafc656826'
 
     // procyon
     implementation 'com.github.MikeAndrson.procyon:procyon-compilertools:androidport_0.5.36'
     implementation files("libs/procyon/javax-model.jar") // for javax.lang.model
+
+    // fernflower
+    // from the latest commit:
+    // https://github.com/fesh0r/fernflower/commit/e7fa2769f512cdf85063a798ba9781d4fd6e9664
+    implementation 'com.github.MikeAndrson:fernflower:3c1d05bf23'
+
+    // jd-core
+    // from the latest commit:
+    // https://github.com/java-decompiler/jd-core/commit/fafc65682647deee757b7698e1c872469be1a211
+    implementation 'com.github.java-decompiler:jd-core:fafc656826'
 
     // jadx
     implementation files("libs/jadx/jadx-core-v1.2.0.jar")

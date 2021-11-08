@@ -41,7 +41,7 @@ class FernflowerDecompiler : BaseJarDecompiler {
 
     override fun getBanner() = """
             /*
-             * Decompiled with Fernflower [e19aab61ce].
+             * Decompiled with Fernflower [e7fa2769f5].
              */
         """.trimIndent() + "\n"
 
