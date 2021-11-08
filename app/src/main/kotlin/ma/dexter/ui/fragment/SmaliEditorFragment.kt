@@ -5,13 +5,13 @@ import android.view.View
 import com.github.zawadz88.materialpopupmenu.MaterialPopupMenuBuilder
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import ma.dexter.R
+import ma.dexter.dex.DexGotoManager
 import ma.dexter.dex.MutableClassDef
 import ma.dexter.model.JavaGotoDef
 import ma.dexter.model.SmaliGotoDef
 import ma.dexter.parsers.smali.SmaliMember
 import ma.dexter.parsers.smali.parseSmali
-import ma.dexter.project.DexGotoManager
-import ma.dexter.project.DexProject
+import ma.dexter.project.Workspace
 import ma.dexter.tasks.BaksmaliTask
 import ma.dexter.tasks.Smali2JavaTask
 import ma.dexter.tasks.SmaliTask
@@ -66,7 +66,7 @@ class SmaliEditorFragment(
                     classDef = MutableClassDef(classDef.parentDex, it.value)
                     classDef.parentDex.replaceClassDef(it.value)
 
-                    DexProject.getOpenedProject()
+                    Workspace.getOpenedProject()
                         .smaliContainer.putSmaliCode(it.value.type, codeEditor.text.toString())
 
                     toast("Saved successfully")
@@ -126,7 +126,7 @@ class SmaliEditorFragment(
     }
 
     private fun showSmali2JavaDialog() {
-        val innerClasses = DexProject.getOpenedProject()
+        val innerClasses = Workspace.getOpenedProject()
             .dexContainer.getInnerClasses(classDef)
 
         if (innerClasses.isNotEmpty()) {

@@ -3,6 +3,7 @@ package ma.dexter.ui.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import ma.dexter.project.DexProject
 import ma.dexter.ui.model.DexPageItem
 import ma.dexter.ui.model.MainItem
 
@@ -10,10 +11,8 @@ class MainViewModel : ViewModel() {
     private val dexPageItems = MutableLiveData(mutableListOf<DexPageItem>())
 
     val currentPosition = MutableLiveData(0)
-
-    // todo: find a better solution for these?
+    val dexProject = MutableLiveData<DexProject>()
     val viewPagerScrolled = MutableLiveData(0)
-    val dexPaths = MutableLiveData(arrayOf<String>())
 
     fun getPageItems(): LiveData<out List<DexPageItem>> {
         return dexPageItems

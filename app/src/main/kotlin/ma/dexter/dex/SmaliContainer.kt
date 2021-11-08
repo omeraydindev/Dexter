@@ -1,6 +1,5 @@
-package ma.dexter.project
+package ma.dexter.dex
 
-import ma.dexter.dex.MutableClassDef
 import ma.dexter.tools.smali.BaksmaliInvoker
 
 class SmaliContainer {

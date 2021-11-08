@@ -1,6 +1,6 @@
 package ma.dexter.tasks
 
-import ma.dexter.project.DexProject
+import ma.dexter.project.Workspace
 import ma.dexter.util.normalizeSmaliPath
 import org.jf.dexlib2.writer.io.FileDataStore
 import org.jf.dexlib2.writer.pool.DexPool
@@ -12,7 +12,7 @@ class SaveDexTask : ProgressTask<String>() {
     override fun run(
         progress: (String) -> Unit
     ): Result<String> {
-        val dexEntries = DexProject.getOpenedProject()
+        val dexEntries = Workspace.getOpenedProject()
             .dexContainer.entries
 
         var totalTime = 0L

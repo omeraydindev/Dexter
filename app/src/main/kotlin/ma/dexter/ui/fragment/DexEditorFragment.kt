@@ -11,10 +11,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import ma.dexter.R
 import ma.dexter.databinding.DialogCreateSmaliFileBinding
 import ma.dexter.databinding.FragmentDexEditorBinding
-import ma.dexter.dex.DexFactory
-import ma.dexter.dex.MutableDexFile
-import ma.dexter.project.DexGotoManager
-import ma.dexter.project.DexProject
+import ma.dexter.dex.DexGotoManager
+import ma.dexter.project.Workspace
 import ma.dexter.ui.BaseActivity
 import ma.dexter.ui.BaseFragment
 import ma.dexter.ui.tree.TreeNode
@@ -27,7 +25,6 @@ import ma.dexter.util.createClassDef
 import ma.dexter.util.getClassDescriptor
 import ma.dexter.util.getPath
 import ma.dexter.util.toast
-import java.io.File
 
 class DexEditorFragment : BaseFragment() {
     private lateinit var binding: FragmentDexEditorBinding
@@ -45,24 +42,18 @@ class DexEditorFragment : BaseFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel.dexPaths.observe(viewLifecycleOwner, ::loadDexes)
+        viewModel.dexProject.observe(viewLifecycleOwner) {
+            Workspace.openProject(it)
+            structureTree()
+        }
     }
 
-    private fun loadDexes(
-        dexPaths: Array<String>
-    ) {
-        loadDexes(dexPaths.map {
-            DexFactory.fromFile(File(it))
-        })
-    }
-
-    private fun loadDexes(
-        dexEntries: List<MutableDexFile>
-    ) {
+    private fun structureTree() {
         val dexTree = SmaliTree()
-            .addDexEntries(dexEntries)
-
-        DexProject.openProject(dexEntries)
+            .addDexEntries(
+                Workspace.getOpenedProject()
+                    .dexContainer.entries
+            )
 
         val binder = DexItemNodeViewFactory(
             toggleListener = { treeNode ->
@@ -124,7 +115,8 @@ class DexEditorFragment : BaseFragment() {
     private fun deleteClass(
         treeNode: TreeNode<DexClassNode>
     ) {
-        val dexContainer = DexProject.getOpenedProject().dexContainer
+        val dexContainer = Workspace.getOpenedProject()
+            .dexContainer
 
         if (treeNode.isLeaf) {
             dexContainer.deleteClassDef(treeNode.getClassDescriptor())
@@ -147,7 +139,7 @@ class DexEditorFragment : BaseFragment() {
         }
 
         val dialogBinding = DialogCreateSmaliFileBinding.inflate(layoutInflater)
-        val biMap = DexProject.getOpenedProject()
+        val biMap = Workspace.getOpenedProject()
             .dexContainer.biMap
 
         dialogBinding.etDexFile.setAdapter(
@@ -190,8 +182,7 @@ class DexEditorFragment : BaseFragment() {
 
                 // costly operation but ensures that the tree is structured correctly
                 // TODO: optimize
-                loadDexes(DexProject.getOpenedProject()
-                    .dexContainer.entries)
+                structureTree()
             }
             .show()
     }

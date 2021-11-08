@@ -1,10 +1,11 @@
-package ma.dexter.project
+package ma.dexter.dex
 
 import androidx.activity.viewModels
 import androidx.fragment.app.FragmentActivity
 import io.github.rosemoe.sora.widget.CodeEditor
 import ma.dexter.model.JavaGotoDef
 import ma.dexter.model.SmaliGotoDef
+import ma.dexter.project.Workspace
 import ma.dexter.ui.model.JavaItem
 import ma.dexter.ui.model.SmaliItem
 import ma.dexter.ui.viewmodel.MainViewModel
@@ -68,7 +69,7 @@ class DexGotoManager(
                 ) {
                     editor.setSelectionRegion(
                         cursor.leftLine, range.first,
-                        cursor.rightLine,range.last + 1 // to make it exclusive
+                        cursor.rightLine, range.last + 1 // to make it exclusive
                     )
 
                     val (_, definingClass, descriptor) = it.destructured
@@ -83,7 +84,7 @@ class DexGotoManager(
         dexClassDef: String,
         memberDescriptorToGo: String? = null
     ) {
-        DexProject.getOpenedProject()
+        Workspace.getOpenedProject()
             .dexContainer.findClassDef(dexClassDef)?.let {
                 gotoClassDef(SmaliGotoDef(it, memberDescriptorToGo))
                 return

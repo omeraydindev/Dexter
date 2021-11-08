@@ -16,6 +16,8 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import ma.dexter.R
 import ma.dexter.databinding.ActivityMainBinding
+import ma.dexter.dex.DexFactory
+import ma.dexter.project.DexProject
 import ma.dexter.tasks.MergeDexTask
 import ma.dexter.tasks.SaveDexTask
 import ma.dexter.tasks.runWithDialog
@@ -106,9 +108,13 @@ class MainActivity : BaseActivity() {
 
         FilePickerDialog(this, properties).run {
             setTitle("Select DEX file(s)")
-            setDialogSelectionListener {
-                viewModel.dexPaths.value = it
+            setDialogSelectionListener { dexPaths ->
                 viewModel.removeAllPageItems()
+
+                viewModel.dexProject.value =
+                    DexProject(dexPaths.map { path ->
+                        DexFactory.fromFile(File(path))
+                    })
             }
             show()
         }

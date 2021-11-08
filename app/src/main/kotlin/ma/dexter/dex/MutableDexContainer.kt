@@ -1,8 +1,6 @@
-package ma.dexter.project
+package ma.dexter.dex
 
 import com.google.common.collect.ImmutableBiMap
-import ma.dexter.dex.MutableClassDef
-import ma.dexter.dex.MutableDexFile
 
 class MutableDexContainer(
     val entries: List<MutableDexFile>
