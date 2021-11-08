@@ -78,6 +78,9 @@ dependencies {
     implementation 'com.github.zawadz88.materialpopupmenu:material-popup-menu:4.1.0'
     implementation 'com.google.guava:guava:27.1-android'
 
+    // javaparser
+    implementation 'com.github.javaparser:javaparser-core:3.23.1'
+
     // dex2jar (maintained fork)
     def d2jVersion = "v34"
     def withoutIcu = { exclude group: 'com.ibm.icu', module: 'icu4j' } // Adds ~10MB to the APK !
