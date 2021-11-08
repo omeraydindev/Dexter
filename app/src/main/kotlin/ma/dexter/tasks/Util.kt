@@ -5,7 +5,6 @@ import android.os.Handler
 import android.os.Looper
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import ma.dexter.ui.dialog.ProgressDialog
-import ma.dexter.util.getStackTraceString
 import java.util.concurrent.Executors
 
 fun <T> ITask<T>.runWithDialog(
@@ -27,7 +26,7 @@ fun <T> ITask<T>.runWithDialog(
                 is Task -> run()
             }
         } catch (e: Throwable) {
-            Result.failure("Exception", getStackTraceString(e))
+            Result.failure("Exception", e.stackTraceToString())
         }
 
         handler.post {

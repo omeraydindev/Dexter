@@ -8,7 +8,6 @@ import ma.dexter.tools.decompilers.BaseDecompiler
 import ma.dexter.tools.decompilers.BaseDecompiler.Companion.decompile
 import ma.dexter.tools.decompilers.BaseDexDecompiler
 import ma.dexter.tools.decompilers.BaseJarDecompiler
-import ma.dexter.util.getStackTraceString
 import java.io.File
 
 class Smali2JavaTask(
@@ -73,7 +72,7 @@ class Smali2JavaTask(
         } catch (e: Throwable) {
             return Result.failure(
                 decompiler.getName(),
-                "Couldn't decompile $className, logs:\n\n${getStackTraceString(e)}"
+                "Couldn't decompile $className, logs:\n\n${e.stackTraceToString()}"
             )
         }
 

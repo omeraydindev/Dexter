@@ -2,9 +2,6 @@ package ma.dexter.util
 
 import java.io.OutputStream
 import java.io.PrintStream
-import java.io.PrintWriter
-import java.io.StringWriter
-import java.net.UnknownHostException
 
 /**
  * Listens for System.out/err logs and invokes the callback
@@ -34,28 +31,4 @@ fun listenForSystemLogs(
 
     System.setOut(outStream)
     if (errLogsEnabled) System.setErr(outStream)
-}
-
-/**
- * Copied from `Log.getStackTraceString`
- * (to not depend on Android-specific classes as much as possible.)
- */
-fun getStackTraceString(tr: Throwable?): String {
-    if (tr == null) {
-        return ""
-    }
-
-    var t: Throwable? = tr
-    while (t != null) {
-        if (t is UnknownHostException) {
-            return ""
-        }
-        t = t.cause
-    }
-
-    val sw = StringWriter()
-    val pw = PrintWriter(sw)
-    tr.printStackTrace(pw)
-    pw.flush()
-    return sw.toString()
 }
