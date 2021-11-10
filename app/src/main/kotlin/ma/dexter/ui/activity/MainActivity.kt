@@ -52,6 +52,21 @@ class MainActivity : BaseActivity() {
         initTabs()
     }
 
+    override fun onBackPressed() {
+        if (binding.viewPager.currentItem != 0) {
+            binding.viewPager.currentItem = 0
+        } else {
+            MaterialAlertDialogBuilder(this)
+                .setTitle("Warning")
+                .setMessage("Are you sure you want to exit?")
+                .setPositiveButton("YES") { _, _ ->
+                    super.onBackPressed()
+                }
+                .setNegativeButton("NO", null)
+                .show()
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         if (binding.viewPager.currentItem != 0) return false
 
