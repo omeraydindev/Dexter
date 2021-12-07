@@ -1,6 +1,6 @@
 package ma.dexter.parsers.java
 
-import com.github.javaparser.StaticJavaParser
+import com.github.javaparser.JavaParser
 import com.github.javaparser.ast.Node
 import com.github.javaparser.ast.body.CallableDeclaration
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration
@@ -17,7 +17,9 @@ fun parseJava(
     val members = mutableListOf<JavaMember>()
     val javaFile = JavaFile(members)
 
-    val compilationUnit = StaticJavaParser.parse(javaCode)
+    val compilationUnit = JavaParser()
+        .parse(javaCode)
+        .result.get()
 
     // NodeWithImplements -> ClassOrInterfaceDeclaration, EnumDeclaration, RecordDeclaration
     val topClass = compilationUnit.types
