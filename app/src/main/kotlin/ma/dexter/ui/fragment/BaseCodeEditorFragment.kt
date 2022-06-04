@@ -1,7 +1,10 @@
 package ma.dexter.ui.fragment
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.*
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.CallSuper
 import androidx.fragment.app.activityViewModels
 import com.github.zawadz88.materialpopupmenu.MaterialPopupMenuBuilder
@@ -20,6 +23,19 @@ open class BaseCodeEditorFragment : BaseFragment() {
 
     protected lateinit var codeEditor: CodeEditor
     private var isEdited = false
+
+    private val exportResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val uri = result.data?.data ?: return@registerForActivityResult
+                val contentResolver = activity?.contentResolver ?: return@registerForActivityResult
+
+                contentResolver.openOutputStream(uri)?.use {
+                    val code = codeEditor.text.toString()
+                    it.write(code.toByteArray())
+                }
+            }
+        }
 
     @CallSuper
     override fun onCreateView(
@@ -66,10 +82,34 @@ open class BaseCodeEditorFragment : BaseFragment() {
 
     }
 
+    private fun export() {
+        val currentTabTitle = viewModel.currentPosition.value?.let { pos ->
+            val pageItems = viewModel.getPageItems().value
+            pageItems?.get(pos)?.getTitle()
+        }
+
+        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "*/*"
+            putExtra(Intent.EXTRA_TITLE, currentTabTitle.orEmpty())
+        }
+
+        exportResultLauncher.launch(intent)
+    }
+
     private fun showMoreMenu(anchorView: View) {
         val builder = MaterialPopupMenuBuilder()
 
         beforeBuildMoreMenu(builder)
+        builder.section {
+            title = "File"
+
+            item {
+                label = "Export.."
+                iconDrawable = drawable(R.drawable.ic_baseline_save_alt_24)
+                callback = ::export
+            }
+        }
         builder.section {
             title = "Editor"
 
