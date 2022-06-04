@@ -199,6 +199,7 @@ class MainActivity : BaseActivity() {
             }
 
             override fun onPageSelected(pos: Int) {
+                viewModel.currentPosition.value = pos
                 invalidateOptionsMenu()
             }
         })
