@@ -18,6 +18,7 @@ import ma.dexter.R
 import ma.dexter.databinding.ActivityMainBinding
 import ma.dexter.dex.DexFactory
 import ma.dexter.project.DexProject
+import ma.dexter.tasks.D2JTask
 import ma.dexter.tasks.MergeDexTask
 import ma.dexter.tasks.SaveDexTask
 import ma.dexter.tasks.runWithDialog
@@ -97,6 +98,10 @@ class MainActivity : BaseActivity() {
                             label = "DEX Merger"
                             callback = ::mergeDexFiles
                         }
+                        item {
+                            label = "DEX to JAR"
+                            callback= ::convertDexToJar
+                        }
                     }
                     section {
                         title = "About"
@@ -164,6 +169,39 @@ class MainActivity : BaseActivity() {
                         if (it.value != null) {
                             MaterialAlertDialogBuilder(this@MainActivity)
                                 .setTitle("Merged successfully")
+                                .setMessage(it.value)
+                                .show()
+                        }
+                    }
+            }
+            show()
+        }
+    }
+
+    private fun convertDexToJar() {
+        val properties = DialogProperties().apply {
+            root = storagePath
+            extensions = arrayOf("dex")
+            selection_mode = DialogConfigs.SINGLE_MODE
+        }
+
+        FilePickerDialog(this, properties).run {
+            setTitle("Select DEX file to convert")
+            setDialogSelectionListener { paths ->
+                val dexFile = File(paths[0])
+
+                var name = paths[0].substringBeforeLast(".")
+                var jarFile = File("$name.jar")
+                while (jarFile.exists()) {
+                    name += "_d"
+                    jarFile = File("$name.jar")
+                }
+
+                D2JTask(dexFile, jarFile)
+                    .runWithDialog(this@MainActivity, "Converting DEX to JAR", "") {
+                        if (it.value != null) {
+                            MaterialAlertDialogBuilder(this@MainActivity)
+                                .setTitle("Converted successfully")
                                 .setMessage(it.value)
                                 .show()
                         }
