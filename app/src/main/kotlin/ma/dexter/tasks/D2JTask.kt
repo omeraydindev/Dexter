@@ -5,7 +5,7 @@ import java.io.File
 import kotlin.system.measureTimeMillis
 
 class D2JTask(
-    private val dexFile: File,
+    private val dexFiles: List<File>,
     private val jarFile: File,
 ): ProgressTask<String>() {
 
@@ -14,9 +14,9 @@ class D2JTask(
     ): Result<String> {
 
         val time = measureTimeMillis {
-            progress("Running D2J")
+            progress("Initializing...")
 
-            val d2j = D2JInvoker(dexFile, jarFile) { currentProgress ->
+            val d2j = D2JInvoker(dexFiles, jarFile) { currentProgress ->
                 progress(currentProgress)
             }
             val d2jResult = d2j.invoke()

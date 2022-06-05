@@ -182,14 +182,12 @@ class MainActivity : BaseActivity() {
         val properties = DialogProperties().apply {
             root = storagePath
             extensions = arrayOf("dex")
-            selection_mode = DialogConfigs.SINGLE_MODE
+            selection_mode = DialogConfigs.MULTI_MODE
         }
 
         FilePickerDialog(this, properties).run {
-            setTitle("Select DEX file to convert")
+            setTitle("Select DEX file(s) to convert")
             setDialogSelectionListener { paths ->
-                val dexFile = File(paths[0])
-
                 var name = paths[0].substringBeforeLast(".")
                 var jarFile = File("$name.jar")
                 while (jarFile.exists()) {
@@ -197,7 +195,7 @@ class MainActivity : BaseActivity() {
                     jarFile = File("$name.jar")
                 }
 
-                D2JTask(dexFile, jarFile)
+                D2JTask(paths.map(::File), jarFile)
                     .runWithDialog(this@MainActivity, "Converting DEX to JAR", "") {
                         if (it.value != null) {
                             MaterialAlertDialogBuilder(this@MainActivity)
