@@ -45,7 +45,7 @@ class Smali2JavaTask(
         if (isJarDecompiler) {
             // Invoke dex2jar
             progress("Converting DEX to JAR...")
-            val d2jResult = D2JInvoker.invoke(dexFile, jarFile)
+            val d2jResult = D2JInvoker(dexFile, jarFile).invoke()
 
             if (!d2jResult.success) {
                 return Result.failure("Dex2Jar", d2jResult.error)

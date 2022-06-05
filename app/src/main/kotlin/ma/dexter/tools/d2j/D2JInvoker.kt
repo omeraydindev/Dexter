@@ -4,30 +4,30 @@ import com.googlecode.d2j.dex.Dex2jar
 import ma.dexter.tools.jar.JarTool
 import java.io.File
 
-object D2JInvoker {
-
+class D2JInvoker(
+    private val dexFile: File,
+    private val outJar: File,
+    private val options: D2JOptions = D2JOptions(),
+    private val progressCallback: (String) -> Unit = {},
+) {
     /**
      * Runs [Dex2jar] on given [dexFile] and outputs to [outJar].
-     *
-     * @param outJar output .jar path
      */
-    fun invoke(
-        dexFile: File,
-        outJar: File,
-        options: D2JOptions = D2JOptions()
-    ): Result {
+    fun invoke(): Result {
         val handler = D2JExceptionHandler()
 
         /** create out directory with the same name as [outJar] but "_" appended */
         val outDir = File(outJar.parent, outJar.name + "_").also { it.mkdirs() }
 
         // invoke dex2jar
-        invokeInternal(dexFile, outDir, options, handler)
+        invokeInternal(outDir, handler)
 
         // create the Jar
+        progressCallback("Writing to JAR")
         JarTool(outDir, outJar).create()
 
         // clean up the temp dir
+        progressCallback("Cleaning up temp files")
         outDir.deleteRecursively()
 
         return Result(
@@ -40,12 +40,10 @@ object D2JInvoker {
      * Adapted from [com.googlecode.dex2jar.tools.Dex2jarCmd.doCommandLine].
      */
     private fun invokeInternal(
-        dexFile: File,
         outPath: File,
-        options: D2JOptions,
         handler: D2JExceptionHandler,
     ) {
-        Dex2jar.from(dexFile)
+        D2JFacade.from(dexFile)
             .withExceptionHandler(handler)
             .reUseReg(options.reuseReg)
             .topoLogicalSort(options.topoLogicalSort)
@@ -54,6 +52,9 @@ object D2JInvoker {
             .printIR(options.printIR)
             .noCode(options.skipMethodBodies)
             .skipExceptions(options.skipExceptions)
+            .currentClassCallback {
+                progressCallback("Processing: $it")
+            }
             .to(outPath.toPath()) // Careful!
     }
 

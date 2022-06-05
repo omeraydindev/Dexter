@@ -16,7 +16,11 @@ class D2JTask(
         val time = measureTimeMillis {
             progress("Running D2J")
 
-            val d2jResult = D2JInvoker.invoke(dexFile, jarFile)
+            val d2j = D2JInvoker(dexFile, jarFile) { currentProgress ->
+                progress(currentProgress)
+            }
+            val d2jResult = d2j.invoke()
+
             if (!d2jResult.success) {
                 return Result.failure("Dex2Jar", d2jResult.error)
             }
