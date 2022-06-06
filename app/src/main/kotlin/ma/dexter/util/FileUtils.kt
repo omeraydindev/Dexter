@@ -26,3 +26,31 @@ fun requestAllFilesAccessPermission(context: Context) {
         }
     }
 }
+
+/**
+ * Get [File] with a unique name, based on [baseName] and
+ * [extension]. Makes the File unique by the Windows way, that is:
+ *
+ * If "[baseName].[extension]" doesn't exist, just returns that.
+ * Otherwise, returns "[baseName] (N).[extension]" where **N** is
+ * some number >= 2.
+ */
+fun getFileWithUniqueName(
+    baseName: String,
+    extension: String,
+    directory: File,
+): File {
+    var count = 1
+    while (true) {
+        val file = File(
+            directory,
+            baseName + (if (count > 1) " ($count)" else "") + "." + extension
+        )
+
+        if (file.exists()) {
+            count++
+        } else {
+            return file
+        }
+    }
+}

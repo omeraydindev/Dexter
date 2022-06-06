@@ -194,8 +194,16 @@ class MainActivity : BaseActivity() {
                     name += "_d"
                     jarFile = File("$name.jar")
                 }
+                val dexFiles = paths.map(::File)
+
+                val jarFile = getFileWithUniqueName(
+                    baseName = dexFiles.first().nameWithoutExtension,
+                    extension = "jar",
+                    directory = dexFiles.first().parentFile!!,
+                )
 
                 D2JTask(paths.map(::File), jarFile)
+                D2JTask(dexFiles, jarFile)
                     .runWithDialog(this@MainActivity, "Converting DEX to JAR", "") {
                         if (it.value != null) {
                             MaterialAlertDialogBuilder(this@MainActivity)
