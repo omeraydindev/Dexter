@@ -82,10 +82,13 @@ dependencies {
     implementation 'com.github.javaparser:javaparser-core:3.23.1'
 
     // dex2jar (maintained fork)
-    def d2jVersion = "v34"
+    /*def d2jVersion = "v50"
     def withoutIcu = { exclude group: 'com.ibm.icu', module: 'icu4j' } // Adds ~10MB to the APK !
     implementation "com.github.ThexXTURBOXx.dex2jar:dex-tools:$d2jVersion", withoutIcu
-    implementation "com.github.ThexXTURBOXx.dex2jar:dex-translator:$d2jVersion", withoutIcu
+    implementation "com.github.ThexXTURBOXx.dex2jar:dex-translator:$d2jVersion", withoutIcu*/
+    // TODO: replace this with the above when a new version is published
+    implementation "com.github.MikeAndrson.dex2jar:dex-tools:9c0d3ad497"
+    implementation "com.github.MikeAndrson.dex2jar:dex-translator:9c0d3ad497"
 
     // smali & baksmali
     implementation "org.smali:smali:2.5.2"
