@@ -14,14 +14,12 @@ import com.github.zawadz88.materialpopupmenu.popupMenu
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.googlecode.d2j.dex.Dex2Asm
 import ma.dexter.R
 import ma.dexter.databinding.ActivityMainBinding
 import ma.dexter.dex.DexFactory
 import ma.dexter.project.DexProject
-import ma.dexter.tasks.D2JTask
-import ma.dexter.tasks.MergeDexTask
-import ma.dexter.tasks.SaveDexTask
-import ma.dexter.tasks.runWithDialog
+import ma.dexter.tasks.*
 import ma.dexter.ui.BaseActivity
 import ma.dexter.ui.adapter.DexPagerAdapter
 import ma.dexter.ui.viewmodel.MainViewModel
@@ -100,7 +98,11 @@ class MainActivity : BaseActivity() {
                         }
                         item {
                             label = "DEX to JAR"
-                            callback= ::convertDexToJar
+                            callback = ::convertDexToJar
+                        }
+                        item {
+                            label = "DEX to Smali"
+                            callback = ::baksmaliDex
                         }
                     }
                     section {
@@ -188,12 +190,6 @@ class MainActivity : BaseActivity() {
         FilePickerDialog(this, properties).run {
             setTitle("Select DEX file(s) to convert")
             setDialogSelectionListener { paths ->
-                var name = paths[0].substringBeforeLast(".")
-                var jarFile = File("$name.jar")
-                while (jarFile.exists()) {
-                    name += "_d"
-                    jarFile = File("$name.jar")
-                }
                 val dexFiles = paths.map(::File)
 
                 val jarFile = getFileWithUniqueName(
@@ -202,9 +198,40 @@ class MainActivity : BaseActivity() {
                     directory = dexFiles.first().parentFile!!,
                 )
 
-                D2JTask(paths.map(::File), jarFile)
                 D2JTask(dexFiles, jarFile)
                     .runWithDialog(this@MainActivity, "Converting DEX to JAR", "") {
+                        if (it.value != null) {
+                            MaterialAlertDialogBuilder(this@MainActivity)
+                                .setTitle("Converted successfully")
+                                .setMessage(it.value)
+                                .show()
+                        }
+                    }
+            }
+            show()
+        }
+    }
+
+    private fun baksmaliDex() {
+        val properties = DialogProperties().apply {
+            root = storagePath
+            extensions = arrayOf("dex")
+            selection_mode = DialogConfigs.SINGLE_MODE
+        }
+
+        FilePickerDialog(this, properties).run {
+            setTitle("Select DEX file to baksmali")
+            setDialogSelectionListener { paths ->
+                val dexFile = File(paths[0])
+
+                val zipFile = getFileWithUniqueName(
+                    baseName = dexFile.nameWithoutExtension + "_smali",
+                    extension = "zip",
+                    directory = dexFile.parentFile!!,
+                )
+
+                BaksmaliDexTask(dexFile, zipFile)
+                    .runWithDialog(this@MainActivity, "Baksmaling DEX", "") {
                         if (it.value != null) {
                             MaterialAlertDialogBuilder(this@MainActivity)
                                 .setTitle("Converted successfully")

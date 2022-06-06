@@ -6,6 +6,7 @@ import org.jf.dexlib2.writer.io.FileDataStore
 import org.jf.dexlib2.writer.pool.DexPool
 import kotlin.system.measureTimeMillis
 
+//TODO: execute in parallel to fasten the process
 class SaveDexTask : ProgressTask<String>() {
 
     // todo: move to [MutableDexContainer]

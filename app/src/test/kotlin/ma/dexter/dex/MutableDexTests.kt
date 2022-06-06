@@ -74,7 +74,7 @@ class MutableDexTests {
     private fun MutableDexFile.getSmali(classDescriptor: String): String {
         val classDef = findClassDef(classDescriptor)!!
 
-        return BaksmaliInvoker.disassemble(classDef)
+        return BaksmaliInvoker().disassemble(classDef)
     }
 
 }

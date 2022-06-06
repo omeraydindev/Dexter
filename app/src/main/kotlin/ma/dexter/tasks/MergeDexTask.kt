@@ -8,6 +8,7 @@ import org.jf.dexlib2.writer.pool.DexPool
 import java.io.File
 import kotlin.system.measureTimeMillis
 
+// TODO: execute in parallel to fasten the process
 class MergeDexTask(
     private val dexPaths: Array<String>,
     private val mergedDexFile: File

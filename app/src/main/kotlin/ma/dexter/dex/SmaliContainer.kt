@@ -13,7 +13,7 @@ class SmaliContainer {
         return if (smaliCode != null) {
             smaliCode
         } else {
-            val newCode = BaksmaliInvoker.disassemble(classDef)
+            val newCode = BaksmaliInvoker().disassemble(classDef)
             putSmaliCode(classDef.type, newCode)
             newCode
         }
