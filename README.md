@@ -1,4 +1,4 @@
-# Dexter
+# Dexter test
 A work-in-progress **DEX** editor for Android, using mainly [smali](https://github.com/JesusFreke/smali) & [dexlib2](https://github.com/JesusFreke/smali/tree/master/dexlib2).
 
 ## Available decompilers
