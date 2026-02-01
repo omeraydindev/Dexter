@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.viewModelScope
 import androidx.viewpager2.widget.ViewPager2
 import com.github.angads25.filepicker.model.DialogConfigs
 import com.github.angads25.filepicker.model.DialogProperties
@@ -15,16 +16,22 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.googlecode.d2j.dex.Dex2Asm
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ma.dexter.R
 import ma.dexter.databinding.ActivityMainBinding
 import ma.dexter.dex.DexFactory
 import ma.dexter.project.DexProject
 import ma.dexter.tasks.*
+import ma.dexter.tools.smali.BaksmaliInvoker
 import ma.dexter.ui.BaseActivity
 import ma.dexter.ui.adapter.DexPagerAdapter
 import ma.dexter.ui.viewmodel.MainViewModel
 import ma.dexter.util.*
 import java.io.File
+import kotlin.system.measureTimeMillis
+import kotlin.time.measureTimedValue
 
 class MainActivity : BaseActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -222,6 +229,7 @@ class MainActivity : BaseActivity() {
         FilePickerDialog(this, properties).run {
             setTitle("Select DEX file to baksmali")
             setDialogSelectionListener { paths ->
+
                 val dexFile = File(paths[0])
 
                 val zipFile = getFileWithUniqueName(
@@ -230,15 +238,32 @@ class MainActivity : BaseActivity() {
                     directory = dexFile.parentFile!!,
                 )
 
-                BaksmaliDexTask(dexFile, zipFile)
-                    .runWithDialog(this@MainActivity, "Baksmaling DEX", "") {
-                        if (it.value != null) {
-                            MaterialAlertDialogBuilder(this@MainActivity)
-                                .setTitle("Converted successfully")
-                                .setMessage(it.value)
-                                .show()
+                MaterialAlertDialogBuilder(this@MainActivity)
+                    .setTitle("Select")
+                    .setPositiveButton("COROUTINES") { _, _ ->
+                        viewModel.viewModelScope.launch {
+                            val time = measureTimeMillis {
+                                BaksmaliInvoker().disassembleCoroutines(
+                                    dexFile, zipFile
+                                )
+                            }
+                            withContext(Dispatchers.Main) {
+                                toast("Took $time ms")
+                            }
                         }
                     }
+                    .setNegativeButton("EXECUTORS") { _, _ ->
+                        BaksmaliDexTask(dexFile, zipFile)
+                            .runWithDialog(this@MainActivity, "Baksmaling DEX", "") {
+                                if (it.value != null) {
+                                    MaterialAlertDialogBuilder(this@MainActivity)
+                                        .setTitle("Converted successfully")
+                                        .setMessage(it.value)
+                                        .show()
+                                }
+                            }
+                    }
+                    .show()
             }
             show()
         }

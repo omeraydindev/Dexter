@@ -1,5 +1,6 @@
 package ma.dexter.tools.smali
 
+import kotlinx.coroutines.*
 import ma.dexter.api.consumer.ClassProgressConsumer
 import ma.dexter.dex.MutableClassDef
 import ma.dexter.util.normalizeSmaliPath
@@ -10,6 +11,7 @@ import org.jf.dexlib2.DexFileFactory
 import org.jf.dexlib2.iface.ClassDef
 import java.io.File
 import java.io.StringWriter
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
@@ -55,6 +57,55 @@ class BaksmaliInvoker(
                 zos.closeEntry()
             }
         }
+    }
+
+    suspend fun disassembleCoroutines(
+        dexFile: File,
+        outZip: File,
+    ) = withContext(Dispatchers.IO) {
+        val loadedDexFile = DexFileFactory.loadDexFile(dexFile, null)
+
+        val classDefs = getClassDefsFromDex(dexFile)
+        val smalis = ConcurrentHashMap<String, ByteArray>(classDefs.size)
+
+        coroutineScope {
+            val deferreds = classDefs.map { classDef ->
+                async(Dispatchers.IO) {
+                    val smaliPath = normalizeSmaliPath(classDef.type)
+                    val bytes = disassemble(classDef).toByteArray()
+
+                    smalis.putIfAbsent(smaliPath, bytes)
+                }
+            }
+
+            deferreds.awaitAll()
+
+            ZipOutputStream(outZip.outputStream()).use { zos ->
+                smalis.forEach { entry ->
+                    putSmaliFileToZip(zos, entry.key, entry.value)
+                }
+            }
+        }
+    }
+
+    private fun putSmaliFileToZip(
+        zos: ZipOutputStream,
+        smaliPath: String,
+        bytes: ByteArray,
+    ) = runBlocking {
+        val zipEntry = ZipEntry("$smaliPath.smali")
+        zos.putNextEntry(zipEntry)
+        zos.write(bytes)
+        zos.closeEntry()
+    }
+
+    private fun getClassDefsFromDex(
+        dexFile: File
+    ): List<ClassDef> = runBlocking {
+        val loadedDexFile = DexFileFactory.loadDexFile(dexFile, null)
+
+        return@runBlocking loadedDexFile
+            .classes.filterNotNull()
     }
 
 }
